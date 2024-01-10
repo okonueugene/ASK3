@@ -1,0 +1,5 @@
+@include('admin.commons.header')
+@include('admin.commons.navbar')
+@yield('content')
+@include ('admin.commons.footer')
+@include ('admin.commons.scripts')
