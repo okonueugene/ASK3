@@ -17,7 +17,7 @@ return new class () extends Migration {
             $table->unsignedBigInteger('guard_id')->nullable();
             $table->string('name');
             $table->time('start');
-            $table->time('end');
+            $table->time('end')->nullable();
             $table->timestamps();
 
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
