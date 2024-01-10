@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Api\App;
 
+use Carbon\Carbon;
 use App\Models\Guard;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
 use App\Events\MarkAttendance;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class AuthenticationController extends Controller
 {
