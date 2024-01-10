@@ -24,7 +24,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum']], function (
     Route::get('/profile', [AuthenticationController::class, 'profile']);
     Route::post('/auth/logout', [AuthenticationController::class, 'logout']);
     Route::controller(AppController::class)->group(function () {
-        Route::get('/patrol/start', 'startPatrol');
+        Route::post('/patrol/start', 'startPatrol');
      
     });
 
