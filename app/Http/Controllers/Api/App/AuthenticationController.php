@@ -12,10 +12,10 @@ class AuthenticationController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string|exists:guards,phone',
+            'phone' => 'required|string',
             'password' => 'required|string|min:6|max:255',
         ]);
-
+// dd($request->all());
         $model = new Guard();
 
         $check = $model->where('phone', $request->phone)->exists();
@@ -61,14 +61,13 @@ class AuthenticationController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid Credentials',
-                ], 204);
+                ], 404);
             }
         } else {
-            //Auth fail
-            return response()->json([
+           return response()->json([
                 'success' => false,
-                'message' => 'Guard with this phone does not exist',
-            ], 204);
+                'message' => 'Invalid Credentials',
+            ], 404);
         }
     }
 
