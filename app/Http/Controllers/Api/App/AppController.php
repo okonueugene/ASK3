@@ -28,11 +28,19 @@ $name = 'Patrol ' . ($site_patrols->count() + 1);
         ]);
 
 
-
-        return response()->json([
-            'message' => 'Patrol started successfully',
-            'patrol' => $patrol,
-        ], 201);
+if($patrol){
+    return response()->json([
+        'message' => 'Patrol started successfully',
+        'success' => true,
+        'patrol' => $patrol,
+    ], 201);
+}else{
+    return response()->json([
+        'message' => 'Patrol not started',
+        'error' =>$errors->all(),
+        'success' => false,
+    ], 400);
+}
     }
 
     public function scanCheckPoints(Request $request)
