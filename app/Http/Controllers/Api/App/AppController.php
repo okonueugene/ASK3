@@ -16,12 +16,12 @@ class AppController extends Controller
         ]);
 
 $site_patrols = Patrol::where('site_id', $request->site_id)->where('created_at', '>=', Carbon::today())->get();
-dd($site_patrols);
-
+$name = 'Patrol ' . ($site_patrols->count() + 1);
         $patrol = Patrol::create([
             'guard_id' => $request->guard_id,
             'site_id' => $request->site_id,
             'start' => $request->time,
+            'name' => $name,
         ]);
 
 
