@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\App\AuthenticationController;
 
 Route::post('guard/login', [AuthenticationController::class, 'login']);
 
-Route::group(['prefix' => 'guard', 'middleware' => ['auth:guard', 'siteStatus']], function () {
+Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum', 'siteStatus']], function () {
 
     Route::get('/profile', [AuthenticationController::class, 'profile']);
     Route::post('/auth/logout', [AuthenticationController::class, 'logout']);

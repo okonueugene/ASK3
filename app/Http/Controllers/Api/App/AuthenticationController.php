@@ -57,7 +57,7 @@ class AuthenticationController extends Controller
                     'id_number' => $guard->id_number,
                     'is_active' => $guard->is_active,
                     'last_login_at' => $guard->name,
-                    'data' => $data['token'],
+                    'token' => $data['token'],
                 ], 201);
             } else {
                 //Auth fail
