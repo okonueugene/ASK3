@@ -43,20 +43,20 @@ class AuthenticationController extends Controller
                    event(new MarkAttendance($guard));
                 }
 
-                $sites = DB::table('sites')->where('id', $guard->site_id)->value('name');
+                $sites = DB::table('sites')->where('id', $guard->site_id)->first();
 
                 return response()->json([
                     'success' => true,
                     'message' => 'Login successful',
                     'id' => $guard->id,
                     'company_id' => $guard->company_id,
-                    'site_id' => $sites,
+                    'site_id' => $sites->id,
                     'name' => $guard->name,
                     'email' => $guard->email,
                     'phone' => $guard->phone,
                     'id_number' => $guard->id_number,
                     'is_active' => $guard->is_active,
-                    'last_login_at' => $guard->name,
+                    'last_login_at' => $guard->last_login,
                     'token' => $data['token'],
                 ], 201);
             } else {
