@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\App\AuthenticationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,25 +16,82 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-// Route::prefix('/v1')->group(
-//     function () {
-//         Route::post('/login', [App\Http\Controllers\Api\Auth\LoginController::class, 'login'])->name('login');
-//         Route::post('/register', [App\Http\Controllers\Api\Auth\RegisterController::class, 'register'])->name('register');
-//         Route::post('/logout', [App\Http\Controllers\Api\Auth\LoginController::class, 'logout'])->name('logout');
-//         Route::post('/refresh', [App\Http\Controllers\Api\Auth\LoginController::class, 'refresh'])->name('refresh');
-//         Route::get('/user', [App\Http\Controllers\Api\Auth\LoginController::class, 'user'])->name('user');
-//         Route::get('/users', [App\Http\Controllers\Api\UserController::class, 'index'])->name('users');
-//         Route::get('/users/{id}', [App\Http\Controllers\Api\UserController::class, 'show'])->name('users.show');
-//         Route::post('/users', [App\Http\Controllers\Api\UserController::class, 'store'])->name('users.store');
-//         Route::put('/users/{id}', [App\Http\Controllers\Api\UserController::class, 'update'])->name('users.update');
-//         Route::delete('/users/{id}', [App\Http\Controllers\Api\UserController::class, 'destroy'])->name('users.destroy');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//         Route::get('/users/{id}/edit', [App\Http\Controllers\Api\UserController::class, 'edit'])->name('users.edit');
-//     }
-// );
+Route::post('guard/login', [AuthenticationController::class, 'login']);
+
+Route::group(['prefix' => 'guard', 'middleware' => ['auth:guard', 'siteStatus']], function () {
+
+    Route::get('/profile', [AuthenticationController::class, 'profile']);
+    Route::post('/auth/logout', [AuthenticationController::class, 'logout']);
+
+    // Route::controller(AppController::class)->group(function () {
+    //     Route::get('/patrols', 'allPatrols');
+    //     Route::post('/patrols/start', 'startPatrol');
+    //     Route::post('/patrols/dopatrol', 'doPatrol');
+    //     Route::post('/tags', 'singlePatrol');
+
+    //     Route::get('/tasks', 'Tasks');
+    //     Route::post('/taskdone', 'completeTask');
+
+
+    //     Route::get('/stats', 'dashboardStats');
+
+    //     Route::get('/incidents', 'incidents');
+    //     Route::post('/incidents', 'incidentCreate');
+    //     Route::post('/incidents/single', 'showIncident');
+
+
+    //     Route::post('/dobs', 'dobCreate');
+    //     Route::get('/dobs', 'allDobs');
+
+    //     //device status
+    //     Route::post('/device/status', 'getDeviceStatus');
+    // });
+});
+
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH Routes - CONFIG TOOL
+|--------------------------------------------------------------------------
+|
+| ROUTES FOR CONFIG APPLICATION
+|
+// */
+// Route::post('auth/tool/login', [ToolAuthController::class, 'login']);
+
+// Route::group([
+//     'prefix' => 'tool',
+//     'middleware' => 'auth:tool'
+// ], function () {
+//     Route::post('/auth/logout', [ToolAuthController::class, 'logout']);
+
+//     Route::controller(ConfigToolController::class)->group(function () {
+//         Route::get('/sites', 'sites');
+//         Route::get('/tags', 'allTags');
+//         Route::post('/tags/site', 'getSiteTags');
+//         Route::post('tag/create', 'createTag');
+//         Route::post('tag/update', 'updateTag');
+//     });
+// });
+
+
+/*
+|--------------------------------------------------------------------------
+| ROUTES - CLIENT APP
+|--------------------------------------------------------------------------
+|
+| ROUTES FOR CLIENT APPLICATION
+|
+*/
+Route::post('auth/client/login', [ClientAuthController::class, 'login']);
+Route::group([
+    'prefix' => 'client',
+    'middleware' => 'auth:tool'
+], function () {
+    Route::post('/auth/logout', [ClientAuthController::class, 'logout']);
+
+    Route::controller(ClientAppController::class)->group(function () {
+        Route::get('/dashboard', 'dashboardStats');
+    });
+});

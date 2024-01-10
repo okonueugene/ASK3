@@ -28,7 +28,7 @@ jobs:
         run: composer update
       - name: Install Dependencies
         run: composer install
-      - name: Generate key
+      - name: Clear cache
         run: php artisan optimize:clear && composer dump-autoload
       - name: Storage link
         run: php artisan storage:link
