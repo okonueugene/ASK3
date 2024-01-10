@@ -102,7 +102,7 @@ class AuthenticationController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Logout failed',
-            ], 204);
+            ], 404);
         }
     }
     
@@ -121,7 +121,7 @@ class AuthenticationController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Guard profile not found',
-            ], 204);
+            ], 404);
         }
     }
 
