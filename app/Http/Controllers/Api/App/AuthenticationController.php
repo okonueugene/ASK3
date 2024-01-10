@@ -29,7 +29,7 @@ class AuthenticationController extends Controller
             if (password_verify($request->password, $guard->password)) {
                 //Auth pass
                 $data['deatils'] = $guard;
-                $data['token'] = $guard->createToken('API TOKEN')->accessToken;
+                $data['token'] = $guard->createToken('authToken')->plainTextToken;
 
                 $guard->update([
                     'last_login' => Carbon::now($guard->timezone)->toDateTimeString(),
