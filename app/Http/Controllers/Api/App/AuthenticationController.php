@@ -19,7 +19,6 @@ class AuthenticationController extends Controller
             'phone' => 'required|string',
             'password' => 'required|string|min:6|max:255',
         ]);
-// dd($request->all());
         $model = new Guard();
 
         $check = $model->where('phone', $request->phone)->exists();
@@ -38,7 +37,7 @@ class AuthenticationController extends Controller
 
                 //mark attendance
                 $dateToday = Carbon::now($guard->timezone)->format('Y-m-d');
-                $present = Attendance::where('guard_id', $guard->id)->where('date', $dateToday)->first();
+                $present = Attendance::where('guard_id', $guard->id)->where('day', $dateToday)->first();
 
                 if (!$present) {
                    event(new MarkAttendance($guard));
@@ -86,7 +85,7 @@ class AuthenticationController extends Controller
         $time_out = Carbon::now($guard->site->timezone)->format('H:i:m');
         $day = Carbon::now($guard->site->timezone)->toDateString();
 
-        $present = Attendance::where('guard_id', $guard->id)->where('date', $day)->first();
+        $present = Attendance::where('guard_id', $guard->id)->where('day', $day)->first();
 
         if ($present) {
             $present->update([
