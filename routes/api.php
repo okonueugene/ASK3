@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\App\AppController;
 use App\Http\Controllers\Api\App\AuthenticationController;
 
 /*
@@ -22,31 +23,12 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:guard', 'siteStatus']]
 
     Route::get('/profile', [AuthenticationController::class, 'profile']);
     Route::post('/auth/logout', [AuthenticationController::class, 'logout']);
-
-    // Route::controller(AppController::class)->group(function () {
-    //     Route::get('/patrols', 'allPatrols');
-    //     Route::post('/patrols/start', 'startPatrol');
-    //     Route::post('/patrols/dopatrol', 'doPatrol');
-    //     Route::post('/tags', 'singlePatrol');
-
-    //     Route::get('/tasks', 'Tasks');
-    //     Route::post('/taskdone', 'completeTask');
+    Route::controller(AppController::class)->group(function () {
+        Route::get('/patrol/start-patrol', 'startPatrol');
+     
+    });
 
 
-    //     Route::get('/stats', 'dashboardStats');
-
-    //     Route::get('/incidents', 'incidents');
-    //     Route::post('/incidents', 'incidentCreate');
-    //     Route::post('/incidents/single', 'showIncident');
-
-
-    //     Route::post('/dobs', 'dobCreate');
-    //     Route::get('/dobs', 'allDobs');
-
-    //     //device status
-    //     Route::post('/device/status', 'getDeviceStatus');
-    // });
-});
 
 
 
@@ -84,14 +66,17 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:guard', 'siteStatus']]
 | ROUTES FOR CLIENT APPLICATION
 |
 */
-Route::post('auth/client/login', [ClientAuthController::class, 'login']);
-Route::group([
-    'prefix' => 'client',
-    'middleware' => 'auth:tool'
-], function () {
-    Route::post('/auth/logout', [ClientAuthController::class, 'logout']);
+// Route::post('auth/client/login', [ClientAuthController::class, 'login']);
+// Route::group([
+//     'prefix' => 'client',
+//     'middleware' => 'auth:tool'
+// ], function () {
+//     Route::post('/auth/logout', [ClientAuthController::class, 'logout']);
 
-    Route::controller(ClientAppController::class)->group(function () {
-        Route::get('/dashboard', 'dashboardStats');
-    });
+//     Route::controller(ClientAppController::class)->group(function () {
+//         Route::get('/dashboard', 'dashboardStats');
+//     });
+// });
+
 });
+
