@@ -40,33 +40,33 @@ class Handler extends ExceptionHandler
      * Render an exception into an HTTP response.
      */
 
-    // public function render($request, Throwable $exception)
-    // {
-    //     if ($exception instanceof TokenMismatchException) {
-    //         return redirect()->route('login')->withErrors(['message' => 'CSRF token mismatch. Please log in again.']);
-    //     }
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof TokenMismatchException) {
+            return redirect()->route('login')->withErrors(['message' => 'CSRF token mismatch. Please log in again.']);
+        }
 
-    //     if ($exception instanceof NotFoundHttpException) {
-    //         return redirect()->route('login')->withErrors(['message' => 'Object Not Found']);
-    //     }
+        if ($exception instanceof NotFoundHttpException) {
+            return redirect()->route('login')->withErrors(['message' => 'Object Not Found']);
+        }
 
-    //     if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
-    //         $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
-    //             return redirect()->route('login')->withErrors(['message' => 'You are not authorized to access this page.']);
-    //         });
-    //     }
-    //     // Add handling for TransportException here
-    //     if ($exception instanceof \Swift_TransportException) {
-    //         return redirect()->route('login')->withErrors(['message' => 'Email not sent.']);
+        if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
+            $this->renderable(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+                return redirect()->route('login')->withErrors(['message' => 'You are not authorized to access this page.']);
+            });
+        }
+        // Add handling for TransportException here
+        if ($exception instanceof \Swift_TransportException) {
+            return redirect()->route('login')->withErrors(['message' => 'Email not sent.']);
 
-    //     }
-    //     if ($exception instanceof \Symfony\Component\Mailer\Exception\TransportException) {
-    //         //go to login page
-    //         return redirect()->route('login')->withErrors(['message' => 'Email not sent.']);
-    //     }
+        }
+        if ($exception instanceof \Symfony\Component\Mailer\Exception\TransportException) {
+            //go to login page
+            return redirect()->route('login')->withErrors(['message' => 'Email not sent.']);
+        }
 
-    //     return parent::render($request, $exception);
-    // }
+        return parent::render($request, $exception);
+    }
 
 
 }
