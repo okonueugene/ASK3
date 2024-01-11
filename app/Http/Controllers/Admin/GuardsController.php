@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Site;
-use App\Models\Guard;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Guard;
+use App\Models\Site;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class GuardsController extends Controller
@@ -21,14 +22,13 @@ class GuardsController extends Controller
         return view('admin.guards', compact('guards', 'title', 'sites', 'freeGuards'));
     }
 
-
     public function addGuard(Request $request)
     {
         $request->validate([
             'email' => 'required|email|unique:guards',
             'phone' => 'required|numeric|regex:/^\d+$/|unique:guards',
             'id_number' => 'required|unique:guards',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
         ]);
 
         Guard::create([
@@ -37,7 +37,7 @@ class GuardsController extends Controller
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'id_number' => $request->input('id_number'),
-            'password' => Hash::make($request->input('password'))
+            'password' => Hash::make($request->input('password')),
         ]);
 
         return redirect()->back()->with('success', 'Guard added successfully');
@@ -49,7 +49,7 @@ class GuardsController extends Controller
 
         return response()->json([
             'message' => 'Guard fetched successfully',
-            'guard' => $guard
+            'guard' => $guard,
         ]);
     }
 
@@ -63,12 +63,16 @@ class GuardsController extends Controller
         ]);
 
         $guard->update([
-           'name' => $request->input('name'),
-           'email' => $request->input('email'),
-           'phone' => $request->input('phone'),
-           'id_number' => $request->input('id_number'),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'id_number' => $request->input('id_number'),
         ]);
 
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($guard)
+            ->log('updated guard');
 
         return response()->json(['status' => 200]);
     }
@@ -77,37 +81,55 @@ class GuardsController extends Controller
     {
         $guard = Guard::findOrFail($id);
         $request->validate([
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
         ]);
 
         $guard->update([
-            'password' => Hash::make($request->input('password'))
+            'password' => Hash::make($request->input('password')),
         ]);
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($guard)
+            ->log('updated guard password');
 
         return response()->json(['status' => 200]);
     }
 
     public function disassociateGuard($id)
     {
-        $guard = Guard::where('id', $id)->update([
-            'site_id' => null
-        ]);
+        $guard = Guard::find($id);
+
+        if ($guard) {
+            DB::table('guards')->where('id', $id)->update(['site_id' => null]);
+        }
+
+        activity()
+            ->causedBy(auth()->user())
+            ->event('updated')
+            ->withProperties(['site_id' => null])
+            ->performedOn($guard)
+            ->log('disassociated guard from site');
 
         return response()->json([
-             'status' => 200
-         ]);
+            'status' => 200,
+        ]);
     }
-
 
     public function changeGuardStatus($id)
     {
         $guard = Guard::findOrFail($id);
         $guard->update([
-            'is_active' => !$guard->is_active
+            'is_active' => !$guard->is_active,
         ]);
 
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($guard)
+            ->log('changed guard status');
+
         return response()->json([
-            'message' => 'Guard status changed successfully'
+            'message' => 'Guard status changed successfully',
         ]);
     }
 
@@ -115,19 +137,30 @@ class GuardsController extends Controller
     {
         $guard = Guard::findOrFail($id);
         $guard->delete();
+
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($guard)
+            ->log('deleted guard');
+
         return response()->json([
-            'status' => 200
+            'status' => 200,
         ]);
     }
 
     public function assignGuardToSite(Request $request)
     {
         $guard = Guard::where('id', $request->guard_id)->update([
-            'site_id' => $request->site_id
+            'site_id' => $request->site_id,
         ]);
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($guard)
+            ->withProperties(['site_id' => $request->site_id])
+            ->log('assigned guard to site');
 
         return response()->json([
-            'success' => 'Guard assigned to site successfully'
+            'success' => 'Guard assigned to site successfully',
         ]);
     }
 }

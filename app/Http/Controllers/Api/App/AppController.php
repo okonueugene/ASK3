@@ -40,7 +40,7 @@ class AppController extends Controller
                 'message' => 'Patrol not started',
                 'error' => $errors->all(),
                 'success' => false,
-            ], 400);
+            ], 200);
         }
     }
 
@@ -63,7 +63,7 @@ class AppController extends Controller
             return response()->json([
                 'message' => 'Tag not found',
                 'success' => false,
-            ], 404);
+            ], 200);
         }
         $tag_site = Tag::where('code', $request->code)->where('site_id', $request->site_id)->first();
 
@@ -71,7 +71,7 @@ class AppController extends Controller
             return response()->json([
                 'message' => 'Tag not assigned to this site',
                 'success' => false,
-            ], 404);
+            ], 200);
         }
 
         //check if tag has been scanned before
@@ -81,7 +81,7 @@ class AppController extends Controller
             return response()->json([
                 'message' => 'Tag already scanned',
                 'success' => false,
-            ], 404);
+            ], 200);
         }
         
 
@@ -111,7 +111,7 @@ class AppController extends Controller
                 'message' => 'Tag not scanned',
                 'error' => $errors->all(),
                 'success' => false,
-            ], 400);
+            ], 200);
         }
 
     }
