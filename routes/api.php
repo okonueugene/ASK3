@@ -22,61 +22,13 @@ Route::post('guard/login', [AuthenticationController::class, 'login']);
 Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum']], function () {
 
     Route::get('/profile', [AuthenticationController::class, 'profile']);
-    Route::post('/auth/logout', [AuthenticationController::class, 'logout']);
+    Route::post('/logout', [AuthenticationController::class, 'logout']);
     Route::controller(AppController::class)->group(function () {
         Route::post('/patrol/start', 'startPatrol');
+        Route::post('/patrol/scan', 'scanCheckPoints');
      
     });
 
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| AUTH Routes - CONFIG TOOL
-|--------------------------------------------------------------------------
-|
-| ROUTES FOR CONFIG APPLICATION
-|
-// */
-// Route::post('auth/tool/login', [ToolAuthController::class, 'login']);
-
-// Route::group([
-//     'prefix' => 'tool',
-//     'middleware' => 'auth:tool'
-// ], function () {
-//     Route::post('/auth/logout', [ToolAuthController::class, 'logout']);
-
-//     Route::controller(ConfigToolController::class)->group(function () {
-//         Route::get('/sites', 'sites');
-//         Route::get('/tags', 'allTags');
-//         Route::post('/tags/site', 'getSiteTags');
-//         Route::post('tag/create', 'createTag');
-//         Route::post('tag/update', 'updateTag');
-//     });
-// });
-
-
-/*
-|--------------------------------------------------------------------------
-| ROUTES - CLIENT APP
-|--------------------------------------------------------------------------
-|
-| ROUTES FOR CLIENT APPLICATION
-|
-*/
-// Route::post('auth/client/login', [ClientAuthController::class, 'login']);
-// Route::group([
-//     'prefix' => 'client',
-//     'middleware' => 'auth:tool'
-// ], function () {
-//     Route::post('/auth/logout', [ClientAuthController::class, 'logout']);
-
-//     Route::controller(ClientAppController::class)->group(function () {
-//         Route::get('/dashboard', 'dashboardStats');
-//     });
-// });
 
 });
 

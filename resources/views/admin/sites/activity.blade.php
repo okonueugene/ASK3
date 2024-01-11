@@ -1,9 +1,3 @@
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
-</head>
-
 @extends('admin.layouts.layout')
 @section('content')
     <div class="nk-content ">
@@ -30,16 +24,86 @@
                                         </div>
                                     </div>
                                     <div class="nk-block">
+                                        <div class="card card-bordered card-preview">
+                                            <div class="card-inner">
+                                                <table class="datatable-init nk-tb-list nk-tb-ulist"
+                                                    data-auto-responsive="false">
+                                                    <thead>
+                                                        <tr class="nk-tb-item nk-tb-head">
+                                                            <th class="nk-tb-col nk-tb-col-check">
+                                                                <div
+                                                                    class="custom-control custom-control-sm custom-checkbox notext">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                        id="uid">
+                                                                    <label class="custom-control-label"
+                                                                        for="uid"></label>
+                                                                </div>
+                                                            </th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Id</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Event</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Description</span>
+                                                            </th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Date</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Caused By</span>
+                                                            </th>
 
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (count($activities) > 0)
+                                                            @foreach ($activities as $activity)
+                                                                <tr>
+
+                                                                    <td class="nk-tb-col">
+                                                                        <div
+                                                                            class="custom-control custom-control-sm custom-checkbox notext">
+                                                                            <input type="checkbox"
+                                                                                class="custom-control-input" id="uid1">
+                                                                            <label class="custom-control-label"
+                                                                                for="uid1"></label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <span class="tb-lead"><a
+                                                                                href="#">{{ $activity->id }}</a></span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <span class="tb-lead"><a
+                                                                                href="#">{{ $activity->event }}</a></span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <span class="tb-lead"><a
+                                                                                href="#">{{ $activity->description }}</a></span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <span class="tb-lead"><a
+                                                                                href="#">{{ $activity->created_at }}</a></span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <span class="tb-lead"><a
+                                                                                href="#">{{ $activity->updated_at }}</a></span>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="6" class="text-center">No Activity
+                                                                    Found</td>
+                                                            </tr>
+                                                        @endif
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- .card-preview -->
                                     </div>
                                 </div>
+                                @include('admin.commons.sidebar')
                             </div>
-                            @include('admin.commons.sidebar')
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-@endsection
+\@endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Sites;
 
 use Carbon\Carbon;
+use App\Models\Dob;
 use App\Models\Site;
 use App\Models\Task;
 use App\Models\Guard;
@@ -31,7 +32,7 @@ class SiteOverviewController extends Controller
 
         $data['incidents'] = Incident::whereIn('site_id', $ids)->paginate(5);
 
-        $data['dobs'] = Guard::whereIn('site_id', $ids)->paginate(5);
+        $data['dobs'] = Dob::whereIn('site_id', $ids)->paginate(5);
 
 
 

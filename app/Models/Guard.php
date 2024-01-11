@@ -41,7 +41,7 @@ class Guard extends Authenticatable
     {
         return LogOptions::defaults()->useLogName('Guard')
         ->setDescriptionForEvent(fn(string $eventName) => "A Guard has been {$eventName}")
-        ->logOnly(['*']);
+        ->logOnly(['name', 'email', 'phone', 'company_id', 'id_number', 'is_active', 'last_login_at']);
     }
 
     public function company()

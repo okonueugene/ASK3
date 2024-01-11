@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Sites;
 use App\Models\Site;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Spatie\Activitylog\Models\Activity;
 
 class SiteActivityController extends Controller
 {
@@ -12,6 +13,7 @@ class SiteActivityController extends Controller
     {
         $title = 'Site Activity';
         $site = Site::findOrFail($id);
-        return view('admin.sites.activity', compact('title', 'site'));
+        $activities = Activity::all();
+        return view('admin.sites.activity', compact('title', 'site', 'activities'));
     }
 }
