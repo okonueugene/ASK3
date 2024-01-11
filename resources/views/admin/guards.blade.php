@@ -238,7 +238,7 @@
                                                     <span>{{ $guard->id_number }}</span>
                                                 </td>
                                                 <td class="nk-tb-col tb-col-lg">
-                                                    @if ($guard->site === null)
+                                                    @if (!$guard->site)
                                                         <span class="badge bg-danger">Not Assigned</span>
                                                     @else
                                                         <span>{{ $guard->site->name }}</span>
