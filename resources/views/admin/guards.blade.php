@@ -238,14 +238,14 @@
                                                     <span>{{ $guard->id_number }}</span>
                                                 </td>
                                                 <td class="nk-tb-col tb-col-lg">
-                                                    <? if($guard->site === null){ ?>
-                                                    <span class="badge bg-danger">Not Assigned</span>
-                                                    <? }else{ ?>
-                                                    <span>{{ $guard->site->name }}</span>
-                                                    <? } ?>
+                                                    @if (!$guard->site)
+                                                        <span class="badge bg-danger">Not Assigned</span>
+                                                    @else
+                                                        <span>{{ $guard->site->name }}</span>
+                                                    @endif
                                                 </td>
                                                 <td class="nk-tb-col tb-col-lg">
-                                                    @if ($guard->is_active === 1)
+                                                    @if ($guard->is_active == 1)
                                                         <span class="badge bg-success">Active</span>
                                                     @else
                                                         <span class="badge bg-warning">Inactive</span>
