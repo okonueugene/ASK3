@@ -130,6 +130,8 @@ class AppController extends Controller
 
     public function endPatrol(Request $request)
     {
+
+        //validate request
         $request->validate([
             'guard_id' => 'required',
             'site_id' => 'required',
@@ -137,18 +139,17 @@ class AppController extends Controller
             'time' => 'required',
         ]);
 
-        $patrol = Patrol::where('id', $request->patrol_id)->first();
-
-        if (!$patrol) {
-            return response()->json([
-                'message' => 'Patrol not found',
-                'success' => false,
-            ]);
-        }
-
-        $patrol->update([
+        //update patrol record with end time
+        $patrol = Patrol::where('id', $request->patrol_id)->update([
             'end' => $request->time,
         ]);
+
+        activity()
+            ->causedBy($patrol->owner)
+            ->event('updated')
+            ->withProperties(['patrol' => $patrol])
+            ->performedOn($patrol)
+            ->log('Patrol ended');
 
         if ($patrol) {
             return response()->json([
@@ -164,5 +165,4 @@ class AppController extends Controller
             ]);
         }
     }
-
 }

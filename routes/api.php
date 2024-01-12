@@ -26,6 +26,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum']], function (
     Route::controller(AppController::class)->group(function () {
         Route::post('/patrol/start', 'startPatrol');
         Route::post('/patrol/scan', 'scanCheckPoints');
+        Route::post('/patrol/end', 'endPatrol');
      
     });
 
