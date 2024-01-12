@@ -81,7 +81,7 @@
                                                                     </td>
                                                                     <td class="nk-tb-col">
                                                                         <span class="tb-lead"><a
-                                                                                href="#">{{ $activity->updated_at }}</a></span>
+                                                                                href="#">{{ $activity->causer_id }}</a></span>
                                                                     </td>
                                                                 </tr>
                                                             @endforeach

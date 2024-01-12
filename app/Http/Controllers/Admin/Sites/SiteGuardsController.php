@@ -12,6 +12,7 @@ class SiteGuardsController extends Controller
     {
         $title = 'Site Guards';
         $site = Site::findOrFail($id);
-        return view('admin.sites.guards', compact('title', 'site'));
+        $guards = $site->guards()->get();
+        return view('admin.sites.guards', compact('title', 'site', 'guards'));
     }
 }

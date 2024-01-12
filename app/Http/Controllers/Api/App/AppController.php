@@ -28,19 +28,25 @@ class AppController extends Controller
             'start' => $request->time,
             'name' => $name,
         ]);
+        activity()
+            ->causedBy($patrol->owner)
+            ->event('updated')
+            ->withProperties(['patrol' => $patrol])
+            ->performedOn($patrol)
+            ->log('Patrol started');
 
         if ($patrol) {
             return response()->json([
                 'message' => 'Patrol started successfully',
                 'success' => true,
                 'patrol' => $patrol,
-            ], 201);
+            ]);
         } else {
             return response()->json([
                 'message' => 'Patrol not started',
                 'error' => $errors->all(),
                 'success' => false,
-            ], 200);
+            ]);
         }
     }
 
@@ -56,14 +62,14 @@ class AppController extends Controller
             'date' => 'required',
         ]);
 
-     //verify if tag exists and is assigned to that site
+        //verify if tag exists and is assigned to that site
         $tag = Tag::where('code', $request->code)->first();
 
         if (!$tag) {
             return response()->json([
                 'message' => 'Tag not found',
                 'success' => false,
-            ], 200);
+            ]);
         }
         $tag_site = Tag::where('code', $request->code)->where('site_id', $request->site_id)->first();
 
@@ -71,7 +77,7 @@ class AppController extends Controller
             return response()->json([
                 'message' => 'Tag not assigned to this site',
                 'success' => false,
-            ], 200);
+            ]);
         }
 
         //check if tag has been scanned before
@@ -81,9 +87,8 @@ class AppController extends Controller
             return response()->json([
                 'message' => 'Tag already scanned',
                 'success' => false,
-            ], 200);
+            ]);
         }
-        
 
         $tag_id = $tag_site->id;
 
@@ -100,20 +105,64 @@ class AppController extends Controller
             'status' => 'checked',
         ]);
 
+        activity()
+            ->causedBy($patrol_history->owner)
+            ->event('updated')
+            ->withProperties(['patrol_history' => $patrol_history])
+            ->performedOn($patrol_history)
+            ->log('Tag scanned');
+
         if ($patrol_history) {
             return response()->json([
                 'message' => 'Tag scanned successfully',
                 'success' => true,
                 'patrol_history' => $patrol_history,
-            ], 201);
+            ]);
         } else {
             return response()->json([
                 'message' => 'Tag not scanned',
                 'error' => $errors->all(),
                 'success' => false,
-            ], 200);
+            ]);
         }
 
+    }
+
+    public function endPatrol(Request $request)
+    {
+        $request->validate([
+            'guard_id' => 'required',
+            'site_id' => 'required',
+            'patrol_id' => 'required',
+            'time' => 'required',
+        ]);
+
+        $patrol = Patrol::where('id', $request->patrol_id)->first();
+
+        if (!$patrol) {
+            return response()->json([
+                'message' => 'Patrol not found',
+                'success' => false,
+            ]);
+        }
+
+        $patrol->update([
+            'end' => $request->time,
+        ]);
+
+        if ($patrol) {
+            return response()->json([
+                'message' => 'Patrol ended successfully',
+                'success' => true,
+                'patrol' => $patrol,
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Patrol not ended',
+                'error' => $errors->all(),
+                'success' => false,
+            ]);
+        }
     }
 
 }

@@ -90,6 +90,8 @@ class GuardsController extends Controller
 
         activity()
             ->causedBy(auth()->user())
+            ->event('updated')
+            ->withProperties(['guard' => $guard])
             ->performedOn($guard)
             ->log('updated guard password');
 
@@ -107,7 +109,7 @@ class GuardsController extends Controller
         activity()
             ->causedBy(auth()->user())
             ->event('updated')
-            ->withProperties(['site_id' => null])
+            ->withProperties(['guard' => $guard])
             ->performedOn($guard)
             ->log('disassociated guard from site');
 
@@ -125,6 +127,8 @@ class GuardsController extends Controller
 
         activity()
             ->causedBy(auth()->user())
+            ->event('updated')
+            ->withProperties(['guard' => $guard])
             ->performedOn($guard)
             ->log('changed guard status');
 
@@ -140,6 +144,8 @@ class GuardsController extends Controller
 
         activity()
             ->causedBy(auth()->user())
+            ->event('deleted')
+            ->withProperties(['guard' => $guard])
             ->performedOn($guard)
             ->log('deleted guard');
 

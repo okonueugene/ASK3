@@ -12,6 +12,7 @@ class SiteTagsController extends Controller
     {
         $title = 'Site Tags';
         $site = Site::findOrFail($id);
-        return view('admin.sites.tags', compact('title', 'site'));
+        $tags = $site->tags;
+        return view('admin.sites.tags', compact('title', 'site', 'tags'));
     }
 }

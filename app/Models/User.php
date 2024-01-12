@@ -70,6 +70,7 @@ class User extends Authenticatable
         return LogOptions::defaults()
         ->setDescriptionForEvent(fn(string $eventName) => "A User has been {$eventName}")
         ->useLogName('User')
-        ->logOnly(['name', 'email', 'phone', 'is_active', 'last_login_at']);
+        ->logOnly(['name', 'email', 'phone', 'is_active', 'last_login_at', 'company_id'])
+        ->logOnlyDirty();
     }
 }

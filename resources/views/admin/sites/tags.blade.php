@@ -13,7 +13,7 @@
                                             <div class="nk-block-head-content">
                                                 <h4 class="nk-block-title">{{ $title }}</h4>
                                                 <div class="nk-block-des">
-                                                    <p>Basic info, like your name and address, that you use on Nio Platform.
+                                                    <p>
                                                     </p>
                                                 </div>
                                             </div>
@@ -26,25 +26,77 @@
                                     <div class="nk-block">
                                         <div class="card card-bordered card-preview">
                                             <div class="card-inner">
-                                                <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                                <table class="datatable-init nk-tb-list nk-tb-ulist"
+                                                    data-auto-responsive="false">
                                                     <thead>
                                                         <tr class="nk-tb-item nk-tb-head">
                                                             <th class="nk-tb-col nk-tb-col-check">
-                                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                    <input type="checkbox" class="custom-control-input" id="uid">
-                                                                    <label class="custom-control-label" for="uid"></label>
+                                                                <div
+                                                                    class="custom-control custom-control-sm custom-checkbox notext">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                        id="uid">
+                                                                    <label class="custom-control-label"
+                                                                        for="uid"></label>
                                                                 </div>
                                                             </th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Id</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Event</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Description</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Date</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Caused By</span></th>
-
+                                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Type</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Code</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Location</span>
+                                                            </th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Action</span></th>
                                                         </tr>
                                                     </thead>
 
                                                     <tbody>
+                                                        @if (count($tags) > 0)
+                                                            @foreach ($tags as $tag)
+                                                                <tr>
+                                                                    <td class="nk-tb-col">
+                                                                        <div
+                                                                            class="custom-control custom-control-sm custom-checkbox notext">
+                                                                            <input type="checkbox"
+                                                                                class="custom-control-input" id="uid1">
+                                                                            <label class="custom-control-label"
+                                                                                for="uid1"></label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="nk-tb-col">
+                                                                        <div class="user-card">
+                                                                            <div
+                                                                                class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($tag->name) }}"
+                                                                                    alt="">
+                                                                            </div>
+                                                                            <div class="user-info">
+                                                                                <span
+                                                                                    class="tb-lead">{{ $tag->name }}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="nk-tb-col tb-col-mb">
+                                                                        <span>{{ strtoupper($tag->type) }}</span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col tb-col-md">
+                                                                        <span>{{ $tag->code }}</span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col tb-col-lg">
+                                                                        <span>{{ $tag->location }}</span>
+                                                                    </td>
+                                                                    <td class="nk-tb-col tb-col-md">
+                                                                        <a href="javascript:void(0)"
+                                                                            onclick="deleteTag({{ $tag->id }})"
+                                                                            class="btn btn-sm btn-danger">
+                                                                            Delete
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="6" class="text-center">No tags found</td>
+                                                            </tr>
+                                                        @endif
                                                     </tbody>
                                                 </table>
                                             </div>

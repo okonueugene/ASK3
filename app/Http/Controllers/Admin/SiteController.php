@@ -51,6 +51,14 @@ class SiteController extends Controller
             }
 
             \DB::commit();
+
+            activity()
+                ->causedBy(auth()->user())
+                ->event('created')
+                ->performedOn($site)
+                ->withProperties(['site'=>$site])
+                ->log('Site created');
+
             return redirect()->back()->with('success', 'Site added successfully');
         } catch (\Exception $e) {
             \DB::rollback();
@@ -104,6 +112,14 @@ class SiteController extends Controller
             }
 
             \DB::commit();
+
+            activity()
+                ->causedBy(auth()->user())
+                ->event('updated')
+                ->performedOn($site)
+                ->withProperties(['site'=>$site])
+                ->log('Site updated');
+
             return response()->json([
                 'message' => 'Site updated successfully',
                 'site' => $site
@@ -141,6 +157,14 @@ class SiteController extends Controller
             $site->delete();
 
             \DB::commit();
+
+            activity()
+                ->causedBy(auth()->user())
+                ->event('deleted')
+                ->performedOn($site)
+                ->withProperties(['site'=>$site])
+                ->log('Site deleted');
+
             return redirect()->back()->with('success', 'Site deleted successfully');
         } catch (\Exception $e) {
             \DB::rollback();
@@ -168,6 +192,14 @@ class SiteController extends Controller
 
 
             \DB::commit();
+
+            activity()
+                ->causedBy(auth()->user())
+                ->event('updated')
+                ->performedOn($site)
+                ->withProperties(['site'=>$site])
+                ->log('Site status changed');
+
             return response()->json([
                 'message' => 'Site status changed successfully',
                 'site' => $status

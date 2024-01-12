@@ -4,13 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class Company extends Model
 {
     use HasFactory;
-    use LogsActivity;
 
 
     protected $fillable = [
@@ -18,13 +15,6 @@ class Company extends Model
         'company_email',
         'status',
     ];
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()->useLogName('Company')
-        ->setDescriptionForEvent(fn(string $eventName) => "This model has been {$eventName}")
-        ->logOnly(['*']);
-    }
 
     public function users()
     {

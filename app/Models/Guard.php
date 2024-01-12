@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Notifications\Notifiable;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +12,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Guard extends Authenticatable
 {
     use HasFactory;
-    use LogsActivity;
     use HasApiTokens;
     use Notifiable;
 
@@ -35,14 +32,6 @@ class Guard extends Authenticatable
         'password',
     ];
 
-
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()->useLogName('Guard')
-        ->setDescriptionForEvent(fn(string $eventName) => "A Guard has been {$eventName}")
-        ->logOnly(['name', 'email', 'phone', 'company_id', 'id_number', 'is_active', 'last_login_at']);
-    }
 
     public function company()
     {
