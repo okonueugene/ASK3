@@ -127,42 +127,35 @@ class AppController extends Controller
         }
 
     }
-
     public function endPatrol(Request $request)
     {
-
-        //validate request
+        // Validate request
         $request->validate([
             'guard_id' => 'required',
             'site_id' => 'required',
             'patrol_id' => 'required',
             'time' => 'required',
         ]);
-
-        //update patrol record with end time
-        $patrol = Patrol::where('id', $request->patrol_id)->update([
+    
+        // Retrieve the patrol record
+        $patrol = Patrol::findOrFail($request->patrol_id);
+    
+        // Update patrol record with end time
+        $patrol->update([
             'end' => $request->time,
         ]);
-
+    
         activity()
             ->causedBy($patrol->owner)
             ->event('updated')
             ->withProperties(['patrol' => $patrol])
             ->performedOn($patrol)
             ->log('Patrol ended');
-
-        if ($patrol) {
-            return response()->json([
-                'message' => 'Patrol ended successfully',
-                'success' => true,
-                'patrol' => $patrol,
-            ]);
-        } else {
-            return response()->json([
-                'message' => 'Patrol not ended',
-                'error' => $errors->all(),
-                'success' => false,
-            ]);
-        }
+    
+        return response()->json([
+            'message' => 'Patrol ended successfully',
+            'success' => true,
+            'patrol' => $patrol,
+        ]);
     }
-}
+}    
