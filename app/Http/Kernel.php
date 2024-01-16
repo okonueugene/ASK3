@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
         'client' => \App\Http\Middleware\ClientMiddleware::class,
         'siteStatus' => \App\Http\Middleware\SiteStatus::class,
+        'ensure_json_header' => \App\Http\Middleware\EnsureJsonHeader::class,
 
     ];
 }

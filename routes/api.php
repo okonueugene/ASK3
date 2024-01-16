@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('guard/login', [AuthenticationController::class, 'login']);
 
-Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum','ensure_json_header']], function () {
 
     Route::get('/profile', [AuthenticationController::class, 'profile']);
     Route::post('/logout', [AuthenticationController::class, 'logout']);
@@ -35,7 +35,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum']], function (
 
 Route::post('tool/login', [ToolAuthController::class, 'login']);
 
-Route::group(['prefix' => 'tool', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'tool', 'middleware' => ['auth:sanctum','ensure_json_header']], function () {
     Route::post('/logout', [ToolAuthController::class, 'logout']);
 
     Route::controller(ConfigToolController::class)->group(function () {
