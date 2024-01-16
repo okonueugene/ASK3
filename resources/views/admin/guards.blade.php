@@ -141,7 +141,7 @@
                                                                         <li>
                                                                             <a href="javascript:void(0)"
                                                                                 onclick="toggleGuardStatus({{ $guard->id }})">
-                                                                                @if ($guard->is_active === 1)
+                                                                                @if ($guard->is_active)
                                                                                     <em
                                                                                         class="icon ni ni-cross"></em><span>Deactivate
                                                                                     </span>
