@@ -26,20 +26,26 @@
                                     <div class="nk-block">
                                         <div class="card card-bordered card-preview">
                                             <div class="card-inner">
-                                                <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                                <table class="datatable-init nk-tb-list nk-tb-ulist"
+                                                    data-auto-responsive="false">
                                                     <thead>
                                                         <tr class="nk-tb-item nk-tb-head">
                                                             <th class="nk-tb-col nk-tb-col-check">
-                                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                                    <input type="checkbox" class="custom-control-input" id="uid">
-                                                                    <label class="custom-control-label" for="uid"></label>
+                                                                <div
+                                                                    class="custom-control custom-control-sm custom-checkbox notext">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                        id="uid">
+                                                                    <label class="custom-control-label"
+                                                                        for="uid"></label>
                                                                 </div>
                                                             </th>
                                                             <th class="nk-tb-col"><span class="sub-text">Id</span></th>
                                                             <th class="nk-tb-col"><span class="sub-text">Event</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Description</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Description</span>
+                                                            </th>
                                                             <th class="nk-tb-col"><span class="sub-text">Date</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Caused By</span></th>
+                                                            <th class="nk-tb-col"><span class="sub-text">Caused By</span>
+                                                            </th>
 
                                                         </tr>
                                                     </thead>
@@ -59,4 +65,4 @@
             </div>
         </div>
     </div>
-\@endsection
+@endsection
