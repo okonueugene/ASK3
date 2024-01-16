@@ -33,6 +33,7 @@ class AppController extends Controller
             ->event('updated')
             ->withProperties(['patrol' => $patrol])
             ->performedOn($patrol)
+            ->useLog('Patrol')
             ->log('Patrol started');
 
         if ($patrol) {
@@ -110,6 +111,7 @@ class AppController extends Controller
             ->event('updated')
             ->withProperties(['patrol_history' => $patrol_history])
             ->performedOn($patrol_history)
+            ->useLog('PatrolHistory')
             ->log('Tag scanned');
 
         if ($patrol_history) {
@@ -136,26 +138,27 @@ class AppController extends Controller
             'patrol_id' => 'required',
             'time' => 'required',
         ]);
-    
+
         // Retrieve the patrol record
         $patrol = Patrol::findOrFail($request->patrol_id);
-    
+
         // Update patrol record with end time
         $patrol->update([
             'end' => $request->time,
         ]);
-    
+
         activity()
             ->causedBy($patrol->owner)
             ->event('updated')
             ->withProperties(['patrol' => $patrol])
             ->performedOn($patrol)
+            ->useLog('Patrol')
             ->log('Patrol ended');
-    
+
         return response()->json([
             'message' => 'Patrol ended successfully',
             'success' => true,
             'patrol' => $patrol,
         ]);
     }
-}    
+}

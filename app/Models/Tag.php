@@ -29,4 +29,14 @@ class Tag extends Model
     {
         return $this->hasMany(PatrolHistory::class);
     }
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

@@ -15,16 +15,16 @@ class Company extends Model
         'company_email',
         'status',
     ];
-
-    public function users()
-    {
+    public function users(){
         return $this->hasMany(User::class);
     }
 
-    public function sites()
-    {
+    public function sites(){
         return $this->hasMany(Site::class);
     }
 
+    public function patrolhistory(){
+        return $this->hasMany(PatrolHistory::class);
+    }
 
 }

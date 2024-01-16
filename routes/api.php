@@ -1,9 +1,11 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\App\AppController;
 use App\Http\Controllers\Api\App\AuthenticationController;
+use App\Http\Controllers\Api\Tool\ConfigToolController;
+use App\Http\Controllers\Api\Tool\ToolAuthController;
+use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +16,7 @@ use App\Http\Controllers\Api\App\AuthenticationController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
-*/
-
+ */
 
 Route::post('guard/login', [AuthenticationController::class, 'login']);
 
@@ -27,9 +28,25 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum']], function (
         Route::post('/patrol/start', 'startPatrol');
         Route::post('/patrol/scan', 'scanCheckPoints');
         Route::post('/patrol/end', 'endPatrol');
-     
-    });
 
+    });
 
 });
 
+Route::post('tool/login', [ToolAuthController::class, 'login']);
+
+Route::group(['prefix' => 'tool', 'middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [ToolAuthController::class, 'logout']);
+
+    Route::controller(ConfigToolController::class)->group(function () {
+        Route::get('/sites', 'getSites');
+        Route::get('tags/site/{id}', 'getSiteTags');
+        Route::get('/tags', 'allTags');
+        Route::post('/tags', 'createTag');
+        Route::patch('/tags/{id}', 'updateTag');
+        Route::delete('/tags/{id}', 'deleteTag');
+
+
+    });
+}
+);

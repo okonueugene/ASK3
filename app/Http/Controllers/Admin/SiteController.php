@@ -57,6 +57,7 @@ class SiteController extends Controller
                 ->event('created')
                 ->performedOn($site)
                 ->withProperties(['site'=>$site])
+                ->useLog('Site')
                 ->log('Site created');
 
             return redirect()->back()->with('success', 'Site added successfully');
@@ -118,6 +119,7 @@ class SiteController extends Controller
                 ->event('updated')
                 ->performedOn($site)
                 ->withProperties(['site'=>$site])
+                ->useLog('Site')
                 ->log('Site updated');
 
             return response()->json([
@@ -163,6 +165,7 @@ class SiteController extends Controller
                 ->event('deleted')
                 ->performedOn($site)
                 ->withProperties(['site'=>$site])
+                ->useLog('Site')
                 ->log('Site deleted');
 
             return redirect()->back()->with('success', 'Site deleted successfully');
@@ -177,7 +180,7 @@ class SiteController extends Controller
         try {
             \DB::beginTransaction();
 
-            $site = DB::table('sites')->where('id', $id)->first();
+            $site = Site::where('id', $id)->first();
             if (!$site) {
                 return response()->json([
                     'message' => 'Site not found'
@@ -198,6 +201,7 @@ class SiteController extends Controller
                 ->event('updated')
                 ->performedOn($site)
                 ->withProperties(['site'=>$site])
+                ->useLog('Site')
                 ->log('Site status changed');
 
             return response()->json([

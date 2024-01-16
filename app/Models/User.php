@@ -73,4 +73,15 @@ class User extends Authenticatable
         ->logOnly(['name', 'email', 'phone', 'is_active', 'last_login_at', 'company_id'])
         ->logOnlyDirty();
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function site()
+    {
+        return $this->hasOne(Site::class);
+    }
+
 }
