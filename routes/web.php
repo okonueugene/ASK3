@@ -1,23 +1,27 @@
 <?php
 
+use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GuardsController;
+use App\Http\Controllers\Admin\SiteController;
+use App\Http\Controllers\Admin\Sites\OverviewController;
+use App\Http\Controllers\Admin\Sites\SiteActivityController;
+use App\Http\Controllers\Admin\Sites\SiteGuardsController;
+use App\Http\Controllers\Admin\Sites\SiteIncidentsController;
+use App\Http\Controllers\Admin\Sites\SiteOverviewController;
+use App\Http\Controllers\Admin\Sites\SitePatrolsController;
+use App\Http\Controllers\Admin\Sites\SiteStatisticsController;
+use App\Http\Controllers\Admin\Sites\SiteTagsController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LoginActivityController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Reports\PatrolReportsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Activitylog\Models\Activity;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\SiteController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\GuardsController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Auth\LoginActivityController;
-use App\Http\Controllers\Admin\Sites\OverviewController;
-use App\Http\Controllers\Admin\Sites\SiteTagsController;
-use App\Http\Controllers\Admin\Sites\SiteGuardsController;
-use App\Http\Controllers\Admin\Sites\SitePatrolsController;
-use App\Http\Controllers\Admin\Sites\SiteActivityController;
-use App\Http\Controllers\Admin\Sites\SiteOverviewController;
-use App\Http\Controllers\Admin\Sites\SiteIncidentsController;
-use App\Http\Controllers\Admin\Sites\SiteStatisticsController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +43,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/login-activity', [LoginActivityController::class, 'index'])->name('login-activity');
     Route::group(['prefix' => 'admin', 'middleware' => 'admin' , 'as' => 'admin.'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/clients' , [ClientController::class, 'index'])->name('clients'); 
+        Route::post('/clients' , [ClientController::class, 'store'])->name('addClient');
+        Route::get('/clients/{id}' , [ClientController::class, 'edit'])->name('getClient');
+        Route::patch('/clients/{id}' , [ClientController::class, 'update'])->name('updateClient');
+        Route::delete('/clients/{id}' , [ClientController::class, 'delete'])->name('deleteClient');
+        Route::put('/clients/{id}' , [ClientController::class, 'changeClientStatus'])->name('changeClientStatus');
+        Route::put('/clients/site/{id}' , [ClientController::class, 'disassociateSiteFromClient'])->name('disassociateSiteFromClient');
+        Route::patch('/client/site/{id}' , [ClientController::class, 'assignSiteToClient'])->name('assignSiteToClient');
+
 
 
         Route::get('/sites', [SiteController::class, 'index'])->name('sites');
@@ -66,6 +80,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/guards/site/{id}', [GuardsController::class, 'disassociateGuard'])->name('disassociateGuard');
         Route::patch('/guard/password/{id}', [GuardsController::class, 'updatePassword'])->name('updateGuardPassword');
         Route::post('/guards/assign', [GuardsController::class, 'assignGuardToSite'])->name('assignGuardToSite');
+
+        Route::get('/patrol-reports', [PatrolReportsController::class, 'index'])->name('patrol-reports');
     });
 
     Route::group(['prefix' => 'client', 'middleware' => 'client' , 'as' => 'client.'], function () {
@@ -76,10 +92,3 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
 });
-Route::get(
-    '/activity',
-    function () {
-        return Activity::all();
-
-    }
-);

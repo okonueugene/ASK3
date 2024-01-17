@@ -72,6 +72,8 @@ class GuardsController extends Controller
         activity()
             ->causedBy(auth()->user())
             ->performedOn($guard)
+            ->withProperties(['guard' => $guard])
+            ->useLog('Guard')
             ->log('updated guard');
 
         return response()->json(['status' => 200]);
@@ -93,6 +95,7 @@ class GuardsController extends Controller
             ->event('updated')
             ->withProperties(['guard' => $guard])
             ->performedOn($guard)
+            ->useLog('Guard')
             ->log('updated guard password');
 
         return response()->json(['status' => 200]);
@@ -111,6 +114,7 @@ class GuardsController extends Controller
             ->event('updated')
             ->withProperties(['guard' => $guard])
             ->performedOn($guard)
+            ->useLog('Guard')
             ->log('disassociated guard from site');
 
         return response()->json([
@@ -130,6 +134,7 @@ class GuardsController extends Controller
             ->event('updated')
             ->withProperties(['guard' => $guard])
             ->performedOn($guard)
+            ->useLog('Guard')
             ->log('changed guard status');
 
         return response()->json([
@@ -147,6 +152,7 @@ class GuardsController extends Controller
             ->event('deleted')
             ->withProperties(['guard' => $guard])
             ->performedOn($guard)
+            ->useLog('Guard')
             ->log('deleted guard');
 
         return response()->json([
@@ -156,13 +162,21 @@ class GuardsController extends Controller
 
     public function assignGuardToSite(Request $request)
     {
-        $guard = Guard::where('id', $request->guard_id)->update([
-            'site_id' => $request->site_id,
-        ]);
+        $guard = Guard::findOrfail($request->guard_id);
+   
+        if (!$guard) {
+            return response()->json([
+                'message' => 'Guard not found'
+            ], 404);
+        }
+
+        DB::table('guards')->where('id', $request->guard_id)->update(['site_id' => $request->site_id]);
+
         activity()
             ->causedBy(auth()->user())
             ->performedOn($guard)
             ->withProperties(['site_id' => $request->site_id])
+            ->useLog('Guard')
             ->log('assigned guard to site');
 
         return response()->json([

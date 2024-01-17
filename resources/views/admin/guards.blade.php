@@ -22,10 +22,6 @@
                                                     data-bs-target="#addGuardModal"><em
                                                         class="icon ni ni-upload-cloud"></em><span>Add Guard</span></a>
                                             </li>
-                                            <li><a href="javascript:void(0)"
-                                                    class="btn btn-white btn-dim btn-outline-primary"
-                                                    onclick="AssignGuardToSite()"><em
-                                                        class="icon ni ni-reports"></em><span>Assign To Site</span></a></li>
                                         </ul>
                                     </div><!-- .toggle-expand-content -->
                                 </div><!-- .toggle-wrap -->
@@ -33,7 +29,7 @@
                         </div><!-- .nk-block-between -->
                     </div><!-- .nk-block-head -->
                     <div class="nk-block">
-       
+
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
                                 <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
@@ -69,8 +65,7 @@
                                             <tr>
                                                 <td class="nk-tb-col nk-tb-col-check">
                                                     <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                        <input type="checkbox" class="custom-control-input"
-                                                            id="uid1">
+                                                        <input type="checkbox" class="custom-control-input" id="uid1">
                                                         <label class="custom-control-label" for="uid1"></label>
                                                     </div>
                                                 </td>
@@ -142,25 +137,32 @@
                                                                             <a href="javascript:void(0)"
                                                                                 onclick="toggleGuardStatus({{ $guard->id }})">
                                                                                 @if ($guard->is_active)
-                                                                                    <em
-                                                                                        class="icon ni ni-cross"></em><span>Deactivate
+                                                                                    <em class="icon ni ni-cross"></em><span>Deactivate
                                                                                     </span>
                                                                                 @else
-                                                                                    <em
-                                                                                        class="icon ni ni-check"></em><span>Activate
+                                                                                    <em class="icon ni ni-check"></em><span>Activate
                                                                                     </span>
                                                                                 @endif
                                                                             </a>
                                                                         </li>
                                                                         <li class="divider"></li>
-                                                                        <li>
-                                                                            <a href="javascript:void(0)"
-                                                                                onclick="disassociateGuard({{ $guard->id }})"><em
-                                                                                    class="icon ni ni-na"></em><span>Disassociate
-                                                                                    Guard
-                                                                                </span>
-                                                                            </a>
-                                                                        </li>
+                                                                        @if ($guard->site == null)
+                                                                            <li>
+                                                                                <a href="javascript:void(0)"
+                                                                                    onclick="AssignGuardToSite({{ $guard->id }})"><em
+                                                                                        class="icon ni ni-reports"></em><span>Assign
+                                                                                        To Site</span></a>
+                                                                            </li>
+                                                                        @else
+                                                                            <li>
+                                                                                <a href="javascript:void(0)"
+                                                                                    onclick="disassociateGuard({{ $guard->id }})"><em
+                                                                                        class="icon ni ni-na"></em><span>Disassociate
+                                                                                        Guard
+                                                                                    </span>
+                                                                                </a>
+                                                                            </li>
+                                                                        @endif
                                                                         <li>
                                                                             <a
                                                                                 href="javascript:void(0)"onclick="deleteGaurd({{ $guard->id }})"><em
@@ -363,18 +365,6 @@
                 <!-- Modal Body -->
                 <div class="modal-body">
                     <form id="assigniteGuardForm">
-                        <div class="form-group">
-                            <label for="name" class="form-label">Select Guard</label>
-                            <div class="form-control-wrap">
-                                <select name="guard_id" id="guard_id" class="custom-select form-select"
-                                    data-search="on">
-                                    <option value="">Select Guard</option>
-                                    @foreach ($freeGuards as $guard)
-                                        <option value="{{ $guard->id }}">{{ $guard->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label for="name" class="form-label">Select Site</label>
                             <div class="form-control-wrap">
@@ -580,12 +570,12 @@
             })
     }
 
-    function AssignGuardToSite() {
+    function AssignGuardToSite(id) {
         $('#assignSiteGuardModal').modal('show');
         //on submit
         $('#assignSiteGuardModal').on('submit', function(e) {
             e.preventDefault();
-            let guard_id = $('#guard_id').val();
+            let guard_id = id;
             let site_id = $('#site_id').val();
             var formData = {
                 guard_id: guard_id,
