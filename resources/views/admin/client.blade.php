@@ -156,7 +156,7 @@
                                             @endforeach
                                         @else
                                             <tr class="nk-tb-item nk-tb-head">
-                                                <td colspan="6" class="text-center">
+                                                <td colspan="5" class="text-center">
                                                     <h5>No Clients Found</h5>
                                                 </td>
                                             </tr>
