@@ -23,13 +23,67 @@
                                                     data-bs-target="#addClientModal"><em
                                                         class="icon ni ni-upload-cloud"></em><span>Add Client</span></a>
                                             </li>
-
+                                            <li><a href="javascript:void(0)"
+                                                    class="btn btn-white btn-dim btn-outline-secondary"
+                                                    data-bs-toggle="modal" data-bs-target="#inviteClientModal"><em
+                                                        class="icon ni ni-upload-cloud"></em><span>Invite Client</span></a>
+                                            </li>
                                         </ul>
                                     </div><!-- .toggle-expand-content -->
                                 </div><!-- .toggle-wrap -->
                             </div><!-- .nk-block-head-content -->
                         </div><!-- .nk-block-between -->
                     </div><!-- .nk-block-head -->
+                    <div class="card" style="margin-bottom: 20px;">
+                        <div class="card-bordered">
+                            <div id="accordion-1" class="accordion accordion-s2">
+                                <div class="accordion-item">
+                                    <a href="#" class="accordion-head" data-bs-toggle="collapse"
+                                        data-bs-target="#accordion-item-1-1">
+                                        <h6 class="title">Invitations</h6>
+                                        <span class="accordion-icon"></span>
+                                    </a>
+                                    <div class="accordion-body collapse" id="accordion-item-1-1"
+                                        data-bs-parent="#accordion-1">
+                                        <table class="table table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Email</th>
+                                                    <th>Sent By</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (count($invitations) > 0)
+                                                    @foreach ($invitations as $invitation)
+                                                        <tr>
+                                                            <td>{{ $invitation->email }}</td>
+                                                            <td>{{ $invitation->user->name }}</td>
+                                                            <td>
+                                                                @if ($invitation->is_accepted == 1)
+                                                                    <span class="tb-status text-success">Accepted</span>
+                                                                @else
+                                                                    <span class="tb-status text-danger">Pending</span>
+                                                                @endif
+                                                            </td>
+                                                            <td>Action</td>
+                                                        </tr>
+                                                    @endforeach
+                                                @else
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">
+                                                            <h5>No Invitations Found</h5>
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="nk-block">
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
@@ -172,7 +226,65 @@
     </div>
 
     <!-- content @e -->
-    <div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalExample" aria-hidden="true">
+    <!-- content @e -->
+    <div class="modal fade" id="inviteClientModal" tabindex="-1" aria-labelledby="addClientModalExample"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Invite A Client</h5>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="inviteClientForm" action="{{ route('client-invitation') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="name" class="form-label">Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" name="name" placeholder="Client Name">
+                            </div>
+                        </div>
+                        @error('name')
+                            <div class="form-group">
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $message }}
+                                </div>
+                            </div>
+                        @enderror
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <div class="form-control-wrap">
+                                <input type="email" class="form-control" name="email" placeholder="Client Email">
+                            </div>
+                        </div>
+
+                        @error('email')
+                            <div class="form-group">
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $message }}
+                                </div>
+                            </div>
+                        @enderror
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-md btn-primary">Invite
+                                Client</button>
+                            <button type="button" class="btn btn-md btn-danger float-end"
+                                data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <span class="sub-text">AskariTechnologies {{ date('Y') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalExample"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <!-- Modal Header -->

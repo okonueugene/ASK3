@@ -91,4 +91,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'super-admin', 'middleware' => 'super-admin' , 'as' => 'super-admin.'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
+
+    //invitations
+    Route::post('/client/invitation', [ClientController::class, 'inviteClient'])->name('client-invitation');
+    Route::get('/client/invitation', [ClientController::class, 'acceptInvite'])->name('accept-invitation');
+    Route::post('/client/invitation/register', [ClientController::class, 'registerClient'])->name('register-client');
+
 });

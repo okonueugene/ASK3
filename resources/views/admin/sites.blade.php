@@ -306,8 +306,7 @@
                 <div class="modal-body">
                     <div class="card">
                         <div class="logo" style="position: relative; top: 0; left: 0;">
-                            <img src="" alt="" id="site-logo" class="card-img-top"
-                                style="width:100%; height:100px;">
+                            <div id="map" style="height:100px;width:100%;"></div>
                             <div class="card-header text-center">
                                 <span class="card-title" id="site-name"></span>
                             </div>
@@ -569,7 +568,25 @@
                 $('#site-logo').attr('src', 'https://ui-avatars.com/api/?name=' + site.name +
                     '&color=f76b0e&background=ffffff');
             }
+            // Initialize the map
+            let map = new google.maps.Map(document.getElementById('map'), {
+                center: {
+                    lat: parseFloat(site.lat),
+                    lng: parseFloat(site.long)
+                },
+                zoom: 14
+            });
+
+            let marker = new google.maps.Marker({
+                position: {
+                    lat: parseFloat(site.lat),
+                    lng: parseFloat(site.long)
+                },
+                map: map,
+                draggable: false
+            });
             $('#viewSiteModal').modal('show');
+
         } catch (error) {
             console.log(error);
         }
