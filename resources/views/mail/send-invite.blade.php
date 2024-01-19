@@ -396,6 +396,9 @@
         .content-cell {
             padding: 45px;
         }
+        #link a {
+            text-decoration: none;
+        }
 
         /*Media Queries ------------------------------ */
 
@@ -497,7 +500,7 @@
                                                         <table width="100%" border="0" cellspacing="0" cellpadding="0"
                                                             role="presentation">
                                                             <tr>
-                                                                <td align="center">
+                                                                <td align="center" id="link">
                                                                     <a href="{{ $mailData['url'] }}" class="f-fallback button"
                                                                         target="_blank">Set up account</a>
                                                                 </td>

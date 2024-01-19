@@ -161,4 +161,96 @@ class AppController extends Controller
             'patrol' => $patrol,
         ]);
     }
-}
+
+ 
+
+    public function addTag(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'location' => 'required|string',
+            'code' => 'required',
+            'type' => 'required',
+            'lat' => 'required',
+            'long' => 'required',
+            'site_id' => 'required',
+        ]);
+    
+        // Check if tag exists
+        $tag = Tag::where('code', $request->code)->first();
+    
+        if ($tag) {
+            // If exists and request->type is 'qr', check if site_id is null
+            if ($request->type == 'qr') {
+                if ($tag->site_id === null) {
+                    // Update tag
+                    $tag->update([
+                        'company_id' => auth()->user()->company_id,
+                        'name' => $request->name,
+                        'location' => $request->location,
+                        'code' => $request->code,
+                        'type' => $request->type,
+                        'lat' => $request->lat,
+                        'long' => $request->long,
+                        'site_id' => $request->site_id,
+                    ]);
+    
+                    // Log the activity
+                    activity()
+                        ->causedBy(auth()->user())
+                        ->event('updated')
+                        ->performedOn($tag)
+                        ->withProperties(['tag' => $tag])
+                        ->log('Tag updated and assigned to site ' . $tag->site->name);
+    
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Tag updated successfully and assigned to ' . $tag->site->name,
+                        'data' => $tag,
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Tag already exists and is assigned to ' . $tag->site->name,
+                    ]);
+                }
+            } elseif ($request->type == 'nfc') {
+                // If tag type is 'nfc', create the tag
+                $tag = Tag::create([
+                    'company_id' => auth()->user()->company_id,
+                    'name' => $request->name,
+                    'location' => $request->location,
+                    'code' => $request->code,
+                    'type' => $request->type,
+                    'lat' => $request->lat,
+                    'long' => $request->long,
+                    'site_id' => $request->site_id,
+                ]);
+    
+                // Log the activity
+                activity()
+                    ->causedBy(auth()->user())
+                    ->event('created')
+                    ->performedOn($tag)
+                    ->withProperties(['tag' => $tag])
+                    ->log('Tag created and assigned to site ' . $tag->site->name);
+    
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Tag created successfully and assigned to ' . $tag->site->name,
+                    'data' => $tag,
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid tag type',
+                ]);
+            }
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tag not found',
+            ]);
+        }
+    }
+}    

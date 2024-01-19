@@ -28,25 +28,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum','ensure_json_
         Route::post('/patrol/start', 'startPatrol');
         Route::post('/patrol/scan', 'scanCheckPoints');
         Route::post('/patrol/end', 'endPatrol');
-
+        Route::post('tag/add', 'addTag');
     });
 
 });
-
-Route::post('tool/login', [ToolAuthController::class, 'login']);
-
-Route::group(['prefix' => 'tool', 'middleware' => ['auth:sanctum','ensure_json_header']], function () {
-    Route::post('/logout', [ToolAuthController::class, 'logout']);
-
-    Route::controller(ConfigToolController::class)->group(function () {
-        Route::get('/sites', 'getSites');
-        Route::get('tags/site/{id}', 'getSiteTags');
-        Route::get('/tags', 'allTags');
-        Route::post('/tags', 'createTag');
-        Route::patch('/tags/{id}', 'updateTag');
-        Route::delete('/tags/{id}', 'deleteTag');
-
-
-    });
-}
-);
