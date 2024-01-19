@@ -22,7 +22,14 @@ class UserSeeder extends Seeder
             'company_id' => 1
         ]);
 
-
+        $guard = \App\Models\Guard::create([
+            'company_id' => 1,
+            'name' => 'Arnold Musembi',
+            'email' => 'arnold@gmail.com',
+            'phone' => '0711690636',
+            'id_number' => '12345678',
+            'password' => Hash::make('123456')
+        ]);
 
     }
 }

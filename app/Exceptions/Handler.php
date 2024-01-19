@@ -43,19 +43,12 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof TokenMismatchException) {
-            // Check if the user is already authenticated
-            if (Auth::check()) {
-                // User is authenticated, return an appropriate response
-                return response()->json([
-                    'message' => 'CSRF token mismatch. Please refresh the page and try again.',
-                    'status' => 419,
-                ], 419);
-            } else {
+        
                 // User is not authenticated, redirect to the login page
                 return redirect()->route('login')->withErrors([
                     'message' => 'CSRF token mismatch. Please log in again.',
                 ]);
-            }
+            
         }
 
         if ($exception instanceof NotFoundHttpException) {

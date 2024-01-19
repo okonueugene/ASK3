@@ -396,6 +396,7 @@
         .content-cell {
             padding: 45px;
         }
+
         #link a {
             text-decoration: none;
         }
@@ -468,22 +469,22 @@
                     <tr>
                         <td class="email-masthead">
                             <a href="#"><img style="height:100px; width:100px" class="email-logo"
-                                    src="https://asset.optitech.co.ke/logo.png"
-                                    alt="logo"></a>
+                                    src="https://asset.optitech.co.ke/logo.png" alt="logo"></a>
 
                         </td>
                     </tr>
                     <!-- Email Body -->
                     <tr>
                         <td class="email-body" width="570" cellpadding="0" cellspacing="0">
-                            <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0"
-                                role="presentation">
+                            <table class="email-body_inner" align="center" width="570" cellpadding="0"
+                                cellspacing="0" role="presentation">
                                 <!-- Body content -->
                                 <tr>
                                     <td class="content-cell">
                                         <div class="f-fallback">
                                             <h1>Hi, {{ $mailData['name'] }}!</h1>
-                                            <p>Welcome! <br> You are receiving this email because you have been invited
+                                            <p>Welcome! </p>
+                                            <p> You are receiving this email because you have been invited
                                                 to register on our
                                                 site.</p>
                                             <p>Click the link below to register your {{ env('APP_NAME') }} account.</p>
@@ -497,12 +498,13 @@
                                                     <td align="center">
                                                         <!-- Border based button
            https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
-                                                        <table width="100%" border="0" cellspacing="0" cellpadding="0"
-                                                            role="presentation">
+                                                        <table width="100%" border="0" cellspacing="0"
+                                                            cellpadding="0" role="presentation">
                                                             <tr>
                                                                 <td align="center" id="link">
-                                                                    <a href="{{ $mailData['url'] }}" class="f-fallback button"
-                                                                        target="_blank">Set up account</a>
+                                                                    <a href="{{ $mailData['url'] }}"
+                                                                        class="f-fallback button" target="_blank">Set up
+                                                                        account</a>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -510,14 +512,15 @@
                                                 </tr>
                                             </table>
                                             <p>If you have any questions, you can reply to
-                                                this email for any querries or assistance. Alternatively, feel free to <a
-                                                    href="mailto:support@optitech.co.ke">contact our customer support
+                                                this email for any querries or assistance. Alternatively, feel free to
+                                                <a href="mailto:support@optitech.co.ke">contact our customer support
                                                     team</a> anytime. (We're lightning quick at replying.)</p>
                                             <p>Welcome aboard,
                                                 <br>The {{ env('APP_NAME') }} team
                                             </p>
                                             <p><strong>P.S.</strong> Need help getting started? Check out our <a
-                                                    href="https://askari.optitech.co.ke/" target="_blank">help documentation</a>.</p>
+                                                    href="https://askari.optitech.co.ke/" target="_blank">help
+                                                    documentation</a>.</p>
                                             <!-- Sub copy -->
                                             <table class="body-sub" role="presentation">
                                                 <tr>

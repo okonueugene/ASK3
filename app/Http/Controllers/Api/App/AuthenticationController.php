@@ -28,8 +28,10 @@ class AuthenticationController extends Controller
             //Password verification
             if (password_verify($request->password, $guard->password)) {
                 //Auth pass
-                $data['deatils'] = $guard;
+                $data['details'] = $guard;
                 $data['token'] = $guard->createToken('authToken')->plainTextToken;
+
+            if ($guard->site_id) {
 
                 $guard->update([
                     'last_login' => Carbon::now($guard->timezone)->toDateTimeString(),
@@ -42,7 +44,13 @@ class AuthenticationController extends Controller
                 if (!$present) {
                    event(new MarkAttendance($guard));
                 }
-
+            }
+            else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Guard not assigned to any site',
+                ], 404);
+            }
                 $sites = DB::table('sites')->where('id', $guard->site_id)->first();
 
                 return response()->json([
