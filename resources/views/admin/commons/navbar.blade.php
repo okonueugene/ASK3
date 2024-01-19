@@ -12,20 +12,20 @@
                         </div>
                         <div class="nk-header-brand">
                             <a href="{{ route('admin.dashboard') }}" class="logo-link">
-                                <img class="logo-light logo-img" src="{{ asset('/images/logo.png') }}"
-                                    srcset="{{ asset('/images/logo2x.png 2x') }}" alt="logo">
-                                <img class="logo-dark logo-img" src="{{ asset('/images/logo-dark.png') }}"
-                                    srcset="{{ asset('/images/logo-dark2x.png') }}" alt="logo-dark">
+                                <img class="logo-light logo-img" src="{{ asset('/images/site_logo.png') }}"
+                                    srcset="{{ asset('/images/Askari Logo-20.png') }}" alt="logo">
+                                <img class="logo-dark logo-img" src="{{ asset('/images/site_logo.png') }}"
+                                    srcset="{{ asset('/images/Askari Logo-20.png') }}" alt="logo-dark">
                             </a>
                         </div><!-- .nk-header-brand -->
                         <div class="nk-header-menu ms-auto" data-content="headerNav">
                             <div class="nk-header-mobile">
                                 <div class="nk-header-brand">
                                     <a href="html/index.html" class="logo-link">
-                                        <img class="logo-light logo-img" src="{{ asset('/images/logo.png') }}"
-                                            srcset="{{ asset('/images/logo2x.png 2x') }}" alt="logo">
-                                        <img class="logo-dark logo-img" src="{{ asset('/images/logo-dark.png') }}"
-                                            srcset="{{ asset('/images/logo-dark2x.png 2x') }}" alt="logo-dark">
+                                        <img class="logo-light logo-img" src="{{ asset('/images/Askari Logo-20.png') }}"
+                                            srcset="{{ asset('/images/Askari Logo-20.png') }}" alt="logo">
+                                        <img class="logo-dark logo-img" src="{{ asset('/images/Askari Logo-20.png') }}"
+                                            srcset="{{ asset('/images/Askari Logo-20.png') }}" alt="logo-dark">
                                     </a>
                                 </div>
                                 <div class="nk-menu-trigger me-n2">
@@ -63,13 +63,25 @@
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
                                         <span class="nk-menu-text">Scheduler</span>
                                     </a>
-                            
+
                                 </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item has-sub">
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
                                         <span class="nk-menu-text">Resolution Center</span>
                                     </a>
-                            
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item has-sub">
+                                            <a href="{{ route('admin.incidents') }}" class="nk-menu-link"><span
+                                                    class="nk-menu-text">Incidents</span>
+                                            </a>
+                                        </li>
+                                        <li class="nk-menu-item has-sub">
+                                            <a href="{{ route('admin.issues') }}" class="nk-menu-link"><span
+                                                    class="nk-menu-text">Issues </span>
+                                            </a>
+                                        </li>
+                                    </ul><!-- .nk-menu-sub -->
+
                                 </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item has-sub">
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
@@ -80,12 +92,13 @@
                                             <a href="{{ route('admin.patrol-reports') }}" class="nk-menu-link">
                                                 <span class="nk-menu-text">Patrol Reports</span>
                                             </a>
-                                        </li><!-- .nk-menu-item -->  <li class="nk-menu-item has-sub">
-                                            <a href="#" class="nk-menu-link">
+                                        </li><!-- .nk-menu-item -->
+                                        <li class="nk-menu-item has-sub">
+                                            <a href="{{ route('admin.attendance-reports') }}" class="nk-menu-link">
                                                 <span class="nk-menu-text">Attendance Reports</span>
                                             </a>
                                         </li><!-- .nk-menu-item -->
-                               
+
                                     </ul><!-- .nk-menu-sub -->
                                 </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item has-sub">
@@ -644,28 +657,28 @@
                                         <ul class="language-list">
                                             <li>
                                                 <a href="#" class="language-item">
-                                                    <img src="{{ asset('/images/flags/english.png')}}" alt=""
-                                                        class="language-flag">
+                                                    <img src="{{ asset('/images/flags/english.png') }}"
+                                                        alt="" class="language-flag">
                                                     <span class="language-name">English</span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#" class="language-item">
-                                                    <img src="{{ asset('/images/flags/spanish.png')}}" alt=""
-                                                        class="language-flag">
+                                                    <img src="{{ asset('/images/flags/spanish.png') }}"
+                                                        alt="" class="language-flag">
                                                     <span class="language-name">Español</span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#" class="language-item">
-                                                    <img src="{{ asset('/images/flags/french.png')}}" alt=""
+                                                    <img src="{{ asset('/images/flags/french.png') }}" alt=""
                                                         class="language-flag">
                                                     <span class="language-name">Français</span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#" class="language-item">
-                                                    <img src="{{ asset('/images/flags/turkey.png')}}" alt=""
+                                                    <img src="{{ asset('/images/flags/turkey.png') }}" alt=""
                                                         class="language-flag">
                                                     <span class="language-name">Türkçe</span>
                                                 </a>

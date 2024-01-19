@@ -17,7 +17,7 @@ return new class () extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone')->nullable();
             $table->boolean('is_active')->default(false);
-            $table->enum('user_type', ['super_admin', 'admin', 'client']);
+            $table->enum('user_type', ['super_admin', 'admin', 'client'])->default('client');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

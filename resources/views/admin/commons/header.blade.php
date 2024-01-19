@@ -9,7 +9,7 @@
     <meta name="description"
         content="A powerful and conceptual apps base dashboard template that especially build for developers and programmers.">
     <!-- Fav Icon  -->
-    <link rel="shortcut icon" href="{{ asset('/images/favicon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('/images/favicon_io/favicon-32x32.png') }}">
     <!-- Page Title  -->
     <title>Dashboard | DashLite Admin Template</title>
     <!-- StyleSheets  -->
