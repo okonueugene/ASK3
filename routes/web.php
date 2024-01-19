@@ -41,6 +41,7 @@ Route::get('/', [LoginController::class, 'index'])->name('login');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::post('/login', [LoginController::class, 'login'])->name('loginUser');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/client/invitation', [ClientController::class, 'acceptInvite'])->name('accept-invitation');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/login-activity', [LoginActivityController::class, 'index'])->name('login-activity');
@@ -107,7 +108,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     //invitations
     Route::post('/client/invitation', [ClientController::class, 'inviteClient'])->name('client-invitation');
-    Route::get('/client/invitation', [ClientController::class, 'acceptInvite'])->name('accept-invitation');
     Route::post('/client/invitation/register', [ClientController::class, 'registerClient'])->name('register-client');
 
 });
