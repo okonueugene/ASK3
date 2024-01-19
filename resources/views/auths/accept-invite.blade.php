@@ -7,7 +7,7 @@
     <meta name="author" content="Softnio">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Fav Icon  -->
-    <link rel="shortcut icon" href="./images/favicon.png">
+    <link rel="shortcut icon" href="{{ asset('/images/favicon.png') }}">
     <!-- Page Title  -->
     <title>Register | Asari</title>
     <!-- StyleSheets  -->
@@ -26,9 +26,9 @@
                     <div class="nk-block nk-block-middle nk-auth-body wide-xs">
                         <div class="brand-logo pb-4 text-center">
                             <a href="html/index.html" class="logo-link">
-                                <img class="logo-light logo-img logo-img-lg" src="{{ asset('/images/logo.png') }}"
+                                <img class="logo-light logo-img logo-img-lg" src="{{ asset('/images/site_logo.png') }}"
                                     srcset="{{ asset('/images/logo2x.png 2x') }}" alt="logo">
-                                <img class="logo-dark logo-img logo-img-lg" src="{{ asset('/images/logo-dark.png') }}"
+                                <img class="logo-dark logo-img logo-img-lg" src="{{ asset('/images/site_logo.png') }}"
                                     srcset="{{ asset('/images/logo-dark2x.png 2x') }}" alt="logo-dark">
                             </a>
                         </div>
