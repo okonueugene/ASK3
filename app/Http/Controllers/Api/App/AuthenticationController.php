@@ -30,6 +30,13 @@ class AuthenticationController extends Controller
                 //Auth pass
                 $data['details'] = $guard;
                 $data['token'] = $guard->createToken('authToken')->plainTextToken;
+                //if guard is inactive
+                if (!$guard->is_active) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Guard is Deactivated',
+                    ], 404);
+                }
 
             if ($guard->site_id) {
 
