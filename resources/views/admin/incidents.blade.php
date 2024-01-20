@@ -1,7 +1,7 @@
 @extends('admin.layouts.layout')
 @section('content')
     <!-- content @s
-        -->
+                        -->
         <div class="nk-content ">
             <div class="container-fluid">
                 <div class="nk-content-inner">
@@ -18,44 +18,118 @@
                                         <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1"
                                             data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                                         <div class="toggle-expand-content" data-content="pageMenu">
-                                            {{-- <ul class="nk-block-tools g-3">
-                                                <li><a href="#" class="btn btn-white btn-dim btn-outline-primary"><em
-                                                            class="icon ni ni-download-cloud"></em><span>Export</span></a></li>
-                                                <li><a href="#" class="btn btn-white btn-dim btn-outline-primary"><em
-                                                            class="icon ni ni-reports"></em><span>Reports</span></a></li>
-                                                <li class="nk-block-tools-opt">
-                                                    <div class="drodown">
-                                                        <a href="#" class="dropdown-toggle btn btn-icon btn-primary"
-                                                            data-bs-toggle="dropdown"><em class="icon ni ni-plus"></em></a>
-                                                        <div class="dropdown-menu dropdown-menu-end">
-                                                            <ul class="link-list-opt no-bdr">
-                                                                <li><a href="#"><em
-                                                                            class="icon ni ni-user-add-fill"></em><span>Add
-                                                                            User</span></a></li>
-                                                                <li><a href="#"><em
-                                                                            class="icon ni ni-coin-alt-fill"></em><span>Add
-                                                                            Order</span></a></li>
-                                                                <li><a href="#"><em
-                                                                            class="icon ni ni-note-add-fill-c"></em><span>Add
-                                                                            Page</span></a></li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul> --}}
+
                                         </div><!-- .toggle-expand-content -->
                                     </div><!-- .toggle-wrap -->
                                 </div><!-- .nk-block-head-content -->
                             </div><!-- .nk-block-between -->
                         </div><!-- .nk-block-head -->
                         <div class="nk-block">
-                            <div class="row g-gs">
+                            <div class="card card-bordered card-preview">
+                                <div class="card-inner">
+                                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head">
+                                                <th class="nk-tb-col nk-tb-col-check">
+                                                    <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                        <input type="checkbox" class="custom-control-input" id="uid">
+                                                        <label class="custom-control-label" for="uid"></label>
+                                                    </div>
+                                                </th>
+                                                <th class="nk-tb-col"><span class="sub-text">Incident No</span></th>
+                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Police Ref</span></th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Title</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Date</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Reported By</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
 
+                                                <th class="nk-tb-col nk-tb-col-tools text-right">
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (count($incidents) > 0)
+                                                @foreach ($incidents as $incident)
+                                                    <tr>
+                                                        <td class="nk-tb-col nk-tb-col-check">
+                                                            <div
+                                                                class="custom-control custom-control-sm custom-checkbox notext">
+                                                                <input type="checkbox" class="custom-control-input"
+                                                                    id="uid1">
+                                                                <label class="custom-control-label" for="uid1"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="nk-tb-col">
+                                                            <div class="user-card">
+                                                                <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                                    <span>{{ $incident->incident_no }}</span>
+                                                                </div>
+                                                                <div class="user-info">
+                                                                    <span class="tb-lead">{{ $incident->incident_no }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-mb">
+                                                            <span>{{ $incident->police_ref }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-md">
+                                                            <span>{{ $incident->title }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-lg">
+                                                            <span>{{ $incident->date }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-lg">
+                                                            <span>{{ $incident->reported_by }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-lg">
+                                                            <span>{{ $incident->status }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col nk-tb-col-tools">
+                                                            <ul class="nk-tb-actions gx-1">
+                                                                <li>
+                                                                    <div class="drodown">
+                                                                        <a href="#"
+                                                                            class="dropdown-toggle btn btn-icon btn-trigger"
+                                                                            data-toggle="dropdown"><em
+                                                                                class="icon ni ni-more-h"></em></a>
+                                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                                            <ul class="link-list-opt no-bdr">
+                                                                                <li><a
+                                                                                        href="{{ route('admin.incident.show', $incident->id) }}"><em
+                                                                                            class="icon ni ni-eye"></em><span>View
+                                                                                            Details</span></a></li>
+                                                                                <li><a
+                                                                                        href="{{ route('admin.incident.edit', $incident->id) }}"><em
+                                                                                            class="icon ni ni-edit"></em><span>Edit
+                                                                                            Details</span></a></li>
+                                                                                <li><a
+                                                                                        href="{{ route('admin.incident.destroy', $incident->id) }}"><em
+                                                                                            class="icon ni ni-trash"></em><span>Delete</span></a>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </td>
+                                                    </tr><!-- .nk-tb-item  -->
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="8" class="text-center">No Incidents Found</td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- content @e -->
     @endsection

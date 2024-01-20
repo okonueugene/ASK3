@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\GuardsController;
 use App\Http\Controllers\Admin\IssuesController;
+use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\IncidentsController;
 use App\Http\Controllers\Auth\LoginActivityController;
@@ -93,6 +94,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/issues', [IssuesController::class, 'index'])->name('issues');
 
         Route::get('/patrol-reports', [PatrolReportsController::class, 'index'])->name('patrol-reports');
+
+        //scheduler
+        Route::get('/scheduler', [ScheduleController::class, 'index'])->name('scheduler');
 
 
         Route::get('/attendance-reports', [AttendanceController::class, 'index'])->name('attendance-reports');
