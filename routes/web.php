@@ -113,5 +113,6 @@ Route::group(['middleware' => ['auth']], function () {
     //invitations
     Route::post('/client/invitation', [ClientController::class, 'inviteClient'])->name('client-invitation');
     Route::post('/client/invitation/register', [ClientController::class, 'registerClient'])->name('register-client');
+    Route::delete('/client/invitation/{id}', [ClientController::class, 'deleteInvitation'])->name('delete-invitation');
 
 });

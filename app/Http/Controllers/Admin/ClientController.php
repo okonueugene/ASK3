@@ -237,4 +237,15 @@ class ClientController extends Controller
       return redirect()->route('login')->with('success', 'Client created successfully');
     }
     
+    //delete invitation
+    public function deleteInvitation($id)
+    {
+        $invitation = Invitation::findOrFail($id);
+        $invitation->delete();
+
+        return redirect()->back()->with([
+            'message' => 'Invitation deleted successfully',
+            'status' => 'success'
+        ]);
+    }
 }
