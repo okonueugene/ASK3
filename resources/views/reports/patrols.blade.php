@@ -15,12 +15,9 @@
                             <div class="nk-block-head-content">
                                 <div class="toggle-wrap nk-block-tools-toggle">
                                     <div class="btn-group" aria-label="Basic example">
-                                        <button type="button" wire:click="generateReport" wire:loading.attr="disabled"
-                                            class="btn  btn-sm btn-outline-primary">PDF</button>
-                                        <button type="button" wire:click="export('xlsx')" wire:loading.attr="disabled"
-                                            class="btn btn-sm btn-outline-primary">XLSX</button>
-                                        <button type="button" wire:click="export('csv')" wire:loading.attr="disabled"
-                                            class="btn btn-sm btn-outline-primary">CSV</button>
+                                        <button type="button" class="btn  btn-sm btn-outline-primary">PDF</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary">XLSX</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary">CSV</button>
                                     </div>
                                 </div><!-- .toggle-wrap -->
                             </div><!-- .nk-block-head-content -->
@@ -35,7 +32,7 @@
                                         <div class="form-group">
                                             <label class="form-label">Filter By Site</label>
                                             <div class="form-control-wrap mr-2">
-                                                <select wire:model="selectedSite" class="form-control">
+                                                <select id="selectedSite" class="form-control">
                                                     <option selected>Choose Site</option>
                                                     @foreach ($sites as $site)
                                                         <option value="{{ $site->id }}">{{ $site->name }}</option>
@@ -48,7 +45,7 @@
                                     <div class="form-group mr-2">
                                         <label class="form-label">Filter By Guard</label>
                                         <div class="form-control-wrap">
-                                            <select wire:model="selectedGuard" class="form-control" name="city_id">
+                                            <select id="selectedGuard" class="form-control" name="city_id">
                                                 <option value="" selected>Choose Guard</option>
                                                 @foreach ($guards as $guard)
                                                     <option value="{{ $guard->id }}">{{ $guard->name }}</option>
@@ -60,9 +57,9 @@
                                     <div class="form-group"> <label class="form-label">Filter By Date</label>
                                         <div class="form-control-wrap">
                                             <div class="input-daterange date-picker-range input-group"> <input
-                                                    wire:model="start" type="text" class="form-control start-date" />
-                                                <div class="input-group-addon">TO</div> <input wire:model="end"
-                                                    type="text" class="form-control end-date" />
+                                                    id="start" type="text" class="form-control start-date" />
+                                                <div class="input-group-addon">TO</div> <input id="end" type="text"
+                                                    class="form-control end-date" />
                                             </div>
                                         </div>
                                     </div>
@@ -70,9 +67,10 @@
                             </div>
                             <div class="nk-block-head-content">
                                 <div class="toggle-wrap nk-block-tools-toggle">
-                                    <button wire:click="filterRecords" class="btn btn-sm btn-secondary">
+                                    <button class="btn btn-sm btn-secondary" onclick="filterRecords()">
                                         Filter Records</button>
-                                    <button wire:click="resetFilter" class="btn btn-sm btn-outline-secondary">Reset
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="resetFilters()">
+                                        Reset
                                         Filters</button>
                                 </div><!-- .toggle-wrap -->
                             </div><!-- .nk-block-head-content -->
@@ -81,183 +79,74 @@
                     <div class="nk-block">
                         <div class="card card-bordered card-stretch">
                             <div class="card-inner-group">
-                                <div class="card-inner position-relative card-tools-toggle">
-                                    <div class="card-title-group">
-                                        <div class="card-tools">
-                                            <div class="form-inline flex-nowrap gx-3">
-                                                <div class="form-wrap w-150px">
-                                                    {{-- <select class="form-select" data-search="off"
-                                                            data-placeholder="Bulk Action">
-                                                            <option value="">Bulk Action</option>
-                                                            <option value="email">Delete</option>
-                                                        </select> --}}
-                                                </div>
-                                                <div class="btn-wrap">
-                                                    <span class="d-none d-md-block"></span>
-                                                    <span class="d-md-none"><button
-                                                            class="btn btn-dim btn-outline-light btn-icon disabled"><em
-                                                                class="icon ni ni-arrow-right"></em></button></span>
-                                                </div>
-                                            </div><!-- .form-inline -->
-                                        </div><!-- .card-tools -->
-                                        <div class="card-tools mr-n1">
-                                            <ul class="btn-toolbar gx-1">
-                                                <li>
-                                                    <div class="form-control-wrap mb-3">
-                                                        <div class="form-icon form-icon-right">
-                                                            <em class="icon ni ni-search"></em>
-                                                        </div>
-                                                        <input wire:model.debounce.350ms='search' type="text"
-                                                            class="form-control" id="default-04"
-                                                            placeholder="Search by Tag Name">
-                                                    </div>
-                                                </li><!-- li -->
-                                                <li class="btn-toolbar-sep"></li><!-- li -->
-                                                <li>
-                                                    <div class="toggle-wrap">
-                                                        <a href="javascript: void(0)"
-                                                            class="btn btn-icon btn-trigger toggle"
-                                                            data-target="cardTools"><em
-                                                                class="icon ni ni-menu-right"></em></a>
-                                                        <div class="toggle-content" data-content="cardTools">
-                                                            <ul class="btn-toolbar gx-1">
-
-                                                                <li>
-                                                                    <div class="dropdown">
-                                                                        <a href="javascript: void(0)"
-                                                                            class="btn btn-trigger btn-icon dropdown-toggle"
-                                                                            data-toggle="dropdown">
-                                                                            <em class="icon ni ni-setting"></em>
-                                                                        </a>
-                                                                        <div
-                                                                            class="dropdown-menu dropdown-menu-xs dropdown-menu-right">
-                                                                            {{-- <ul class="link-check">
-                                                                                    <li><span>Show</span></li>
-                                                                                    <li
-                                                                                        class="{{ $pages == 10 ? 'active' : '' }}">
-                                                                                        <a href="javascript: void(0)"
-                                                                                            wire:click.prevent="$set('pages', 10)">10</a>
-                                                                                    </li>
-                                                                                    <li
-                                                                                        class="{{ $pages == 20 ? 'active' : '' }}">
-                                                                                        <a href="javascript: void(0)"
-                                                                                            wire:click.prevent="$set('pages', 20)">20</a>
-                                                                                    </li>
-                                                                                    <li
-                                                                                        class="{{ $pages == 50 ? 'active' : '' }}">
-                                                                                        <a href="javascript: void(0)"
-                                                                                            wire:click.prevent="$set('pages', 50)">50</a>
-                                                                                    </li>
-                                                                                </ul> --}}
-                                                                            {{-- <ul class="link-check">
-                                                                                    <li><span>Order</span></li>
-                                                                                    <li
-                                                                                        class="{{ $order == 'DESC' ? 'active' : '' }}">
-                                                                                        <a href="javascript: void(0)"
-                                                                                            wire:click.prevent="$set('order', 'DESC')">DESC</a>
-                                                                                    </li>
-                                                                                    <li
-                                                                                        class="{{ $order == 'ASC' ? 'active' : '' }}">
-                                                                                        <a
-                                                                                            href="javascript: void(0)"wire:click.prevent="$set('order', 'ASC')">ASC</a>
-                                                                                    </li>
-                                                                                </ul> --}}
-                                                                        </div>
-                                                                    </div><!-- .dropdown -->
-                                                                </li><!-- li -->
-                                                            </ul><!-- .btn-toolbar -->
-                                                        </div><!-- .toggle-content -->
-                                                    </div><!-- .toggle-wrap -->
-                                                </li><!-- li -->
-                                            </ul><!-- .btn-toolbar -->
-                                        </div><!-- .card-tools -->
-                                    </div><!-- .card-title-group -->
-
-                                </div><!-- .card-inner -->
                                 <div class="card-inner p-0">
-                                    <div class="nk-tb-list nk-tb-ulist is-compact">
-                                        <div class="nk-tb-item nk-tb-head">
-                                            <div class="nk-tb-col nk-tb-col-check">
-                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                    <input type="checkbox" class="custom-control-input" id="uid">
-                                                    <label class="custom-control-label" for="uid"></label>
-                                                </div>
-                                            </div>
-                                            <div class="nk-tb-col"><span class="sub-text">Name</span></div>
-                                            <div class="nk-tb-col"><span class="sub-text">Shift</span></div>
-                                            <div class="nk-tb-col tb-col-md"><span class="sub-text">Site</span></div>
-                                            <div class="nk-tb-col tb-col-md"><span class="sub-text">Tag</span></div>
-                                            <div class="nk-tb-col tb-col-sm"><span class="sub-text">Date</span></div>
-                                            <div class="nk-tb-col tb-col-md"><span class="sub-text">Time</span>
-                                            </div>
-                                            <div class="nk-tb-col tb-col-md"><span class="sub-text">Status</span>
-                                            </div>
-                                        </div><!-- .nk-tb-item -->
-                                        @forelse ($records as $record)
-                                            <div class="nk-tb-item">
-                                                <div class="nk-tb-col nk-tb-col-check">
+                                    <table id="patrol-report" class="datatable-init nk-tb-list nk-tb-ulist"
+                                        data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head">
+                                                <th class="nk-tb-col nk-tb-col-check">
                                                     <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                        <input type="checkbox" class="custom-control-input"
-                                                            id="uid1">
-                                                        <label class="custom-control-label" for="uid1"></label>
+                                                        <input type="checkbox" class="custom-control-input" id="uid">
+                                                        <label class="custom-control-label" for="uid"></label>
                                                     </div>
-                                                </div>
-                                                <div class="nk-tb-col">
-                                                    <div class="user-card">
-                                                        <div class="user-avatar xs bg-primary">
-                                                            <span> <?php
-                                                            $name = $record->owner->name;
-                                                            preg_match_all('/\b\w/', $name, $name);
-                                                            echo strtoupper(join('', $name[0]));
-                                                            ?></span>
+                                                </th>
+                                                <th class="nk-tb-col"><span class="sub-text">Guard</span></th>
+                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Site</span>
+                                                </th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Tag</span></th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Date</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Time</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span>
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($records as $record)
+                                                <tr>
+                                                    <td class="nk-tb-col nk-tb-col-check">
+                                                        <div
+                                                            class="custom-control custom-control-sm custom-checkbox notext">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="uid1">
+                                                            <label class="custom-control-label" for="uid1"></label>
                                                         </div>
-                                                        <div class="user-name">
-                                                            <span class="tb-lead">{{ $record->patrol->owner->name }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <div class="user-card">
+                                                            <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                                <span>{{ $record->owner->name[0] }}</span>
+                                                            </div>
+                                                            <div class="user-info">
+                                                                <span class="tb-lead">{{ $record->owner->name }} <span
+                                                                        class="dot dot-success d-md-none ml-1"></span></span>
+                                                                <span>{{ $record->owner->phone }}</span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="nk-tb-col">
-                                                    <span><span class="badge badge-warning">Not Yet
-                                                        </span>
-                                                        {{ $record->patrol->name }}</span>
-                                                </div>
-                                                <div class="nk-tb-col tb-col-md">
-                                                    <span>{{ $record->site->name }}</span>
-                                                </div>
-                                                <div class="nk-tb-col tb-col-md">
-                                                    <span>{{ $record->tag->name ? $record->tag->name : 'N/A' }}</span>
-                                                </div>
-                                                <div class="nk-tb-col tb-col-sm">
-                                                    <span>{{ $record->date }}</span>
-                                                </div>
-                                                <div class="nk-tb-col tb-col-md">
-                                                    @if ($record->time)
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-mb">
+                                                        <span>{{ $record->site->name }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-md">
+                                                        <span>{{ $record->tag->name }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-md">
+                                                        <span>{{ $record->date }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-lg">
                                                         <span>{{ $record->time }}</span>
-                                                    @else
-                                                        <span class="badge badge-white">No Scanned</span>
-                                                    @endif
-                                                </div>
-                                                <div class="nk-tb-col tb-col-md">
-                                                    @if ($record->status == 'checked')
-                                                        <span class="badge badge-success">Checked</span>
-                                                    @elseif ($record->status == 'upcoming')
-                                                        <span class="badge badge-dark">Upcoming</span>
-                                                    @elseif($record->status == 'missed')
-                                                        <span class="badge badge-danger">Missed</span>
-                                                    @endif
-                                                </div>
-                                            </div><!-- .nk-tb-item -->
-                                        @empty
-                                            <div class="card-inner">
-                                                <p class="text-center">No records found</p>
-                                            </div>
-                                        @endforelse
-                                    </div><!-- .nk-tb-list -->
-                                </div><!-- .card-inner -->
-                                <div class="card-inner">
-                                    {{-- <ul class="pagination justify-content-center justify-content-md-start">
-                                            {{ $records->links() }}
-                                        </ul><!-- .pagination --> --}}
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-lg">
+                                                        <span>{{ $record->status }}</span>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No records found</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
                                 </div><!-- .card-inner -->
                             </div><!-- .card-inner-group -->
                         </div><!-- .card -->
@@ -266,4 +155,123 @@
             </div>
         </div>
     </div>
+    </div>
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    //listen for the click event on the site filter
+    $(document).ready(function() {
+        $('#selectedSite').on('change', function() {
+            //get the selected site
+            let siteId = $(this).val();
+            console.log(siteId);
+
+            //get the url
+            let url = `{{ route('admin.getSiteGuards', ':siteId') }}`;
+
+            //replace the :siteId with the actual siteId
+            url = url.replace(':siteId', siteId);
+
+            // Make axios call
+            axios.post(url)
+                .then((response) => {
+                    console.log(response.data);
+
+                    let guards = response.data.guards;
+
+                    // Remove existing options
+                    $('#selectedGuard').find('option').remove();
+
+                    // Add new options
+                    $('#selectedGuard').append('<option value="" selected>Choose Guard</option>');
+                    guards.forEach(guard => {
+                        $('#selectedGuard').append(
+                            `<option value="${guard.id}">${guard.name}</option>`);
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        });
+    });
+
+    const filterRecords = () => {
+        //get the selected site
+        let siteId = '';
+        let selectedSite = $('#selectedSite').val();
+        if (selectedSite != 'Choose Site') {
+            siteId = selectedSite;
+        }
+
+        //get the selected guard
+        let selectedGuard = $('#selectedGuard').val();
+        if (selectedGuard != 'Choose Guard') {
+            guardId = selectedGuard;
+        }
+
+        //get the selected date range
+        let startDate = $('#start').val();
+        let endDate = $('#end').val();
+
+        console.log(siteId, guardId, startDate, endDate);
+
+        let url =
+            `{{ route('admin.filterRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
+
+        // Make axios call
+        axios.post(url)
+        .then((response) => {
+            console.log(response.data);
+
+            let filteredRecords = response.data.records;
+
+            // Remove existing DataTable data
+            let dataTable = $('#patrol-report').DataTable().clear();
+
+            // Add new DataTable rows
+            filteredRecords.forEach(record => {
+                dataTable.row.add([
+                    `<div class="custom-control custom-control-sm custom-checkbox notext">
+                        <input type="checkbox" class="custom-control-input" id="uid">
+                        <label class="custom-control-label" for="uid"></label>
+                    </div>`,
+                    `<div class="user-card">
+                        <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                            <span>${record.owner.name[0]}</span>
+                        </div>
+                        <div class="user-info">
+                            <span class="tb-lead">${record.owner.name} <span class="dot dot-success d-md-none ml-1"></span></span>
+                            <span>${record.owner.phone}</span>
+                        </div>
+                    </div>`,
+                    `<span>${record.site.name}</span>`,
+                    `<span>${record.tag.name}</span>`,
+                    `<span>${record.date}</span>`,
+                    `<span>${record.time}</span>`,
+                    `<span>${record.status}</span>`
+                ]);
+            });
+
+            // Draw the DataTable
+            dataTable.draw();
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    }
+
+    const resetFilters = () => {
+        // Reset the site filter
+        $('#selectedSite').val('Choose Site');
+
+        // Reset the guard filter
+        $('#selectedGuard').val('Choose Guard');
+
+        // Reset the date range filter
+        $('#start').val('');
+        $('#end').val('');
+
+        // Reload the page
+        location.reload();
+    }
+</script>

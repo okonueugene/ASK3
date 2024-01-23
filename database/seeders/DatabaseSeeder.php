@@ -28,5 +28,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Site::factory(30)->create();
         \App\Models\Guard::factory(200)->create();
         \App\Models\Tag::factory(100)->create();
+        \App\Models\PatrolHistory::factory(1000)->create();
+
     }
 }

@@ -85,6 +85,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::put('/guards/site/{id}', [GuardsController::class, 'disassociateGuard'])->name('disassociateGuard');
         Route::patch('/guard/password/{id}', [GuardsController::class, 'updatePassword'])->name('updateGuardPassword');
         Route::post('/guards/assign', [GuardsController::class, 'assignGuardToSite'])->name('assignGuardToSite');
+        Route::post('/site/{id}/guards', [GuardsController::class, 'getSiteGuards'])->name('getSiteGuards');
 
         //incidents
         Route::get('/incidents', [IncidentsController::class, 'index'])->name('incidents');
@@ -94,6 +95,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/issues', [IssuesController::class, 'index'])->name('issues');
 
         Route::get('/patrol-reports', [PatrolReportsController::class, 'index'])->name('patrol-reports');
+        Route::post('/patrol-reports', [PatrolReportsController::class, 'filterRecords'])->name('filterRecords');
 
         //scheduler
         Route::get('/scheduler', [ScheduleController::class, 'index'])->name('scheduler');

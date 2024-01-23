@@ -183,4 +183,14 @@ class GuardsController extends Controller
             'success' => 'Guard assigned to site successfully',
         ]);
     }
+
+    public function getSiteGuards($id)
+    {
+        $guards = Site::findOrFail($id)->guards;
+
+        return response()->json([
+            'guards' => $guards,
+            'id' => $id,
+        ]);
+    }
 }
