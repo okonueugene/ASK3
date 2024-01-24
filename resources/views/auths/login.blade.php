@@ -29,9 +29,9 @@
                         <div class="brand-logo pb-4 text-center">
                             <a href="/" class="logo-link">
                                 <img class="logo-light logo-img logo-img-lg" src="{{ asset('/images/site_logo.png') }}"
-                                    srcset="./images/logo2x.png 2x" alt="logo">
+                                    srcset="{{ asset('/images/site_logo.png') }}" alt="logo">
                                 <img class="logo-dark logo-img logo-img-lg" src="{{ asset('/images/site_logo.png') }}"
-                                    srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
+                                    srcset="{{ asset('/images/site_logo.png') }}" alt="logo-dark">
                             </a>
                         </div>
                         <div class="card card-bordered">
@@ -62,10 +62,10 @@
                                     <div class="form-group">
                                         <div class="form-label-group">
                                             <label class="form-label" for="password">Passcode</label>
-                                            <a class="link link-primary link-sm" href="#">Forgot Code?</a>
+                                            <a class="link link-primary link-sm" href="javascript:void(0)">Forgot Code?</a>
                                         </div>
                                         <div class="form-control-wrap">
-                                            <a href="#" class="form-icon form-icon-right passcode-switch lg"
+                                            <a href="javascript:void(0)" class="form-icon form-icon-right passcode-switch lg"
                                                 data-target="password">
                                                 <em class="passcode-icon icon-show icon ni ni-eye"></em>
                                                 <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
@@ -84,7 +84,7 @@
 
                                 <div class="form-note-s2 text-center pt-4">
                                     <p class="text-center text-danger">{{ session('error') }}</p>
-                                    New on our platform? <a href="html/pages/auths/auth-register-v2.html">Create an
+                                    New on our platform? <a href="javascript:void(0)">Create an
                                         account</a>
                                 </div>
                                 <div class="text-center pt-4 pb-3">
@@ -98,50 +98,15 @@
                                 <div class="col-lg-6 order-lg-last">
                                     <ul class="nav nav-sm justify-content-center justify-content-lg-end">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Terms & Condition</a>
+                                            <a class="nav-link" href="javascript:void(0)">Terms & Condition</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Privacy Policy</a>
+                                            <a class="nav-link" href="javascript:void(0)">Privacy Policy</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="#">Help</a>
+                                            <a class="nav-link" href="javascript:void(0)">Help</a>
                                         </li>
-                                        <li class="nav-item dropup">
-                                            <a class="dropdown-toggle dropdown-indicator has-indicator nav-link"
-                                                data-bs-toggle="dropdown" data-offset="0,10"><span>English</span></a>
-                                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
-                                                <ul class="language-list">
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/english.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">English</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/spanish.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">Español</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/french.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">Français</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/turkey.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">Türkçe</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </li>
+                                     
                                     </ul>
                                 </div>
                                 <div class="col-lg-6">

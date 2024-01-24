@@ -15,9 +15,12 @@
                             <div class="nk-block-head-content">
                                 <div class="toggle-wrap nk-block-tools-toggle">
                                     <div class="btn-group" aria-label="Basic example">
-                                        <button type="button" class="btn  btn-sm btn-outline-primary">PDF</button>
-                                        <button type="button" class="btn btn-sm btn-outline-primary">XLSX</button>
-                                        <button type="button" class="btn btn-sm btn-outline-primary">CSV</button>
+                                        <button type="button" class="btn  btn-sm btn-outline-primary"
+                                            onclick="exportPDF()">PDF</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="exportExcel('xlsx')">XLS</button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                            onclick="exportExcel('csv')">CSV</button>
                                     </div>
                                 </div><!-- .toggle-wrap -->
                             </div><!-- .nk-block-head-content -->
@@ -158,6 +161,7 @@
     </div>
 @endsection
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 <script>
     //listen for the click event on the site filter
     $(document).ready(function() {
@@ -220,22 +224,22 @@
 
         // Make axios call
         axios.post(url)
-        .then((response) => {
-            console.log(response.data);
+            .then((response) => {
+                console.log(response.data);
 
-            let filteredRecords = response.data.records;
+                let filteredRecords = response.data.records;
 
-            // Remove existing DataTable data
-            let dataTable = $('#patrol-report').DataTable().clear();
+                // Remove existing DataTable data
+                let dataTable = $('#patrol-report').DataTable().clear();
 
-            // Add new DataTable rows
-            filteredRecords.forEach(record => {
-                dataTable.row.add([
-                    `<div class="custom-control custom-control-sm custom-checkbox notext">
+                // Add new DataTable rows
+                filteredRecords.forEach(record => {
+                    dataTable.row.add([
+                        `<div class="custom-control custom-control-sm custom-checkbox notext">
                         <input type="checkbox" class="custom-control-input" id="uid">
                         <label class="custom-control-label" for="uid"></label>
                     </div>`,
-                    `<div class="user-card">
+                        `<div class="user-card">
                         <div class="user-avatar bg-dim-primary d-none d-sm-flex">
                             <span>${record.owner.name[0]}</span>
                         </div>
@@ -244,20 +248,20 @@
                             <span>${record.owner.phone}</span>
                         </div>
                     </div>`,
-                    `<span>${record.site.name}</span>`,
-                    `<span>${record.tag.name}</span>`,
-                    `<span>${record.date}</span>`,
-                    `<span>${record.time}</span>`,
-                    `<span>${record.status}</span>`
-                ]);
-            });
+                        `<span>${record.site.name}</span>`,
+                        `<span>${record.tag.name}</span>`,
+                        `<span>${record.date}</span>`,
+                        `<span>${record.time}</span>`,
+                        `<span>${record.status}</span>`
+                    ]);
+                });
 
-            // Draw the DataTable
-            dataTable.draw();
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+                // Draw the DataTable
+                dataTable.draw();
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
     const resetFilters = () => {
@@ -273,5 +277,100 @@
 
         // Reload the page
         location.reload();
+    }
+
+    function exportExcel(ext) {
+        //get the selected site
+        let siteId = '';
+        let selectedSite = $('#selectedSite').val();
+        if (selectedSite != 'Choose Site') {
+            siteId = selectedSite;
+        }
+
+        //get the selected guard
+        let selectedGuard = $('#selectedGuard').val();
+        if (selectedGuard != 'Choose Guard') {
+            guardId = selectedGuard;
+        }
+
+        //get the selected date range
+        let startDate = $('#start').val();
+        let endDate = $('#end').val();
+
+        console.log(siteId, guardId, startDate, endDate);
+
+        let url =
+            `{{ route('admin.exportRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}&ext=${ext}`;
+        console.log(url);
+
+        // Create a hidden iframe to handle the download
+        let iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    }
+</script>
+<script>
+    function exportPDF() {
+        //get the selected site
+        let siteId = '';
+        let selectedSite = $('#selectedSite').val();
+        if (selectedSite != 'Choose Site') {
+            siteId = selectedSite;
+        }
+
+        //get the selected guard
+        let selectedGuard = $('#selectedGuard').val();
+        if (selectedGuard != 'Choose Guard') {
+            guardId = selectedGuard;
+        }
+
+        //get the selected date range
+        let startDate = $('#start').val();
+        let endDate = $('#end').val();
+
+        console.log(siteId, guardId, startDate, endDate);
+
+        let url =
+            `{{ route('admin.exportPDF') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
+
+        // Make axios call
+
+
+        axios.get(url)
+            .then((response) => {
+                console.log(response.data);
+                //initialize a spinner
+
+                let spinner = `
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            `;
+                $('#spinner').html(spinner);
+                // Display the spinner
+
+                // Check the response status and display success or error message
+                if (response.status === 200) {
+                    displaySuccess('PDF generated successfully.');
+                } else {
+                    displayError(response.data.message);
+                }
+
+                // Create a hidden iframe to handle the download
+                let iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+                document.body.appendChild(iframe);
+
+            })
+            .catch((error) => {
+                console.log(error);
+
+                // Display an error message
+                displayError(error.response.data.message);
+
+                // You might want to log the detailed error to the console or handle it differently
+            });
     }
 </script>

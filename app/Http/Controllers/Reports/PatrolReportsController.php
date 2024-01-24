@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Reports;
 
-use Carbon\Carbon;
-use App\Models\Site;
-use App\Models\Guard;
-use Illuminate\Http\Request;
-use App\Models\PatrolHistory;
+use App\Exports\PatrolReportsExport;
 use App\Http\Controllers\Controller;
+use App\Models\Guard;
+use App\Models\PatrolHistory;
+use App\Models\Site;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PatrolReportsController extends Controller
 {
@@ -40,14 +43,13 @@ class PatrolReportsController extends Controller
         }
         if ($request->filled('start_date')) {
             // Convert start date format
-            $this->filters['range']['start'] = Carbon::createFromFormat('d/m/Y', $request->input('start_date'))->format('Y-m-d');
+            $this->filters['range']['start'] = Carbon::createFromFormat('m/d/Y', $request->input('start_date'))->format('Y-m-d');
         }
-    
+
         if ($request->filled('end_date')) {
             // Convert end date format
-            $this->filters['range']['end'] = Carbon::createFromFormat('d/m/Y', $request->input('end_date'))->format('Y-m-d');
+            $this->filters['range']['end'] = Carbon::createFromFormat('m/d/Y', $request->input('end_date'))->format('Y-m-d');
         }
-    
 
         $records = $this->fetchRecords();
 
@@ -80,5 +82,73 @@ class PatrolReportsController extends Controller
             })
             ->orderBy('id', 'desc')
             ->get();
+    }
+
+    public function export(Request $request)
+    {
+        $date = Carbon::now()->format('d-m-Y');
+
+        $filters = [];
+
+        if ($request->filled('site_id') && $request->input('site_id') != null) {
+            $filters['site'] = $request->input('site_id');
+        }
+
+        if ($request->filled('guard_id') && $request->input('guard_id') != null) {
+            $filters['guard'] = $request->input('guard_id');
+        }
+        if ($request->filled('start_date')) {
+            // Convert start date format
+            $filters['range']['start'] = Carbon::createFromFormat('m/d/Y', $request->input('start_date'))->format('Y-m-d');
+        }
+
+        if ($request->filled('end_date')) {
+            // Convert end date format
+            $filters['range']['end'] = Carbon::createFromFormat('m/d/Y', $request->input('end_date'))->format('Y-m-d');
+        }
+
+        
+        $file = 'Patrol Report' . $date . '.' . $request->input('ext');
+
+        return \Excel::download(new PatrolReportsExport($filters), $file);
+    }
+
+    public function generatePdfReport(Request $request)
+    {
+        //validate the request
+        $request->validate([
+            'site_id' => 'required',
+        ]);
+
+
+          $this->filters = []; // Reset filters array
+
+        if ($request->filled('site_id') && $request->input('site_id') != null) {
+            $this->filters['site'] = $request->input('site_id');
+        }
+
+        if ($request->filled('guard_id') && $request->input('guard_id') != null) {
+            $this->filters['guard'] = $request->input('guard_id');
+        }
+        if ($request->filled('start_date')) {
+            // Convert start date format
+            $this->filters['range']['start'] = Carbon::createFromFormat('m/d/Y', $request->input('start_date'))->format('Y-m-d');
+        }
+
+        if ($request->filled('end_date')) {
+            // Convert end date format
+            $this->filters['range']['end'] = Carbon::createFromFormat('m/d/Y', $request->input('end_date'))->format('Y-m-d');
+        }
+        $site = Site::findOrFail($request->input('site_id'));
+
+
+        $records = $this->fetchRecords();
+
+        $pdfContent = PDF::loadView('exports.patrol_report', compact('records', 'site'))->output();
+
+        return response()->streamDownload(
+            fn () => print($pdfContent),
+            "patrolreport.pdf"
+        );
     }
 }

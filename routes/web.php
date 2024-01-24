@@ -96,6 +96,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('/patrol-reports', [PatrolReportsController::class, 'index'])->name('patrol-reports');
         Route::post('/patrol-reports', [PatrolReportsController::class, 'filterRecords'])->name('filterRecords');
+        Route::get('/patrol-reports/export', [PatrolReportsController::class, 'export'])->name('exportRecords');
+        Route::get('/patrol-reports/export/pdf', [PatrolReportsController::class, 'generatePdfReport'])->name('exportPDF');
 
         //scheduler
         Route::get('/scheduler', [ScheduleController::class, 'index'])->name('scheduler');
