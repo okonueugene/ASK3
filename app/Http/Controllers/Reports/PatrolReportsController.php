@@ -7,10 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Guard;
 use App\Models\PatrolHistory;
 use App\Models\Site;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class PatrolReportsController extends Controller
 {
@@ -22,7 +21,7 @@ class PatrolReportsController extends Controller
 
         $title = 'Patrol Reports';
         $sites = Site::where('company_id', auth()->user()->company_id)->get();
-        $guards = $this->handleGuardFilter($request);
+        $guards = Guard::where('company_id', auth()->user()->company_id)->get();
 
         $records = $this->fetchRecords();
         $total = count($records);
@@ -57,17 +56,7 @@ class PatrolReportsController extends Controller
 
     }
 
-    private function handleGuardFilter(Request $request)
-    {
-        $guards = Guard::where('company_id', auth()->user()->company_id)->get();
-
-        if ($request->filled('site_id') && $request->input('site_id') != null) {
-            $guards = $guards->where('site_id', $request->input('site_id'));
-        }
-
-        return $guards;
-    }
-
+ 
     private function fetchRecords()
     {
         return PatrolHistory::with(['patrol', 'site', 'tag', 'company', 'owner'])
@@ -107,8 +96,7 @@ class PatrolReportsController extends Controller
             $filters['range']['end'] = Carbon::createFromFormat('m/d/Y', $request->input('end_date'))->format('Y-m-d');
         }
 
-        
-        $file = 'Patrol Report' . $date . '.' . $request->input('ext');
+        $file = 'Patrol Report ' . $date . '.' . $request->input('ext');
 
         return \Excel::download(new PatrolReportsExport($filters), $file);
     }
@@ -120,9 +108,8 @@ class PatrolReportsController extends Controller
             'site_id' => 'required',
         ]);
 
-
-          $this->filters = []; // Reset filters array
-
+        $this->filters = []; // Reset filters array
+      
         if ($request->filled('site_id') && $request->input('site_id') != null) {
             $this->filters['site'] = $request->input('site_id');
         }
@@ -141,14 +128,15 @@ class PatrolReportsController extends Controller
         }
         $site = Site::findOrFail($request->input('site_id'));
 
-
         $records = $this->fetchRecords();
 
         $pdfContent = PDF::loadView('exports.patrol_report', compact('records', 'site'))->output();
 
+
         return response()->streamDownload(
-            fn () => print($pdfContent),
-            "patrolreport.pdf"
+            fn() => print($pdfContent),
+            $site->name . ' Patrol Report ' . date('d-m-Y') . '.pdf'
         );
+
     }
 }

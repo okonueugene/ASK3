@@ -104,6 +104,9 @@ Route::group(['middleware' => ['auth']], function () {
 
 
         Route::get('/attendance-reports', [AttendanceController::class, 'index'])->name('attendance-reports');
+        Route::post('/attendance-reports', [AttendanceController::class, 'filterRecords'])->name('filterAttendanceRecords');
+        Route::get('/attendance-reports/export', [AttendanceController::class, 'export'])->name('exportAttendanceRecords');
+        Route::get('/attendance-reports/export/pdf', [AttendanceController::class, 'generatePdfReport'])->name('exportAttendancePDF');
     });
 
     Route::group(['prefix' => 'client', 'middleware' => 'client' , 'as' => 'client.'], function () {

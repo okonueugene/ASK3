@@ -26,7 +26,6 @@
                             </div><!-- .nk-block-head-content -->
                         </div><!-- .nk-block-between -->
                     </div><!-- .nk-block-head -->
-
                     <div class="nk-block-head nk-block-head-sm">
                         <div class="nk-block-between d-flex justify-space-between">
                             <div class="d-flex justify-content-between">
@@ -83,6 +82,10 @@
                         <div class="card card-bordered card-stretch">
                             <div class="card-inner-group">
                                 <div class="card-inner p-0">
+                                    <div id="loading" class="spinner-border text-info" role="status"
+                                        style="position:absolute;left:50%;top:25%;z-index:1000;display:none">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
                                     <table id="patrol-report" class="datatable-init nk-tb-list nk-tb-ulist"
                                         data-auto-responsive="false">
                                         <thead>
@@ -168,7 +171,6 @@
         $('#selectedSite').on('change', function() {
             //get the selected site
             let siteId = $(this).val();
-            console.log(siteId);
 
             //get the url
             let url = `{{ route('admin.getSiteGuards', ':siteId') }}`;
@@ -179,7 +181,6 @@
             // Make axios call
             axios.post(url)
                 .then((response) => {
-                    console.log(response.data);
 
                     let guards = response.data.guards;
 
@@ -217,7 +218,6 @@
         let startDate = $('#start').val();
         let endDate = $('#end').val();
 
-        console.log(siteId, guardId, startDate, endDate);
 
         let url =
             `{{ route('admin.filterRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
@@ -225,7 +225,6 @@
         // Make axios call
         axios.post(url)
             .then((response) => {
-                console.log(response.data);
 
                 let filteredRecords = response.data.records;
 
@@ -297,11 +296,9 @@
         let startDate = $('#start').val();
         let endDate = $('#end').val();
 
-        console.log(siteId, guardId, startDate, endDate);
 
         let url =
             `{{ route('admin.exportRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}&ext=${ext}`;
-        console.log(url);
 
         // Create a hidden iframe to handle the download
         let iframe = document.createElement('iframe');
@@ -312,6 +309,9 @@
 </script>
 <script>
     function exportPDF() {
+        let spinner = document.getElementById('loading');
+        spinner.style.display = 'block';
+
         //get the selected site
         let siteId = '';
         let selectedSite = $('#selectedSite').val();
@@ -329,7 +329,6 @@
         let startDate = $('#start').val();
         let endDate = $('#end').val();
 
-        console.log(siteId, guardId, startDate, endDate);
 
         let url =
             `{{ route('admin.exportPDF') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
@@ -339,22 +338,16 @@
 
         axios.get(url)
             .then((response) => {
-                console.log(response.data);
-                //initialize a spinner
-
-                let spinner = `
-            <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-            `;
-                $('#spinner').html(spinner);
-                // Display the spinner
 
                 // Check the response status and display success or error message
                 if (response.status === 200) {
                     displaySuccess('PDF generated successfully.');
                 } else {
+
                     displayError(response.data.message);
+
+                // Hide the spinner
+                spinner.style.display = 'none';
                 }
 
                 // Create a hidden iframe to handle the download
@@ -363,6 +356,9 @@
                 iframe.src = url;
                 document.body.appendChild(iframe);
 
+                // Hide the spinner
+                spinner.style.display = 'none';
+
             })
             .catch((error) => {
                 console.log(error);
@@ -370,7 +366,10 @@
                 // Display an error message
                 displayError(error.response.data.message);
 
-                // You might want to log the detailed error to the console or handle it differently
+                // Hide the spinner
+                spinner.style.display = 'none';
             });
+
+
     }
 </script>
