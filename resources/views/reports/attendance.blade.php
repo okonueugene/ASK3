@@ -217,6 +217,7 @@
     });
 
     const filterRecords = () => {
+
         //get the selected site
         let siteId = '';
         let selectedSite = $('#selectedSite').val();
@@ -238,10 +239,17 @@
         let url =
             `{{ route('admin.filterAttendanceRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
         console.log(url);
-
+        //show the spinner
+        let spinner = document.getElementById('loading');
+        spinner.style.display = 'block';
         // Make axios call
         axios.post(url)
             .then((response) => {
+                if (response.status === 200) {
+                    displaySuccess('Records filtered successfully.');
+                } else {
+                    displayError(response.data.message);
+                }
                 let filteredRecords = response.data.records;
                 console.log(filteredRecords);
                 // Remove existing DataTable data
@@ -272,10 +280,15 @@
                         `<span>${record.time_out ? diffInHours(record.time_in, record.time_out) : 'Not Available'}</span>`
                     ]).draw(false);
                 });
+                //remove the spinner
+                spinner.style.display = 'none';
 
             })
             .catch((error) => {
                 console.log(error);
+
+                // Display an error message
+                displayError(error.response.data.message);
             });
 
     }
@@ -316,12 +329,37 @@
 
         let url =
             `{{ route('admin.exportAttendanceRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}&ext=${ext}`;
+        //show the spinner
+        let spinner = document.getElementById('loading');
+        spinner.style.display = 'block';
+        //make axios call
+        axios.get(url)
+            .then((response) => {
+
+                // Check the response status and display success or error message
+                if (response.status === 200) {
+                    displaySuccess('Records exported successfully.');
+                } else {
+
+                    displayError(response.data.message);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+
+                // Display an error message
+                displayError(error.response.data.message);
+            });
+
 
         // Create a hidden iframe to handle the download
         let iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         iframe.src = url;
         document.body.appendChild(iframe);
+
+        //remove the spinner
+        spinner.style.display = 'none';
     }
 </script>
 <script>

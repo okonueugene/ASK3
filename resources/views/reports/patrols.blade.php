@@ -230,6 +230,8 @@
         let url =
             `{{ route('admin.filterRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
 
+        let spinner = document.getElementById('loading');
+        spinner.style.display = 'block';
         // Make axios call
         axios.post(url)
             .then((response) => {
@@ -265,9 +267,16 @@
 
                 // Draw the DataTable
                 dataTable.draw();
+                // Hide the spinner
+                spinner.style.display = 'none';
             })
             .catch((error) => {
                 console.log(error);
+
+                //display an error message
+                displayError(error.response.data.message);
+                // Hide the spinner
+                spinner.style.display = 'none';
             });
     }
 
@@ -308,18 +317,45 @@
         let url =
             `{{ route('admin.exportRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}&ext=${ext}`;
 
+        //show the spinner
+        let spinner = document.getElementById('loading');
+        spinner.style.display = 'block';
+        //make axios call
+        axios.get(url)
+            .then((response) => {
+
+                // Check the response status and display success or error message
+                if (response.status === 200) {
+                    displaySuccess('Records exported successfully.');
+                    // Hide the spinner
+                    spinner.style.display = 'none';
+                } else {
+
+                    displayError(response.data.message);
+                    // Hide the spinner
+                    spinner.style.display = 'none';
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+
+                // Display an error message
+                displayError(error.response.data.message);
+                // Hide the spinner
+                spinner.style.display = 'none';
+            });
         // Create a hidden iframe to handle the download
         let iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         iframe.src = url;
         document.body.appendChild(iframe);
+
+        // Hide the spinner
+        spinner.style.display = 'none';
     }
 </script>
 <script>
     function exportPDF() {
-        let spinner = document.getElementById('loading');
-        spinner.style.display = 'block';
-
         //get the selected site
         let siteId = '';
         let selectedSite = $('#selectedSite').val();
@@ -340,7 +376,8 @@
 
         let url =
             `{{ route('admin.exportPDF') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
-
+        let spinner = document.getElementById('loading');
+        spinner.style.display = 'block';
         // Make axios call
 
 
@@ -350,6 +387,8 @@
                 // Check the response status and display success or error message
                 if (response.status === 200) {
                     displaySuccess('PDF generated successfully.');
+                    // Hide the spinner
+                    spinner.style.display = 'none';
                 } else {
 
                     displayError(response.data.message);
@@ -377,7 +416,5 @@
                 // Hide the spinner
                 spinner.style.display = 'none';
             });
-
-
     }
 </script>

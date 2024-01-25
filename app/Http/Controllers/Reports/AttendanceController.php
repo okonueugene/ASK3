@@ -78,6 +78,11 @@ class AttendanceController extends Controller
 
     public function export(Request $request)
     {
+        //validate the request
+        $request->validate([
+            'site_id' => 'required',
+        ]);
+
         $filters = [];
 
         if ($request->filled('site_id') && $request->input('site_id') != null) {
@@ -110,6 +115,13 @@ class AttendanceController extends Controller
         } else {
             $file = 'Attendance Report ' . $date . '.' . $request->input('ext');
         }
+
+        activity()
+            ->performedOn($site)
+            ->event('generated')
+            ->causedBy(auth()->user())
+            ->useLog('Attendance Report')
+            ->log('Generated an Excel attendance report for ' . $site->name);
 
         return Excel::download(new AttendanceReportsExport($filters), $file);
     }
@@ -176,11 +188,17 @@ class AttendanceController extends Controller
         $reportTitle .= $guardName ? ' - ' . $guardName : '';
 
         $pdf = Pdf::loadView('exports.attendance_report', compact('records', 'reportTitle', 'timestamp', 'site'));
+        //log the user activity
+        activity()
+            ->performedOn($site)
+            ->event('generated')
+            ->causedBy(auth()->user())
+            ->useLog('Attendance Report')
+            ->log('Generated a PDF attendance report for ' . $site->name);
 
         return response()->streamDownload(
             fn() => print($pdf->output()),
             $site->name . ' Attendance Report ' . date('d-m-Y') . '.pdf'
         );
-
     }
 }

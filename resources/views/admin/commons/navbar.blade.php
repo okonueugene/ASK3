@@ -110,7 +110,7 @@
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
                                         <span class="nk-menu-text">Configuration</span>
                                     </a>
-                                    <ul class="nk-menu-sub">
+                                    {{-- <ul class="nk-menu-sub">
                                         <li class="nk-menu-item has-sub">
                                             <a href="#" class="nk-menu-link nk-menu-toggle">
                                                 <span class="nk-menu-text">Ui Elements</span>
@@ -499,7 +499,7 @@
                                                 <span class="nk-menu-text">Email Template</span>
                                             </a>
                                         </li>
-                                    </ul><!-- .nk-menu-sub -->
+                                    </ul><!-- .nk-menu-sub --> --}}
                                 </li><!-- .nk-menu-item -->
                             </ul><!-- .nk-menu -->
                         </div><!-- .nk-header-menu -->

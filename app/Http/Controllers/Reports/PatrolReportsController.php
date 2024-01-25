@@ -56,7 +56,6 @@ class PatrolReportsController extends Controller
 
     }
 
- 
     private function fetchRecords()
     {
         return PatrolHistory::with(['patrol', 'site', 'tag', 'company', 'owner'])
@@ -75,6 +74,11 @@ class PatrolReportsController extends Controller
 
     public function export(Request $request)
     {
+
+        $request->validate([
+            'site_id' => 'required',
+        ]);
+
         $date = Carbon::now()->format('d-m-Y');
 
         $filters = [];
@@ -96,7 +100,16 @@ class PatrolReportsController extends Controller
             $filters['range']['end'] = Carbon::createFromFormat('m/d/Y', $request->input('end_date'))->format('Y-m-d');
         }
 
+        $site = Site::findOrFail($request->input('site_id'));
+
         $file = 'Patrol Report ' . $date . '.' . $request->input('ext');
+
+        activity()
+            ->causedBy(auth()->user())
+            ->event('generated')
+            ->performedOn($request->user())
+            ->useLog('Patrol Report')
+            ->log('Generated an ' . strtoupper($request->input('ext')) . ' For ' . $site->name);
 
         return \Excel::download(new PatrolReportsExport($filters), $file);
     }
@@ -109,7 +122,7 @@ class PatrolReportsController extends Controller
         ]);
 
         $this->filters = []; // Reset filters array
-      
+
         if ($request->filled('site_id') && $request->input('site_id') != null) {
             $this->filters['site'] = $request->input('site_id');
         }
@@ -132,6 +145,12 @@ class PatrolReportsController extends Controller
 
         $pdfContent = PDF::loadView('exports.patrol_report', compact('records', 'site'))->output();
 
+        activity()
+            ->performedOn($site)
+            ->event('generated')
+            ->causedBy(auth()->user())
+            ->useLog('Attendance Report')
+            ->log('Generated a PDF Attendance report for ' . $site->name);
 
         return response()->streamDownload(
             fn() => print($pdfContent),
