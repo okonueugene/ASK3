@@ -12,6 +12,7 @@ class SiteIncidentsController extends Controller
     {
         $title = 'Site Incidents';
         $site = Site::findOrFail($id);
-        return view('admin.sites.incidents', compact('title', 'site'));
+        $incidents = $site->incidents()->orderBy('id', 'DESC')->get();
+        return view('admin.sites.incidents', compact('title', 'site', 'incidents'));
     }
 }

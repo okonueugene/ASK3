@@ -32,6 +32,7 @@
 
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
+                                @if (count($guards) > 0)
                                 <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
                                     <thead>
                                         <tr class="nk-tb-item nk-tb-head">
@@ -55,12 +56,6 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (count($guards) == 0)
-                                            <tr>
-                                                <td colspan="8" class="text-center">No Guards Found</td>
-                                            </tr>
-                                        @endif
-
                                         @foreach ($guards as $guard)
                                             <tr>
                                                 <td class="nk-tb-col nk-tb-col-check">
@@ -180,6 +175,15 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+                            @else
+                                <table class="table text-center">
+                                    <tr>
+                                        <td class="nk-tb-col">
+                                            <span>No Records Found</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @endif
                             </div>
                         </div>
                     </div>

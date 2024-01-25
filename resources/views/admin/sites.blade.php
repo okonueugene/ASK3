@@ -37,140 +37,148 @@
                     <div class="nk-block">
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
-                                <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
-                                    <thead>
-                                        <tr class="nk-tb-item nk-tb-head">
-                                            <th class="nk-tb-col nk-tb-col-check">
-                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                    <input type="checkbox" class="custom-control-input" id="uid">
-                                                    <label class="custom-control-label" for="uid"></label>
-                                                </div>
-                                            </th>
-                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
-                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Site Owner</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Location</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Country</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Timezone</span></th>
-                                            <th class="nk-tb-col nk-tb-col-tools text-end">
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (count($sites) < 1)
-                                            <tr class="nk-tb-item">
-                                                <td colspan="8" class="text-center">
-                                                    <h4>No Sites Found</h4>
-                                                </td>
-                                        @endif
-                                        @foreach ($sites as $site)
-                                            <tr class="nk-tb-item">
-                                                <td class="nk-tb-col nk-tb-col-check">
+                                @if (count($sites) > 0)
+                                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head">
+                                                <th class="nk-tb-col nk-tb-col-check">
                                                     <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                        <input type="checkbox" class="custom-control-input" id="uid1">
-                                                        <label class="custom-control-label" for="uid1"></label>
+                                                        <input type="checkbox" class="custom-control-input" id="uid">
+                                                        <label class="custom-control-label" for="uid"></label>
                                                     </div>
-                                                </td>
-                                                <td class="nk-tb-col">
-                                                    <div class="user-card">
-                                                        <div class="user-avatar bg-dim-primary d-none d-sm-flex">
-                                                            <span>
-                                                                @if ($site->media->count() == 0)
-                                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($site->name) }}&color=f76b0e&background=ffffff"
-                                                                        alt="{{ $site->name }}">
-                                                                @else
-                                                                    <img src="{{ asset(str_replace('http://localhost', '', $site->media->first()->getUrl())) }}"
-                                                                        alt="{{ $site->name }}">
-                                                                @endif
-                                                            </span>
+                                                </th>
+                                                <th class="nk-tb-col"><span class="sub-text">Name</span></th>
+                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Site Owner</span>
+                                                </th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Location</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Country</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Timezone</span></th>
+                                                <th class="nk-tb-col nk-tb-col-tools text-end">
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
 
+                                            @foreach ($sites as $site)
+                                                <tr class="nk-tb-item">
+                                                    <td class="nk-tb-col nk-tb-col-check">
+                                                        <div
+                                                            class="custom-control custom-control-sm custom-checkbox notext">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="uid1">
+                                                            <label class="custom-control-label" for="uid1"></label>
                                                         </div>
-                                                        <div class="user-info">
-                                                            <span class="tb-lead">{{ $site->name }}<span
-                                                                    class="dot dot-success d-md-none ms-1"></span></span>
-                                                            <span>info@softnio.com</span>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="nk-tb-col tb-col-mb" data-order="35040.34">
-                                                    <span class="tb-amount">{{ $site->owner->name ?? 'N/A' }}</span>
-                                                </td>
-                                                <td class="nk-tb-col tb-col-md">
-                                                    <span>{{ $site->location }}</span>
-                                                </td>
-                                                <td class="nk-tb-col tb-col-lg">
-                                                    <span>{{ $site->country }}</span>
-                                                </td>
-                                                <td class="nk-tb-col tb-col-lg">
-                                                    @if ($site->is_active == 1)
-                                                        <span class="tb-status text-success">Active</span>
-                                                    @else
-                                                        <span class="tb-status text-danger">Inactive</span>
-                                                    @endif
-                                                </td>
-                                                <td class="nk-tb-col tb-col-md">
-                                                    <span class="tb-amount">{{ $site->timezone }}</span>
-                                                </td>
-                                                <td class="nk-tb-col nk-tb-col-tools">
-                                                    <ul class="nk-tb-actions gx-1">
+                                                    </td>
+                                                    <td class="nk-tb-col">
+                                                        <div class="user-card">
+                                                            <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                                <span>
+                                                                    @if ($site->media->count() == 0)
+                                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($site->name) }}&color=f76b0e&background=ffffff"
+                                                                            alt="{{ $site->name }}">
+                                                                    @else
+                                                                        <img src="{{ asset(str_replace('http://localhost', '', $site->media->first()->getUrl())) }}"
+                                                                            alt="{{ $site->name }}">
+                                                                    @endif
+                                                                </span>
 
-                                                        <li>
-                                                            <div class="drodown">
-                                                                <a href="#"
-                                                                    class="dropdown-toggle btn btn-icon btn-trigger"
-                                                                    data-bs-toggle="dropdown"><em
-                                                                        class="icon ni ni-more-h"></em></a>
-                                                                <div class="dropdown-menu dropdown-menu-end">
-                                                                    <ul class="link-list-opt no-bdr">
-                                                                        <li>
-                                                                            <a href="javascript:void(0)"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#viewSiteModal"
-                                                                                onclick="quickView({{ $site->id }})">
-
-                                                                                <em class="icon ni ni-focus"></em>
-                                                                                <span>Quick View</span>
-                                                                            </a>
-                                                                        </li>
-                                                                        <li><a
-                                                                                href="{{ route('admin.site-overview', $site->id) }}"><em
-                                                                                    class="icon ni ni-eye"></em><span>View
-                                                                                    Site</span></a></li>
-                                                                        <li><a href="javascript:void(0)"
-                                                                                onclick="updateSite({{ $site->id }})"><em
-                                                                                    class="icon ni ni-repeat"></em><span>Update
-                                                                                    Site</span></a>
-                                                                        </li>
-                                                                        @if ($site->is_active == 1)
-                                                                            <li>
-                                                                                <a href="javascript:void(0)"
-                                                                                    onclick="suspendSite({{ $site->id }})">
-                                                                                    <em class="icon ni ni-na"></em>
-                                                                                    <span>Suspend Site</span>
-                                                                                </a>
-                                                                            </li>
-                                                                        @else
-                                                                            <li>
-                                                                                <a href="javascript:void(0)"
-                                                                                    onclick="suspendSite({{ $site->id }})">
-                                                                                    <em class="icon ni ni-check"></em>
-                                                                                    <span>Activate Site</span>
-                                                                                </a>
-                                                                            </li>
-                                                                        @endif
-                                                                        <li><a href="javascript:void(0)"><em
-                                                                                    class="icon ni ni-trash"></em><span>Remove
-                                                                                    Site</span></a></li>
-                                                                    </ul>
-                                                                </div>
                                                             </div>
-                                                        </li>
-                                                    </ul>
-                                                </td>
-                                            </tr><!-- .nk-tb-item  -->
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                                            <div class="user-info">
+                                                                <span class="tb-lead">{{ $site->name }}<span
+                                                                        class="dot dot-success d-md-none ms-1"></span></span>
+                                                                <span>info@softnio.com</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-mb" data-order="35040.34">
+                                                        <span class="tb-amount">{{ $site->owner->name ?? 'N/A' }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-md">
+                                                        <span>{{ $site->location }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-lg">
+                                                        <span>{{ $site->country }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-lg">
+                                                        @if ($site->is_active == 1)
+                                                            <span class="tb-status text-success">Active</span>
+                                                        @else
+                                                            <span class="tb-status text-danger">Inactive</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="nk-tb-col tb-col-md">
+                                                        <span class="tb-amount">{{ $site->timezone }}</span>
+                                                    </td>
+                                                    <td class="nk-tb-col nk-tb-col-tools">
+                                                        <ul class="nk-tb-actions gx-1">
+
+                                                            <li>
+                                                                <div class="drodown">
+                                                                    <a href="#"
+                                                                        class="dropdown-toggle btn btn-icon btn-trigger"
+                                                                        data-bs-toggle="dropdown"><em
+                                                                            class="icon ni ni-more-h"></em></a>
+                                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                                        <ul class="link-list-opt no-bdr">
+                                                                            <li>
+                                                                                <a href="javascript:void(0)"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#viewSiteModal"
+                                                                                    onclick="quickView({{ $site->id }})">
+
+                                                                                    <em class="icon ni ni-focus"></em>
+                                                                                    <span>Quick View</span>
+                                                                                </a>
+                                                                            </li>
+                                                                            <li><a
+                                                                                    href="{{ route('admin.site-overview', $site->id) }}"><em
+                                                                                        class="icon ni ni-eye"></em><span>View
+                                                                                        Site</span></a></li>
+                                                                            <li><a href="javascript:void(0)"
+                                                                                    onclick="updateSite({{ $site->id }})"><em
+                                                                                        class="icon ni ni-repeat"></em><span>Update
+                                                                                        Site</span></a>
+                                                                            </li>
+                                                                            @if ($site->is_active == 1)
+                                                                                <li>
+                                                                                    <a href="javascript:void(0)"
+                                                                                        onclick="suspendSite({{ $site->id }})">
+                                                                                        <em class="icon ni ni-na"></em>
+                                                                                        <span>Suspend Site</span>
+                                                                                    </a>
+                                                                                </li>
+                                                                            @else
+                                                                                <li>
+                                                                                    <a href="javascript:void(0)"
+                                                                                        onclick="suspendSite({{ $site->id }})">
+                                                                                        <em class="icon ni ni-check"></em>
+                                                                                        <span>Activate Site</span>
+                                                                                    </a>
+                                                                                </li>
+                                                                            @endif
+                                                                            <li><a href="javascript:void(0)"><em
+                                                                                        class="icon ni ni-trash"></em><span>Remove
+                                                                                        Site</span></a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr><!-- .nk-tb-item  -->
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <table class="table text-center">
+                                        <tr>
+                                            <td class="nk-tb-col">
+                                                <span>No Records Found</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                @endif
                             </div>
                         </div>
                     </div>

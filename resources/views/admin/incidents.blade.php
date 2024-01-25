@@ -1,7 +1,7 @@
 @extends('admin.layouts.layout')
 @section('content')
     <!-- content @s
-                        -->
+                                -->
         <div class="nk-content ">
             <div class="container-fluid">
                 <div class="nk-content-inner">
@@ -27,29 +27,31 @@
                         <div class="nk-block">
                             <div class="card card-bordered card-preview">
                                 <div class="card-inner">
-                                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
-                                        <thead>
-                                            <tr class="nk-tb-item nk-tb-head">
-                                                <th class="nk-tb-col nk-tb-col-check">
-                                                    <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                        <input type="checkbox" class="custom-control-input" id="uid">
-                                                        <label class="custom-control-label" for="uid"></label>
-                                                    </div>
-                                                </th>
-                                                <th class="nk-tb-col"><span class="sub-text">Incident No</span></th>
-                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Police Ref</span></th>
-                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Title</span></th>
-                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Date</span></th>
-                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Reported By</span></th>
-                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
+                                    @if (count($incidents) > 0)
+                                        <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head">
+                                                    <th class="nk-tb-col nk-tb-col-check">
+                                                        <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                            <input type="checkbox" class="custom-control-input" id="uid">
+                                                            <label class="custom-control-label" for="uid"></label>
+                                                        </div>
+                                                    </th>
+                                                    <th class="nk-tb-col"><span class="sub-text">Incident No</span></th>
+                                                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Police Ref</span>
+                                                    </th>
+                                                    <th class="nk-tb-col tb-col-md"><span class="sub-text">Title</span></th>
+                                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Date</span></th>
+                                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Reported By</span>
+                                                    </th>
+                                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
 
-                                                <th class="nk-tb-col nk-tb-col-tools text-right">
-                                                </th>
+                                                    <th class="nk-tb-col nk-tb-col-tools text-right">
+                                                    </th>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @if (count($incidents) > 0)
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                                 @foreach ($incidents as $incident)
                                                     <tr>
                                                         <td class="nk-tb-col nk-tb-col-check">
@@ -115,14 +117,17 @@
                                                         </td>
                                                     </tr><!-- .nk-tb-item  -->
                                                 @endforeach
-                                            @else
-                                                <tr>
-                                                    <td colspan="8" class="text-center">No Incidents Found</td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <table class="table text-center">
+                                            <tr>
+                                                <td class="nk-tb-col">
+                                                    <span>No Records Found</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    @endif
                                 </div>
                             </div>
                         </div>

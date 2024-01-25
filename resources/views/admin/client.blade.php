@@ -68,10 +68,13 @@
                                                                 @endif
                                                             </td>
                                                             <td>
-                                                                <form action="{{ route('delete-invitation', ['id' => $invitation->id]) }}" method="post">
+                                                                <form
+                                                                    action="{{ route('delete-invitation', ['id' => $invitation->id]) }}"
+                                                                    method="post">
                                                                     @csrf
                                                                     @method('delete')
-                                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this invitation?')">Delete</button>
+                                                                    <button type="submit" class="btn btn-sm btn-danger"
+                                                                        onclick="return confirm('Are you sure you want to delete this invitation?')">Delete</button>
                                                                 </form>
                                                             </td>
                                                         </tr>
@@ -93,24 +96,25 @@
                     <div class="nk-block">
                         <div class="card card-bordered card-preview">
                             <div class="card-inner">
-                                <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
-                                    <thead>
-                                        <tr class="nk-tb-item nk-tb-head">
-                                            <th class="nk-tb-col nk-tb-col-check">
-                                                <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                    <input type="checkbox" class="custom-control-input" id="uid">
-                                                    <label class="custom-control-label" for="uid"></label>
-                                                </div>
-                                            </th>
-                                            <th class="nk-tb-col"><span class="sub-text">Client Name</span></th>
-                                            <th class="nk-tb-col tb-col-mb"><span class="sub-text">Email</span></th>
-                                            <th class="nk-tb-col tb-col-md"><span class="sub-text">Site</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
-                                            <th class="nk-tb-col tb-col-lg"><span class="sub-text">Action</span></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (count($clients) > 0)
+                                @if (count($clients) > 0)
+                                    <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false">
+                                        <thead>
+                                            <tr class="nk-tb-item nk-tb-head">
+                                                <th class="nk-tb-col nk-tb-col-check">
+                                                    <div class="custom-control custom-control-sm custom-checkbox notext">
+                                                        <input type="checkbox" class="custom-control-input" id="uid">
+                                                        <label class="custom-control-label" for="uid"></label>
+                                                    </div>
+                                                </th>
+                                                <th class="nk-tb-col"><span class="sub-text">Client Name</span></th>
+                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Email</span></th>
+                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Site</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span></th>
+                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Action</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
                                             @foreach ($clients as $client)
                                                 <tr>
                                                     <td class="nk-tb-col">
@@ -214,15 +218,17 @@
                                                     </td>
                                                 </tr><!-- .nk-tb-item  -->
                                             @endforeach
-                                        @else
-                                            <tr class="nk-tb-item nk-tb-head">
-                                                <td colspan="5" class="text-center">
-                                                    <h5>No Clients Found</h5>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <table class="table text-center">
+                                        <tr>
+                                            <td class="nk-tb-col">
+                                                <span>No Records Found</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                @endif
                             </div>
                         </div>
                     </div><!-- .nk-block -->

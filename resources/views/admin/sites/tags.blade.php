@@ -26,30 +26,34 @@
                                     <div class="nk-block">
                                         <div class="card card-bordered card-preview">
                                             <div class="card-inner">
-                                                <table class="datatable-init nk-tb-list nk-tb-ulist"
-                                                    data-auto-responsive="false">
-                                                    <thead>
-                                                        <tr class="nk-tb-item nk-tb-head">
-                                                            <th class="nk-tb-col nk-tb-col-check">
-                                                                <div
-                                                                    class="custom-control custom-control-sm custom-checkbox notext">
-                                                                    <input type="checkbox" class="custom-control-input"
-                                                                        id="uid">
-                                                                    <label class="custom-control-label"
-                                                                        for="uid"></label>
-                                                                </div>
-                                                            </th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Name</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Type</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Code</span></th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Location</span>
-                                                            </th>
-                                                            <th class="nk-tb-col"><span class="sub-text">Action</span></th>
-                                                        </tr>
-                                                    </thead>
+                                                @if (count($tags) > 0)
+                                                    <table class="datatable-init nk-tb-list nk-tb-ulist"
+                                                        data-auto-responsive="false">
+                                                        <thead>
+                                                            <tr class="nk-tb-item nk-tb-head">
+                                                                <th class="nk-tb-col nk-tb-col-check">
+                                                                    <div
+                                                                        class="custom-control custom-control-sm custom-checkbox notext">
+                                                                        <input type="checkbox" class="custom-control-input"
+                                                                            id="uid">
+                                                                        <label class="custom-control-label"
+                                                                            for="uid"></label>
+                                                                    </div>
+                                                                </th>
+                                                                <th class="nk-tb-col"><span class="sub-text">Name</span>
+                                                                </th>
+                                                                <th class="nk-tb-col"><span class="sub-text">Type</span>
+                                                                </th>
+                                                                <th class="nk-tb-col"><span class="sub-text">Code</span>
+                                                                </th>
+                                                                <th class="nk-tb-col"><span class="sub-text">Location</span>
+                                                                </th>
+                                                                <th class="nk-tb-col"><span class="sub-text">Action</span>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
 
-                                                    <tbody>
-                                                        @if (count($tags) > 0)
+                                                        <tbody>
                                                             @foreach ($tags as $tag)
                                                                 <tr>
                                                                     <td class="nk-tb-col">
@@ -92,13 +96,18 @@
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
-                                                        @else
-                                                            <tr>
-                                                                <td colspan="6" class="text-center">No tags found</td>
-                                                            </tr>
-                                                        @endif
-                                                    </tbody>
-                                                </table>
+
+                                                        </tbody>
+                                                    </table>
+                                                @else
+                                                    <table class="table text-center">
+                                                        <tr>
+                                                            <td class="nk-tb-col">
+                                                                <span>No Records Found</span>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                @endif
                                             </div>
                                         </div><!-- .card-preview -->
                                     </div>

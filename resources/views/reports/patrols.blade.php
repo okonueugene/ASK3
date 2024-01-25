@@ -86,73 +86,81 @@
                                         style="position:absolute;left:50%;top:25%;z-index:1000;display:none">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
-                                    <table id="patrol-report" class="datatable-init nk-tb-list nk-tb-ulist"
-                                        data-auto-responsive="false">
-                                        <thead>
-                                            <tr class="nk-tb-item nk-tb-head">
-                                                <th class="nk-tb-col nk-tb-col-check">
-                                                    <div class="custom-control custom-control-sm custom-checkbox notext">
-                                                        <input type="checkbox" class="custom-control-input" id="uid">
-                                                        <label class="custom-control-label" for="uid"></label>
-                                                    </div>
-                                                </th>
-                                                <th class="nk-tb-col"><span class="sub-text">Guard</span></th>
-                                                <th class="nk-tb-col tb-col-mb"><span class="sub-text">Site</span>
-                                                </th>
-                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Tag</span></th>
-                                                <th class="nk-tb-col tb-col-md"><span class="sub-text">Date</span></th>
-                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Time</span></th>
-                                                <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span>
-                                                </th>
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($records as $record)
-                                                <tr>
-                                                    <td class="nk-tb-col nk-tb-col-check">
+                                    @if (count($records) > 0)
+                                        <table id="patrol-report" class="datatable-init nk-tb-list nk-tb-ulist"
+                                            data-auto-responsive="false">
+                                            <thead>
+                                                <tr class="nk-tb-item nk-tb-head">
+                                                    <th class="nk-tb-col nk-tb-col-check">
                                                         <div
                                                             class="custom-control custom-control-sm custom-checkbox notext">
                                                             <input type="checkbox" class="custom-control-input"
-                                                                id="uid1">
-                                                            <label class="custom-control-label" for="uid1"></label>
+                                                                id="uid">
+                                                            <label class="custom-control-label" for="uid"></label>
                                                         </div>
-                                                    </td>
-                                                    <td class="nk-tb-col">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar bg-dim-primary d-none d-sm-flex">
-                                                                <span>{{ $record->owner->name[0] }}</span>
-                                                            </div>
-                                                            <div class="user-info">
-                                                                <span class="tb-lead">{{ $record->owner->name }} <span
-                                                                        class="dot dot-success d-md-none ml-1"></span></span>
-                                                                <span>{{ $record->owner->phone }}</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="nk-tb-col tb-col-mb">
-                                                        <span>{{ $record->site->name }}</span>
-                                                    </td>
-                                                    <td class="nk-tb-col tb-col-md">
-                                                        <span>{{ $record->tag->name }}</span>
-                                                    </td>
-                                                    <td class="nk-tb-col tb-col-md">
-                                                        <span>{{ $record->date }}</span>
-                                                    </td>
-                                                    <td class="nk-tb-col tb-col-lg">
-                                                        <span>{{ $record->time }}</span>
-                                                    </td>
-                                                    <td class="nk-tb-col tb-col-lg">
-                                                        <span>{{ $record->status }}</span>
-                                                    </td>
+                                                    </th>
+                                                    <th class="nk-tb-col"><span class="sub-text">Guard</span></th>
+                                                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Site</span>
+                                                    </th>
+                                                    <th class="nk-tb-col tb-col-md"><span class="sub-text">Tag</span></th>
+                                                    <th class="nk-tb-col tb-col-md"><span class="sub-text">Date</span></th>
+                                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Time</span></th>
+                                                    <th class="nk-tb-col tb-col-lg"><span class="sub-text">Status</span>
+                                                    </th>
+
                                                 </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="7" class="text-center">No records found</td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($records as $record)
+                                                    <tr>
+                                                        <td class="nk-tb-col nk-tb-col-check">
+                                                            <div
+                                                                class="custom-control custom-control-sm custom-checkbox notext">
+                                                                <input type="checkbox" class="custom-control-input"
+                                                                    id="uid1">
+                                                                <label class="custom-control-label" for="uid1"></label>
+                                                            </div>
+                                                        </td>
+                                                        <td class="nk-tb-col">
+                                                            <div class="user-card">
+                                                                <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                                                                    <span>{{ $record->owner->name[0] }}</span>
+                                                                </div>
+                                                                <div class="user-info">
+                                                                    <span class="tb-lead">{{ $record->owner->name }} <span
+                                                                            class="dot dot-success d-md-none ml-1"></span></span>
+                                                                    <span>{{ $record->owner->phone }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-mb">
+                                                            <span>{{ $record->site->name }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-md">
+                                                            <span>{{ $record->tag->name }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-md">
+                                                            <span>{{ $record->date }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-lg">
+                                                            <span>{{ $record->time }}</span>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-lg">
+                                                            <span>{{ $record->status }}</span>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <table class="table text-center">
+                                            <tr>
+                                                <td class="nk-tb-col">
+                                                    <span>No Records Found</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    @endif
                                 </div><!-- .card-inner -->
                             </div><!-- .card-inner-group -->
                         </div><!-- .card -->
@@ -346,8 +354,8 @@
 
                     displayError(response.data.message);
 
-                // Hide the spinner
-                spinner.style.display = 'none';
+                    // Hide the spinner
+                    spinner.style.display = 'none';
                 }
 
                 // Create a hidden iframe to handle the download
