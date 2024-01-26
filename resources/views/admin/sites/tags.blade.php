@@ -14,12 +14,25 @@
                                                 <h4 class="nk-block-title">{{ $title }}</h4>
                                                 <div class="nk-block-des">
                                                     <p>
+                                                        This Site has {{ count($tags) }} Tags
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="nk-block-head-content align-self-start d-lg-none"><a href="#"
-                                                    class="toggle btn btn-icon btn-trigger mt-n1"
-                                                    data-target="userAside"><em class="icon ni ni-menu-alt-r"></em></a>
+                                            <div class="nk-block-head-content">
+                                                <ul>
+                                                    <li>
+                                                        <a href="javascript:void(0)"
+                                                            class="btn btn-white btn-dim btn-outline-primary"
+                                                            data-bs-toggle="modal" data-bs-target="#addTagModal">
+                                                            Add Single Tag
+                                                        </a>
+                                                        <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                            data-bs-target="#addMultipleTagModal"
+                                                            class="btn btn-white btn-dim btn-outline-primary">
+                                                            Add Multiple Tags
+                                                        </a>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -126,4 +139,117 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalExample" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Add A Tag</h5>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="addSingleTagForm" action="{{ route('admin.addSingleTag', $site->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="name" class="form-label">Name</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            @error('name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="code" class="form-label">Code</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="code" name="code" required>
+                            </div>
+                            @error('code')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="location" class="form-label">Location</label>
+                            <div class="form-control-wrap">
+                                <input type="text" class="form-control" id="location" name="location" required>
+                            </div>
+                            @error('location')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Add Tag</button>
+                            <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <span class="sub-text">AskariTechnologies {{ date('Y') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addMultipleTagModal" tabindex="-1" aria-labelledby="addMultipleTagModalExample"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Multiple Tags</h5>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="addMultipleTagsForm" action="{{ route('admin.addMultipleTags', $site->id) }}"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="number" class="form-label">Number of Tags</label>
+                            <div class="form-control-wrap">
+                                <input type="number" class="form-control" id="number" name="number" required>
+                            </div>
+                            @error('number')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-primary">Add Tags</button>
+                            <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <span class="sub-text">AskariTechnologies {{ date('Y') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+<script>
+    function deleteTag(id) {
+        if (confirm('Are you sure you want to delete this tag?')) {
+            let url = "{{ route('admin.deleteTag', ':id') }}";
+            url = url.replace(':id', id);
+
+            axios.delete(url)
+                .then(function(response) {
+                    if (response.data.success) {
+                        displaySuccess(response.data.message);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        displayError(response.data.error);
+                    }
+                })
+                .catch(function(error) {
+                    displayError(error.response.data.error);
+                });
+        }
+    }
+</script>

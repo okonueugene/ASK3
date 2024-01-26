@@ -130,7 +130,7 @@
             <tr>
                 <td width="20%" align="Left">
                     <h6 class="text-big text-large font-weight-bold mb-3">
-                        <span style="text-transform:uppercase;">Report No #PTR-</span>{{ $timestamp }}
+                        <span style="text-transform:uppercase;">Report No #ATT-</span>{{ $currentTimestamp }}
                     </h6>
                 </td>
                 <td width="60%" align="center"> <strong class="font-weight-bold">

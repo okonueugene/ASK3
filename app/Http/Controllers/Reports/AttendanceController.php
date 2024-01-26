@@ -129,14 +129,14 @@ class AttendanceController extends Controller
     public function generatePdfReport(Request $request)
     {
 
-        //validate the request
+        // Validate the request
         $request->validate([
             'site_id' => 'required',
         ]);
 
         $this->filters = [];
-        $this->filters = []; // Reset filters array
 
+        // Reset filters array
         if ($request->filled('site_id') && $request->input('site_id') != null) {
             $this->filters['site'] = $request->input('site_id');
         }
@@ -144,13 +144,12 @@ class AttendanceController extends Controller
         if ($request->filled('guard_id') && $request->input('guard_id') != null) {
             $this->filters['guard'] = $request->input('guard_id');
         }
+
         if ($request->filled('start_date')) {
-            // Convert start date format
             $this->filters['range']['start'] = Carbon::createFromFormat('m/d/Y', $request->input('start_date'))->format('Y-m-d');
         }
 
         if ($request->filled('end_date')) {
-            // Convert end date format
             $this->filters['range']['end'] = Carbon::createFromFormat('m/d/Y', $request->input('end_date'))->format('Y-m-d');
         }
 
@@ -158,37 +157,18 @@ class AttendanceController extends Controller
 
         $site = Site::findOrFail($request->input('site_id'));
 
-        $timestamp = Carbon::now()->timestamp;
+        $currentTimestamp = Carbon::now()->timestamp;
 
-        // Get the site name
+        $reportTitle = $this->determineReportTitle();
+
         $siteName = $site->name;
-
-        // Get the guard's name if a specific guard is selected
-
         $guardName = $request->filled('guard_id') ? Guard::findOrFail($request->input('guard_id'))->name : 'All Guards';
 
-        // Determine the report title based on the date range
-        if (!isset($this->filters['range']) || count($this->filters['range']) == 0) {
-            $reportTitle = 'All Time';
-        } else {
-            if (Carbon::parse($this->filters['range']['start'])->diffInDays(Carbon::parse($this->filters['range']['end'])) == 7) {
-                $reportTitle = 'Weekly';
-            } elseif (Carbon::parse($this->filters['range']['start'])->diffInDays(Carbon::parse($this->filters['range']['end'])) == 30) {
-                $reportTitle = 'Monthly';
-            } elseif (Carbon::parse($this->filters['range']['start'])->diffInDays(Carbon::parse($this->filters['range']['end'])) == 1) {
-                $reportTitle = 'Daily';
-            } else {
-                $reportTitle = 'Custom';
-            }
-        }
+        $reportTitle .= ($siteName ? ' - ' . $siteName : '') . ($guardName ? ' - ' . $guardName : '');
 
-        // Append the site name and guard's name (if available) to the report title
-        $reportTitle .= ' Guard Attendance Report';
-        $reportTitle .= $siteName ? ' - ' . $siteName : '';
-        $reportTitle .= $guardName ? ' - ' . $guardName : '';
+        $pdf = Pdf::loadView('exports.attendance_report', compact('records', 'reportTitle', 'currentTimestamp', 'site'));
 
-        $pdf = Pdf::loadView('exports.attendance_report', compact('records', 'reportTitle', 'timestamp', 'site'));
-        //log the user activity
+        // Log the user activity
         activity()
             ->performedOn($site)
             ->event('generated')
@@ -200,5 +180,27 @@ class AttendanceController extends Controller
             fn() => print($pdf->output()),
             $site->name . ' Attendance Report ' . date('d-m-Y') . '.pdf'
         );
+    }
+
+    private function determineReportTitle(): string
+    {
+        if (!isset($this->filters['range']) || count($this->filters['range']) == 0) {
+            return 'All Time Report';
+        }
+
+        $daysDifference = Carbon::parse($this->filters['range']['start'])->diffInDays(Carbon::parse($this->filters['range']['end']));
+
+        switch ($daysDifference) {
+            case 7:
+                return 'Weekly Report';
+            case 30:
+                return 'Monthly Report';
+            case 1:
+                return 'Daily Report';
+            case 0:
+                return "Today's Report";
+            default:
+                return 'Custom';
+        }
     }
 }

@@ -19,7 +19,17 @@
               });
           };
       @endif
-
+      @if (session('error'))
+          window.onload = function() {
+              iziToast.error({
+                  title: "Error",
+                  message: "{{ session('error') }}",
+                  position: "topRight",
+                  timeout: 10000,
+                  transitionIn: "fadeInDown"
+              });
+          };
+      @endif
       function displayError(message) {
           iziToast.error({
               title: 'Error',

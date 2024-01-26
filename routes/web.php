@@ -72,6 +72,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/site/site-guards/{id}', [SiteGuardsController::class, 'index'])->name('site-guards');
         Route::get('/site/{id}/site-statistics', [SiteStatisticsController::class, 'index'])->name('site-statistics');
         Route::get('/site/site-tags/{id}', [SiteTagsController::class, 'index'])->name('site-tags');
+        Route::post('/site/site-tag/{id}', [SiteTagsController::class, 'addSingleTag'])->name('addSingleTag');
+        Route::post('/site/site-tag/multiple/{id} ', [SiteTagsController::class, 'addMultipleTags'])->name('addMultipleTags');
+        Route::delete('/site/site-tag/{id}', [SiteTagsController::class, 'deleteTag'])->name('deleteTag');
         Route::get('/site/{id}/site-patrols', [SitePatrolsController::class, 'index'])->name('site-patrols');
         Route::get('/site/{id}/site-incidents', [SiteIncidentsController::class, 'index'])->name('site-incidents');
 
