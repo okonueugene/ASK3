@@ -69,8 +69,12 @@
                                                                         <div class="user-card">
                                                                             <div
                                                                                 class="user-avatar bg-dim-primary d-none d-sm-flex">
-                                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($tag->name) }}"
-                                                                                    alt="">
+                                                                                @if ($tag->type == 'qr')
+                                                                                    <span>{!! QrCode::size(50)->generate($tag->code) !!}</span>
+                                                                                @else
+                                                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($tag->name) }}"
+                                                                                        alt="">
+                                                                                @endif
                                                                             </div>
                                                                             <div class="user-info">
                                                                                 <span
@@ -82,7 +86,9 @@
                                                                         <span>{{ strtoupper($tag->type) }}</span>
                                                                     </td>
                                                                     <td class="nk-tb-col tb-col-md">
+
                                                                         <span>{{ $tag->code }}</span>
+
                                                                     </td>
                                                                     <td class="nk-tb-col tb-col-lg">
                                                                         <span>{{ $tag->location }}</span>
