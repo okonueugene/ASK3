@@ -280,7 +280,7 @@ class AppController extends Controller
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Tags not retrieved',
+                'message' => 'No Site Tags found',
             ]);
         }
     }
