@@ -29,6 +29,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum','ensure_json_
         Route::post('/patrol/scan', 'scanCheckPoints');
         Route::post('/patrol/end', 'endPatrol');
         Route::post('tag/add', 'addTag');
+        Route::post('tag/site-tags', 'siteTags');
     });
 
 });

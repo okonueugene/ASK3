@@ -260,4 +260,20 @@ class AppController extends Controller
             ]);
 
         }}
+
+        //get all tags assigned to a site
+        public function siteTags(Request $request)
+        {
+            $request->validate([
+                'site_id' => 'required',
+            ]);
+
+            $tags = Tag::where('site_id', $request->site_id)->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tags retrieved successfully',
+                'data' => $tags,
+            ]);
+        }
 }
