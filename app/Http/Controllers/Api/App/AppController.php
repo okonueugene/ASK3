@@ -270,7 +270,7 @@ class AppController extends Controller
 
         $tags = Tag::where('site_id', $request->site_id)->get();
 
-        if ($tags) {
+        if (count($tags) > 0) {
             return response()->json([
                 'success' => true,
                 'message' => 'Tags retrieved successfully',
