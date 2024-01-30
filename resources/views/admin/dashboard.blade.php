@@ -68,25 +68,27 @@
                                     </div>
                                     <div class="card-inner">
                                         <div class="timeline">
-                                            <h6 class="timeline-head">{{ date("F j, Y") }}</h6>
+                                            <h6 class="timeline-head">{{ date('F j, Y') }}</h6>
                                             <ul class="timeline-list">
-                                                @if(count($activities) > 0)
-                                                @foreach($activities as $activity)
-                                                <li class="timeline-item">
-                                                    <div class="timeline-status bg-primary is-outline"></div>
-                                                    <div class="timeline-date">
-                                                        <span class="date">{{ $activity->created_at->format('d M') }}</span>
-                                                        <em class="icon ni ni-alarm-alt"></em>
-                                                    </div>
-                                                    <div class="timeline-data">
-                                                        <h6 class="timeline-title">{{ $activity->log_name }}</h6>
-                                                        <div class="timeline-des">
-                                                            <p>{{ $activity->description }}.</p>
-                                                            <span class="time">{{ $activity->created_at->format('h:i A') }}</span>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                @endforeach
+                                                @if (count($activities) > 0)
+                                                    @foreach ($activities as $activity)
+                                                        <li class="timeline-item">
+                                                            <div class="timeline-status bg-primary is-outline"></div>
+                                                            <div class="timeline-date">
+                                                                <span
+                                                                    class="date">{{ $activity->created_at->format('d M') }}</span>
+                                                                <em class="icon ni ni-alarm-alt"></em>
+                                                            </div>
+                                                            <div class="timeline-data">
+                                                                <h6 class="timeline-title">{{ $activity->log_name }}</h6>
+                                                                <div class="timeline-des">
+                                                                    <p>{{ $activity->description }}.</p>
+                                                                    <span
+                                                                        class="time">{{ $activity->created_at->format('h:i A') }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    @endforeach
                                                 @else
                                                     <span style="margin-left: 20px;">No activities yet ... </span>
                                                 @endif
@@ -125,8 +127,10 @@
                                         <div class="nk-order-ovwg">
                                             <div class="row g-4 align-end">
                                                 <div class="col-xxl-8">
-                                                    <div class="nk-ck-sm">
-                                                        <canvas id="polarChartData"></canvas>
+                                                    <div class="nk-ck-sm"
+                                                        style="padding: 0; margin: 0; box-sizing: border-box;">
+                                                        <canvas id="polarChartData"
+                                                            style="position:relative; bottom: 35%; display: block; width:929px; height:230px;"></canvas>
                                                     </div>
                                                 </div><!-- .col -->
                                                 <div class="col-xxl-4">
@@ -151,15 +155,18 @@
                                                                     <strong>{{ Auth::user()->company->company_name }}
                                                                     </strong>
                                                                 </div>
-                                                                <div class="title"><em class="icon ni ni-users"></em> Total
+                                                                <div class="title"><em class="icon ni ni-users"></em>
+                                                                    Total
                                                                     Guards</div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                    </div>
-                                </div><!-- .card -->
-                            </div><!-- .col -->
+                                            </div><!-- .row -->
+                                        </div>
+                                    </div><!-- .card -->
+                                </div><!-- .col -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -168,7 +175,6 @@
     </div>
     <!-- content @e -->
 @endsection
-
 <script>
     // Google maps object for the map
     var map;
@@ -278,7 +284,7 @@
     <style>
         #polarChartData {
             height: 300px !important;
-        }
 
+        }
     </style>
 @endpush
