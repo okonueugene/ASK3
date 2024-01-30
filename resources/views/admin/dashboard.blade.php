@@ -98,16 +98,66 @@
                             <div class="col-xl-12 col-xxl-8">
                                 <div class="card card-bordered card-full">
                                     <div class="card-inner border-bottom">
-                                        <div class="card-title-group">
+                                        <div class="card-title-group align-start mb-3">
                                             <div class="card-title">
-                                                <h6 class="title text-centerll">Recent Investment</h6>
+                                                <h6 class="title">Overview</h6>
+                                                <p>Today's Guards Attendance. <a
+                                                        href="{{ route('admin.attendance-reports') }}"
+                                                        class="link link-sm">Detailed Stats</a></p>
                                             </div>
-                                            <div class="card-tools">
-                                                <a href="#" class="link">View All</a>
+                                            <div class="card-tools mt-n1 mr-n1">
+                                                <div class="drodown">
+                                                    <a href="javascript: void(0)"
+                                                        class="dropdown-toggle btn btn-icon btn-trigger"
+                                                        data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                                                        <ul class="link-list-opt no-bdr">
+                                                            <li><a href="javascript: void(0)" class="active"><span>15
+                                                                        Days</span></a>
+                                                            </li>
+                                                            <li><a href="javascript: void(0)"><span>30 Days</span></a></li>
+                                                            <li><a href="javascript: void(0)"><span>3 Months</span></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </div><!-- .card-title-group -->
+                                        <div class="nk-order-ovwg">
+                                            <div class="row g-4 align-end">
+                                                <div class="col-xxl-8">
+                                                    <div class="nk-ck-sm">
+                                                        <canvas id="polarChartData"></canvas>
+                                                    </div>
+                                                </div><!-- .col -->
+                                                <div class="col-xxl-4">
+                                                    <div class="row g-4">
+                                                        <div class="col-sm-6 col-xxl-12">
+                                                            <div class="nk-order-ovwg-data buy">
+                                                                <div class="amount">{{ count($site) }}<small
+                                                                        class="currenct currency-usd">Sites</small></div>
+                                                                <div class="info">Sites under
+                                                                    <strong>{{ Auth::user()->company->company_name }}
+                                                                    </strong>
+                                                                </div>
+                                                                <div class="title"><em class="icon ni ni-location"></em>
+                                                                    Total Sites </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 col-xxl-12">
+                                                            <div class="nk-order-ovwg-data sell">
+                                                                <div class="amount">{{ count($guards) }}<small
+                                                                        class="currenct currency-usd"> Guards</small></div>
+                                                                <div class="info">Total Guards
+                                                                    <strong>{{ Auth::user()->company->company_name }}
+                                                                    </strong>
+                                                                </div>
+                                                                <div class="title"><em class="icon ni ni-users"></em> Total
+                                                                    Guards</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                     </div>
-          
                                 </div><!-- .card -->
                             </div><!-- .col -->
                         </div>
@@ -200,3 +250,35 @@
         centerMap();
     };
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('polarChartData').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Present Guards', 'Absent Guards'],
+                datasets: [{
+                    label: '# Guards',
+                    data: [{{ count($present) }}, {{ count($guards) - count($present) }}],
+                    backgroundColor: [
+                        'rgba(12, 188, 69, 0.8)',
+                        'rgba(251, 34, 0, 0.8)',
+                    ],
+                    borderColor: [
+                        'rgba(12, 188, 69, 0.8)',
+                        'rgba(251, 34, 0, 0.8)',
+                    ],
+                    borderWidth: 0.5
+                }]
+            }
+        });
+    });
+</script>
+@push('style')
+    <style>
+        #polarChartData {
+            height: 300px !important;
+        }
+
+    </style>
+@endpush
