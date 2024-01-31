@@ -189,7 +189,7 @@
         @endforeach
     ];
 
-    function initMap() {
+    async function initMap() {
         // Create the map
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 9.5,

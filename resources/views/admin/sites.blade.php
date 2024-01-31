@@ -667,7 +667,7 @@
 
     }
 
-    function initMap(site) {
+    async  function initMap(site) {
         // Parse the values from the input fields
         var inputLat = parseFloat($('#update-lat').val());
         var inputLng = parseFloat($('#update-long').val());

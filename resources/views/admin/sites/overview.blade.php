@@ -332,7 +332,7 @@
 
 <script>
     //initilize the map using google map api
-    function initMap() {
+    async function initMap() {
         //set the center of the map
         var map = new google.maps.Map(document.getElementById('sitemap'), {
             center: {
