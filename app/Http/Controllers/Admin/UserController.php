@@ -12,10 +12,10 @@ class UserController extends Controller
     //
     public function index()
     {
-        return response()->json([
-            'message' => 'User list',
-            'users' => User::all()
-        ]);
+        $title = 'Users';
+        $users = User::all();
+
+        return view ('admin.users', compact('users', 'title'));
     }
 
     public function store(Request $request)
@@ -35,10 +35,29 @@ class UserController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return response()->json([
-            'message' => 'User created successfully',
-            'user' => $user
+        return redirect()->back()->with('success', 'User created successfully');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'new_name' => 'sometimes|min:3|max:50|string',
+            'new_email' => ['sometimes', 'email', 'unique:users,email,' . $id],
+            'new_user_type' => 'sometimes|in:admin,client',
+            'new_password' => 'sometimes|min:8|max:50',
         ]);
+
+        $user = User::findOrFail($id);
+
+        $user->update([
+            'name' => $request->new_name,
+            'email' => $request->new_email,
+            'user_type' => $request->new_user_type,
+            'password' => Hash::make($request->new_password)
+        ]);
+
+
+        return redirect()->back()->with('success', 'User updated successfully');
     }
 
     public function destroy($id)
@@ -46,8 +65,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return response()->json([
-            'message' => 'User deleted successfully'
-        ]);
+        return redirect()->back()->with('success', 'User deleted successfully');
     }
 }

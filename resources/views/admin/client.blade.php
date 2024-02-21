@@ -236,7 +236,6 @@
             </div>
         </div>
     </div>
-
     <!-- content @e -->
     <!-- content @e -->
     <div class="modal fade" id="inviteClientModal" tabindex="-1" aria-labelledby="addClientModalExample"

@@ -91,7 +91,8 @@ class AuthenticationController extends Controller
 
     public function logout()
     {
-        $guard = auth()->guard('guard')->user();
+        $guard = Auth::user();
+
 
         $guard->tokens()->each(function ($token, $key) {
             $token->delete();

@@ -59,7 +59,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/client/site/{id}' , [ClientController::class, 'assignSiteToClient'])->name('assignSiteToClient');
 
 
+        //users
+        Route::get('/users', [UserController::class, 'index'])->name('users');
+        Route::post('/users', [UserController::class, 'store'])->name('addUser');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('updateUser');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('deleteUser');
 
+        
         Route::get('/sites', [SiteController::class, 'index'])->name('sites');
         Route::post('/sites', [SiteController::class, 'addSite'])->name('addSite');
         Route::get('/site/{id}', [SiteController::class, 'quickView'])->name('quickView');

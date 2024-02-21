@@ -2,8 +2,8 @@
           <div class="nk-footer bg-white">
               <div class="container-fluid">
                   <div class="nk-footer-wrap">
-                      <div class="nk-footer-copyright"> &copy; 2023 Dashlite. Template by <a href="https://softnio.com"
-                              target="_blank">Softnio</a>
+                      <div class="nk-footer-copyright"> &copy; {{ date('Y') }} <a
+                              href="https://askaritechnologies.com">{{ config('app.name') }}</a>
                       </div>
                       <div class="nk-footer-links">
                           <ul class="nav nav-sm">
@@ -16,21 +16,6 @@
                                           <li>
                                               <a href="#" class="language-item">
                                                   <span class="language-name">English</span>
-                                              </a>
-                                          </li>
-                                          <li>
-                                              <a href="#" class="language-item">
-                                                  <span class="language-name">Español</span>
-                                              </a>
-                                          </li>
-                                          <li>
-                                              <a href="#" class="language-item">
-                                                  <span class="language-name">Français</span>
-                                              </a>
-                                          </li>
-                                          <li>
-                                              <a href="#" class="language-item">
-                                                  <span class="language-name">Türkçe</span>
                                               </a>
                                           </li>
                                       </ul>

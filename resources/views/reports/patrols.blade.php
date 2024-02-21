@@ -172,7 +172,6 @@
     </div>
 @endsection
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
 <script>
     //listen for the click event on the site filter
     $(document).ready(function() {
@@ -237,9 +236,11 @@
             .then((response) => {
 
                 let filteredRecords = response.data.records;
+                console.log(filteredRecords);
 
                 // Remove existing DataTable data
                 let dataTable = $('#patrol-report').DataTable().clear();
+                console.log(dataTable);
 
                 // Add new DataTable rows
                 filteredRecords.forEach(record => {
