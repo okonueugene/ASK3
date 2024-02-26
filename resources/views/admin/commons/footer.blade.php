@@ -3,7 +3,7 @@
               <div class="container-fluid">
                   <div class="nk-footer-wrap">
                       <div class="nk-footer-copyright"> &copy; {{ date('Y') }} <a
-                              href="https://askaritechnologies.com">{{ config('app.name') }}</a>
+                              href="https://askaritechnologies.com" target="blank">{{ config('app.name') }}</a>
                       </div>
                       <div class="nk-footer-links">
                           <ul class="nav nav-sm">

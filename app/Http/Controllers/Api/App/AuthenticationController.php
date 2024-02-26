@@ -73,7 +73,7 @@ class AuthenticationController extends Controller
                     'is_active' => $guard->is_active,
                     'last_login_at' => $guard->last_login,
                     'token' => $data['token'],
-                ], 201);
+                ], 200);
             } else {
                 //Auth fail
                 return response()->json([
@@ -114,7 +114,7 @@ class AuthenticationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Logout successful',
-            ], 201);
+            ], 200);
         }
         else
         {
@@ -135,7 +135,7 @@ class AuthenticationController extends Controller
                 'success' => true,
                 'message' => 'Guard profile',
                 'data' => $guard,
-            ], 201);
+            ], 200);
         } else {
             return response()->json([
                 'success' => false,
