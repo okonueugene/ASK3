@@ -35,7 +35,7 @@ class AuthenticationController extends Controller
                     return response()->json([
                         'success' => false,
                         'message' => 'Guard is Deactivated',
-                    ], 404);
+                    ], 200);
                 }
 
             if ($guard->site_id) {
@@ -56,7 +56,7 @@ class AuthenticationController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Guard not assigned to any site',
-                ], 404);
+                ], 200);
             }
                 $sites = DB::table('sites')->where('id', $guard->site_id)->first();
 
@@ -79,13 +79,13 @@ class AuthenticationController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Invalid Credentials',
-                ], 404);
+                ], 200);
             }
         } else {
            return response()->json([
                 'success' => false,
                 'message' => 'Invalid Credentials',
-            ], 404);
+            ], 200);
         }
     }
 
@@ -121,7 +121,7 @@ class AuthenticationController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Logout failed',
-            ], 404);
+            ], 200);
         }
     }
     
@@ -140,7 +140,7 @@ class AuthenticationController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Guard profile not found',
-            ], 404);
+            ], 200);
         }
     }
 
