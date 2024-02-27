@@ -78,13 +78,13 @@ class AuthenticationController extends Controller
                 //Auth fail
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid Credentials',
+                    'message' => 'Invalid Phone number or Password',
                 ], 200);
             }
         } else {
            return response()->json([
                 'success' => false,
-                'message' => 'Invalid Credentials',
+                'message' => 'Invalid Phone number or Password',
             ], 200);
         }
     }
