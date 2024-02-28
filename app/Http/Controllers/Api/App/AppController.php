@@ -323,11 +323,10 @@ class AppController extends Controller
 
     public function dashboardStats(Request $request)
     {
-        $guard_id = 1;
-        // //validate request
-        // $request->validate([
-        //     'guard_id' => 'required',
-        // ]);
+        //validate request
+        $request->validate([
+            'guard_id' => 'required',
+        ]);
 
         $guard = Guard::where('id', $guard_id)->first();
 
