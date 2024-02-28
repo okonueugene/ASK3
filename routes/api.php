@@ -30,6 +30,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum','ensure_json_
         Route::post('/patrol/end', 'endPatrol');
         Route::post('tag/add', 'addTag');
         Route::post('tag/site-tags', 'siteTags');
+        Route::post('/dashboard-stats', 'dashboardStats');
     });
 
 });

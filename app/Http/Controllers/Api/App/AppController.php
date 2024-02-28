@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api\App;
 
 use App\Http\Controllers\Controller;
+use App\Models\Guard;
 use App\Models\Patrol;
 use App\Models\PatrolHistory;
 use App\Models\Tag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AppController extends Controller
 {
@@ -285,5 +287,67 @@ class AppController extends Controller
                 'message' => 'No Site Tags found',
             ]);
         }
+    }
+    // Dashboard stats
+    // public function dashboardStats()
+    // {
+    //     $guard = Auth::guard('guard')->user();
+
+    //     $allpatrols = Patrol::where('guard_id', $guard->id)->get();
+
+    //     date_default_timezone_set('Africa/Nairobi');
+
+    //     $time = now()->toTimeString();
+    //     $today = Carbon::now($guard->site->timezone)->format('Y-m-d');
+
+    //     $totalpatrols = count($allpatrols);
+    //     $passed = Patrol::select('*')
+    //         ->where('guard_id', '=', $guard->id)
+    //         ->where('end', '<', $time)
+    //         ->get();
+
+    //     $roundspassed = count($passed);
+    //     $todaytasks = $guard->tasks->where('date', $today)->count();
+
+    //     $time_in = $guard->attendances()->where('day', $today)->first();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'totalpatrols' => count($allpatrols),
+    //         'rounds_passed' => $roundspassed,
+    //         'today_tasks' => $todaytasks,
+    //         'time_in' => $time_in->time_in,
+    //     ], 200);
+
+    // }
+
+    public function dashboardStats(Request $request)
+    {
+        $guard_id = 1;
+        // //validate request
+        // $request->validate([
+        //     'guard_id' => 'required',
+        // ]);
+
+        $guard = Guard::where('id', $guard_id)->first();
+
+        date_default_timezone_set('Africa/Nairobi');
+
+        $time = now()->toTimeString();
+        $today = Carbon::now($guard->site->timezone)->format('Y-m-d');
+
+        //get all patrols for the guard on the current day
+        $allpatrols = PatrolHistory::where('guard_id', $guard_id)->where('created_at', '>=', Carbon::today())->get();
+
+        //get number of tags a guard is supposed to scan
+        $checkpoints = $guard->site->tags->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Dashboard stats retrieved successfully',
+            'totalpatrols' => count($allpatrols),
+            'checkpoints' => $checkpoints,
+        ], 200);
+
     }
 }
