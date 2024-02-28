@@ -336,7 +336,7 @@ class AppController extends Controller
         $today = Carbon::now($guard->site->timezone)->format('Y-m-d');
 
         //get all patrols for the guard on the current day
-        $allpatrols = PatrolHistory::where('guard_id', $guard_id)->where('created_at', '>=', Carbon::today())->get();
+        $allpatrols = PatrolHistory::where('guard_id', $redquest->guard_id)->where('created_at', '>=', Carbon::today())->get();
 
         //get number of tags a guard is supposed to scan
         $checkpoints = $guard->site->tags->count();
