@@ -328,7 +328,7 @@ class AppController extends Controller
             'guard_id' => 'required',
         ]);
 
-        $guard = Guard::where('id', $guard_id)->first();
+        $guard = Guard::where('id', $request->guard_id)->first();
 
         date_default_timezone_set('Africa/Nairobi');
 
