@@ -233,10 +233,13 @@ class ClientController extends Controller
       // Mark the invitation as accepted
       $invitation->update(['is_accepted' => true]);
 
-      return  response()->json($user);
-
       // Redirect to login with a success message
-      return redirect()->route('login')->with('success', 'Client created successfully');
+      if ($user) {
+        return redirect()->route('login')->with('success', 'Client created successfully');
+      }
+      else {
+        return view('auths.invalid-invitation');
+      }
     }
     
     //delete invitation

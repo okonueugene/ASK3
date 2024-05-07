@@ -38,7 +38,7 @@
                                     <div class="nk-block-head-content">
                                         <h4 class="nk-block-title">Register</h4>
                                         <div class="nk-block-des">
-                                            <p>Create New Dashlite Account</p>
+                                            <p>Create New Askari Account</p>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
                                         <div class="custom-control custom-control-xs custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="checkbox">
                                             <label class="custom-control-label" for="checkbox">I agree to
-                                                AskariTechnologies <a href="#">Privacy Policy</a> &amp; <a
+                                                Askari Technologies <a href="#">Privacy Policy</a> &amp; <a
                                                     href="#">
                                                     Terms.</a></label>
                                         </div>
