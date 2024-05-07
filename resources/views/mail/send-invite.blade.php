@@ -399,6 +399,8 @@
 
         #link a {
             text-decoration: none;
+            color: #FFF;
+            
         }
 
         /*Media Queries ------------------------------ */
