@@ -436,4 +436,29 @@ class AppController extends Controller
         ]);
 
     }
+
+    //retrieve all incidents for a site
+    public function siteIncidents(Request $request)
+    {
+        $request->validate([
+            'site_id' => 'required',
+        ]);
+
+        $incidents = Incident::where('site_id', $request->site_id)->get();
+        $incidents->load('media');
+
+        if (count($incidents) > 0) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Incidents retrieved successfully',
+                'data' => $incidents,
+            ]);
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Incidents found',
+            ]);
+        }
+    }
 }
