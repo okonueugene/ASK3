@@ -461,4 +461,29 @@ class AppController extends Controller
             ]);
         }
     }
+
+    //retrieve an incident
+    public function getIncident(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+        ]);
+
+        $incident = Incident::where('id', $request->id)->first();
+        $incident->load('media');
+
+        if ($incident) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Incident retrieved successfully',
+                'data' => $incident,
+            ]);
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incident not found',
+            ]);
+        }
+    }
 }
