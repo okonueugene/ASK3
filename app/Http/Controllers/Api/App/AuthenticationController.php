@@ -66,6 +66,7 @@ class AuthenticationController extends Controller
                     'id' => $guard->id,
                     'company_id' => $guard->company_id,
                     'site_id' => $sites->id,
+                    'site_name' => $guard->site->name,
                     'name' => $guard->name,
                     'email' => $guard->email,
                     'phone' => $guard->phone,
