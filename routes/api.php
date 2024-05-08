@@ -35,7 +35,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum','ensure_json_
         //incident routes
         Route::post('/incidents', 'addIncident');
         //site incidents
-        Route::post('/site-incidents', 'siteIncidents');
+        Route::get('/site-incidents', 'siteIncidents');
     });
 
 });
