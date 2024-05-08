@@ -31,6 +31,9 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum','ensure_json_
         Route::post('tag/add', 'addTag');
         Route::post('tag/site-tags', 'siteTags');
         Route::post('/dashboard-stats', 'dashboardStats');
+
+        //incident routes
+        Route::post('/incidents', 'addIncident');
     });
 
 });

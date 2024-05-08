@@ -26,6 +26,11 @@ class Incident extends Model implements HasMedia
         'time',
     ];
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('incident_images');
+    }
+
     public function siteIncident()
     {
         return $this->belongsTo(Site::class, 'site_id');
@@ -36,7 +41,8 @@ class Incident extends Model implements HasMedia
         return $this->belongsTo(IncidentImages::class);
     }
 
-    public function owner(){
+    public function owner()
+    {
         return $this->belongsTo(Guard::class, 'guard_id');
     }
 }

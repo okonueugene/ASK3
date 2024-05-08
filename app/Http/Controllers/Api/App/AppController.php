@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\App;
 
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use App\Models\Tag;
 use App\Models\Guard;
 use App\Models\Patrol;
-use App\Models\PatrolHistory;
-use App\Models\Tag;
-use Carbon\Carbon;
+use App\Models\Incident;
 use Illuminate\Http\Request;
+use App\Models\PatrolHistory;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class AppController extends Controller
@@ -261,7 +262,8 @@ class AppController extends Controller
                 'data' => $tag,
             ]);
 
-        }}
+        }
+    }
 
     //get all tags assigned to a site
     public function siteTags(Request $request)
@@ -346,6 +348,92 @@ class AppController extends Controller
             'totalpatrols' => count($allpatrols),
             'checkpoints' => $checkpoints,
         ], 200);
+
+    }
+
+    //Add an Incident
+    public function addIncident(Request $request)
+    {
+        $guard = Guard::where('id', auth()->guard()->user()->id)->first(); 
+
+
+        $this->validate($request, [
+            'title' => 'required',
+            'details' => 'required',
+            'actions_taken' => 'required'
+        ]);
+
+        $time = Carbon::now($guard->site->timezone)->toDateTimeString();
+
+        $today = Carbon::now($guard->site->timezone)->format('Y-m-d');
+
+        $incident = Incident::create([
+            'company_id' => $guard->company_id,
+            'guard_id' => $guard->id,
+            'site_id' => $guard->site_id,
+            'incident_no' => random_int(100000, 999999),
+            'title' => $request->title,
+            'details' => $request->details,
+            'actions_taken' => $request->actions_taken,
+            'police_ref' => $request->police_ref,
+            'date' => $today,
+            'time' => $time,
+        ]);
+
+        $img = $request->file;
+        $img1 = $request->file1;
+        $img2 = $request->file2;
+
+        if ($img != null) {
+            $filename = "IMG" . rand() . ".jpg";
+            $decoded = base64_decode($img);
+
+            $incident->addMediaFromString($decoded)
+                ->usingFileName($filename)
+                ->toMediaCollection('incident_images');
+        }
+
+        if ($img1 != null) {
+            $filename = "IMG" . rand() . ".jpg";
+
+            $decoded = base64_decode($img1);
+
+            $incident->addMediaFromString($decoded)
+                ->usingFileName($filename)
+                ->toMediaCollection('incident_images');
+        }
+
+        if ($img2 != null) {
+            $filename = "IMG" . rand() . ".jpg";
+
+            $decoded = base64_decode($img2);
+
+            $incident->addMediaFromString($decoded)
+                ->usingFileName($filename)
+                ->toMediaCollection('incident_images');
+        }
+        // $user = $incident->company->users()->first();
+
+        // $email = [
+        //     'subject' => 'New Incident',
+        //     'greeting' => 'Hi ' . $user->name . ',',
+        //     'body' => $incident->owner->name . ' has added a new Incident NO: ' . $incident->incident_no,
+        //     'thanks' => 'Thank you for using ASKARI',
+        //     'actionText' => 'View Incident',
+        //     'actionURL' => url('/app/sites/' . $incident->siteIncident->id . '/incidents'),
+        // ];
+
+        // $user->notify(new EmailNotification($email));
+
+        activity()->causedBy($incident->owner)
+            ->withProperties(['site_id' => $incident->owner->site_id])
+            ->log($incident->owner->name . ' added a new Incident NO: ' . $incident->incident_no);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Incident added successfully',
+            'data' => $incident,
+        ]);
 
     }
 }

@@ -12,21 +12,18 @@ return new class () extends Migration {
     {
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('site_id');
-            $table->unsignedBigInteger('guard_id');
+            $table->foreignId('company_id')->nullable();
+            $table->foreignId('site_id')->nullable();
+            $table->foreignId('guard_id')->nullable();
             $table->string('incident_no')->nullable();
             $table->string('police_ref')->nullable();
+            $table->longText('details')->nullable();
+            $table->longText('actions_taken')->nullable();
             $table->string('title')->nullable();
             $table->string('date')->nullable();
-            $table->string('reported_by')->nullable();
+            $table->time('time')->nullable();
             $table->enum('status', ['open', 'closed'])->default('open');
             $table->timestamps();
-
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
-            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
-            $table->foreign('guard_id')->references('id')->on('guards')->onDelete('cascade');
-
         });
     }
 
