@@ -347,6 +347,8 @@ class AppController extends Controller
             'message' => 'Dashboard stats retrieved successfully',
             'totalpatrols' => count($allpatrols),
             'checkpoints' => $checkpoints,
+            'clocked_in' => $guard->attendances()->where('day', $today)->first()->time_in,
+            'incidents'=> $guard->site->incidents()->where('date', $today)->count(),
         ], 200);
 
     }
