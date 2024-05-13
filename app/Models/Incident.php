@@ -36,11 +36,6 @@ class Incident extends Model implements HasMedia
         return $this->belongsTo(Site::class, 'site_id');
     }
 
-    public function images()
-    {
-        return $this->belongsTo(IncidentImages::class);
-    }
-
     public function owner()
     {
         return $this->belongsTo(Guard::class, 'guard_id');

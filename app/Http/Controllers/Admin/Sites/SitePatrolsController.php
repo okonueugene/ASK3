@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Sites;
 
 use App\Models\Site;
+use App\Models\Patrol;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -12,6 +13,8 @@ class SitePatrolsController extends Controller
     {
         $title = 'Site Patrols';
         $site = Site::findOrFail($id);
-        return view('admin.sites.patrols', compact('title', 'site'));
+        $patrols = Patrol::where('site_id', $id)->orderBy('id', 'DESC')->get()->load('owner', 'site');
+
+        return view('admin.sites.patrols', compact('title', 'patrols', 'site'));
     }
 }

@@ -2,20 +2,16 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 
 class Guard extends Authenticatable
 {
     use HasFactory;
     use HasApiTokens;
     use Notifiable;
-
-
 
     protected $fillable = [
         'name',
@@ -31,7 +27,6 @@ class Guard extends Authenticatable
     protected $hidden = [
         'password',
     ];
-
 
     public function company()
     {
@@ -65,6 +60,10 @@ class Guard extends Authenticatable
     public function attendances()
     {
         return $this->hasMany(Attendance::class, 'guard_id');
+    }
+    public function shifts()
+    {
+        return $this->hasMany(Shift::class);
     }
 
 }

@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CompanySeeder::class,
             UserSeeder::class,
+            TimezoneSeeder::class,
 
             // PermissionSeeder::class,
             // RoleSeeder::class,
@@ -25,10 +26,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\User::factory(100)->create();
-        \App\Models\Site::factory(30)->create();
+        \App\Models\Site::factory(20)->create();
         \App\Models\Guard::factory(200)->create();
         \App\Models\Tag::factory(100)->create();
         \App\Models\PatrolHistory::factory(1000)->create();
+        \App\Models\Patrol::factory(100)->create();
+        \App\Models\Incident::factory(100)->create();
+
 
     }
 }

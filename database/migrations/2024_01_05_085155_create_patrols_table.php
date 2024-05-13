@@ -18,6 +18,7 @@ return new class () extends Migration {
             $table->string('name');
             $table->time('start');
             $table->time('end')->nullable();
+            $table->enum('type', ['scheduled', 'unscheduled'])->default('unscheduled');
             $table->timestamps();
 
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');

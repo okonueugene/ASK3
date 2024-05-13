@@ -63,6 +63,16 @@
                                             href="{{ route('admin.site-tags', $site->id) }}"><em
                                                 class="icon ni ni-tag-fill"></em><span> Tags</span></a>
                                     </li>
+                                    <li>
+                                        <a class="{{ request()->routeIs('admin.site-patrols') ? 'active' : '' }}"
+                                            href="{{ route('admin.site-patrols', $site->id) }}"><em
+                                                class="icon ni ni-clock-fill"></em><span>Patrols</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="{{ request()->routeIs('admin.site-incidents') ? 'active' : '' }}"
+                                            href="{{ route('admin.site-incidents', $site->id) }}"><em
+                                                class="icon ni ni-alert-fill"></em><span> Incidents</span></a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
