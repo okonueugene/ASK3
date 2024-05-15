@@ -230,7 +230,7 @@
                                             <!-- Media items will be dynamically added here -->
                                         </ul>
                                     </div>
-                
+
                                     <br>
                                 </div>
                             </div>

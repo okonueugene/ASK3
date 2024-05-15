@@ -20,10 +20,10 @@
                                                 <ul>
                                                     <li>
                                                         <a href="javascript:void(0)"
-                                                            class="btn btn-white btn-dim btn-outline-primary"
+                                                            class="btn btn-md btn-white btn-dim btn-outline-primary"
                                                             data-bs-toggle="modal" data-bs-target="#addPatrolModal">
                                                             <em class="icon ni ni ni-plus"></em>
-                                                            <span>Add Scheduled Patrol</span>
+                                                            <span>Scheduled Patrol</span>
                                                         </a>
                                                     </li>
                                                 </ul>
@@ -116,8 +116,8 @@
                                                                                                 {{-- <a href="{{ route('admin.patrol-show', $patrol->id) }}" --}}
                                                                                                 <a href="javascript:void(0)"
                                                                                                     data-bs-toggle="modal"
-                                                                                                    data-bs-target="#addPatrolModal"
-                                                                                                    onclick="editPatrol({{ $patrol->id }})">
+                                                                                                    data-bs-target="#showPatrolModal"
+                                                                                                    onclick="showPatrol({{ $patrol }})">
                                                                                                     <em
                                                                                                         class="icon ni ni-eye"></em>
                                                                                                     <span>Show Patrol</span>
@@ -127,8 +127,8 @@
                                                                                                 {{-- <a href="{{ route('admin.patrol-edit', $patrol->id) }}" --}}
                                                                                                 <a href="javascript:void(0)"
                                                                                                     data-bs-toggle="modal"
-                                                                                                    data-bs-target="#addPatrolModal"
-                                                                                                    onclick="editPatrol({{ $patrol->id }})">
+                                                                                                    data-bs-target="#editPatrolModal"
+                                                                                                    onclick="editPatrol({{ $patrol }})">
                                                                                                     <em
                                                                                                         class="icon ni ni-edit"></em>
                                                                                                     <span>Edit Patrol</span>
@@ -141,7 +141,8 @@
                                                                                                     onclick="deletePatrol({{ $patrol->id }})">
                                                                                                     <em
                                                                                                         class="icon ni ni-trash"></em>
-                                                                                                    <span>Delete Patrol</span>
+                                                                                                    <span>Delete
+                                                                                                        Patrol</span>
                                                                                                 </a>
                                                                                             </li>
                                                                                         </ul>
@@ -190,37 +191,194 @@
                     <form id="addSingleTagForm" action="{{ route('admin.addSingleTag', $site->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="form-label" for="full-name-1">Select
+                                        Guard</label>
+                                    <div class="form-control-wrap">
+                                        <div class="form-group">
+                                            <select class="custom-select form-select" data-search="on" id="guard_name">
+                                                <option>Select Guard</option>
+                                                @foreach ($siteguards as $siteguard)
+                                                    <option value="{{ $siteguard->id }}">
+                                                        {{ $siteguard->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Round Name</label>
+                                    <div class="form-control-wrap">
+                                        <input type="text" class="form-control" name="name" id="round_name"
+                                            required>
+                                    </div>
+                                    @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="start" class="form-label">Start Time</label>
+                                    <div class="form-control-wrap">
+                                        <input type="time" class="form-control" name="start" id="start_time"
+                                            required>
+                                    </div>
+                                    @error('start')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="end" class="form-label">End Time</label>
+                                    <div class="form-control-wrap">
+                                        <input type="time" class="form-control" name="end" id="end_time"
+                                            required>
+                                    </div>
+                                    @error('end')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12" id="checkpoint" style="display: none;">
+                            <div class="card card-preview">
+                                <div class="card-inner">
+                                    <h6 class="title mb-3">Select Checkpoints</h6>
+                                    <div><span><input type="checkbox" id="checkAll"> Check All</span></div>
+                                    <ul class="custom-control-group">
+                                        @foreach ($sitetags as $tag)
+                                            <li>
+                                                <div
+                                                    class="custom-control custom-control-sm custom-checkbox custom-control-pro">
+                                                    <input type="checkbox" class="custom-control-input" name="tags[]"
+                                                        id="{{ $tag->id }}"><label class="custom-control-label"
+                                                        for="{{ $tag->id }}">{{ $tag->name == null ? $tag->code : $tag->location }}</label>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-md btn-primary float-end">Add Patrol</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="showPatrolModal" tabindex="-1" aria-labelledby="showPatrolModalExample"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Show Patrol</h5>
+
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Name</label>
+                            <div class="form-control form-control-lg">
+                                <span id="name"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="guard" class="form-label">Guard</label>
+                            <div class="form-control form-control-lg">
+                                <span id="guard"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="start" class="form-label text-center">Start Time</label>
+                            <div class="form-control form-control-lg">
+                                <span id="start"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="end" class="form-label">End Time</label>
+                            <div class="form-control form-control-lg">
+                                <span id="end"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="type" class="form-label">Type</label>
+                            <div class="form-control form-control-lg">
+                                <span id="type"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="button" class="btn btn-white btn-dim btn-outline-secondary float-end"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editPatrolModal" tabindex="-1" aria-labelledby="editPatrolModalExample"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Patrol</h5>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="editSingleTagForm" action="" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="patrol_id" id="patrol_id">
                         <div class="form-group">
                             <label for="name" class="form-label">Name</label>
                             <div class="form-control-wrap">
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control" name="edit_name" id="edit_name"
+                                    value="">
                             </div>
                             @error('name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label for="start" class="form-label">Start Time</label>
                             <div class="form-control-wrap">
-                                <input type="time" class="form-control" id="start" name="start" required>
+                                <input type="time" class="form-control" name="edit_start" id="edit_start"
+                                    value="">
                             </div>
                             @error('start')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label for="end" class="form-label">End Time</label>
                             <div class="form-control-wrap">
-                                <input type="time" class="form-control" id="end" name="end" required>
+                                <input type="time" class="form-control" name="edit_end" id="edit_end"
+                                    value="">
                             </div>
                             @error('end')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group" style="margin-top: 20px;">
-                            <button type="submit" class="btn btn-lg btn-primary">Add Patrol</button>
+                            <button type="submit" class="btn btn-md btn-primary float-end">Edit Patrol</button>
                         </div>
                     </form>
                 </div>
@@ -228,3 +386,43 @@
         </div>
     </div>
 @endsection
+
+<script>
+    //Render checkpoit div if inputs are not empty
+    window.onload = function() {
+        $('#addSingleTagForm').on('input', function() {
+            console.log($('#guard_name').val(), $('#round_name').val(), $('#start_time').val(), $(
+                '#end_time').val());
+            if ($('#guard_name').val() != '' && $('#round_name').val() != '' && $('#start_time').val() !=
+                '' && $('#end_time').val() != '') {
+                $('#checkpoint').show();
+            } else {
+                $('#checkpoint').hide();
+            }
+        });
+
+        //Check All Checkpoints in the list 
+        $('#checkAll').click(function() {
+            if ($(this).is(':checked')) {
+                $('input:checkbox').prop('checked', true);
+            } else {
+                $('input:checkbox').prop('checked', false);
+            }
+        });
+    }
+
+    function showPatrol(patrol) {
+        $('#name').text(patrol.name);
+        $('#guard').text(patrol.owner.name);
+        $('#start').text(patrol.start);
+        $('#end').text(patrol.end);
+        patrol.type == 'scheduled' ? $('#type').text('Scheduled') : $('#type').text('Unscheduled');
+    }
+
+    function editPatrol(patrol) {
+        $('#patrol_id').val(patrol.id);
+        $('#edit_name').val(patrol.name);
+        $('#edit_start').val(patrol.start);
+        $('#edit_end').val(patrol.end);
+    }
+</script>

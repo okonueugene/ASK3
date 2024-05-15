@@ -87,16 +87,16 @@
                                                 @foreach ($data['patrols'] as $patrol)
                                                 <div class="nk-tb-item">
                                                     <div class="nk-tb-col tb-col-md">
-                                                        <span class="tb-sub"></span>
+                                                        <span class="tb-sub">{{ $patrol->name }}</span>
                                                     </div>
                                                     <div class="nk-tb-col tb-col-sm">
                                                         <div class="user-card">
                                                             <div class="user-avatar sm bg-purple-dim">
-                                                                {{-- <img src="https://ui-avatars.com/api/?name={{ urlencode($patrol->owner->name) }}"
-                                                                    alt="data"> --}}
+                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($patrol->owner->name) }}"
+                                                                    alt="data">
                                                             </div>
                                                             <div class="user-name">
-                                                                {{-- <span class="tb-lead">{{ $patrol->owner->name }}</span> --}}
+                                                                <span class="tb-lead">{{ $patrol->owner->name }}</span>
                                                             </div>
                                                         </div>
                                                     </div>

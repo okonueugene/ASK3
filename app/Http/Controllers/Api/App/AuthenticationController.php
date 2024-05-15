@@ -41,11 +41,11 @@ class AuthenticationController extends Controller
             if ($guard->site_id) {
 
                 $guard->update([
-                    'last_login' => Carbon::now($guard->timezone)->toDateTimeString(),
+                    'last_login' => Carbon::now($guard->site->timezone)->toDateTimeString(),
                 ]);
 
                 //mark attendance
-                $dateToday = Carbon::now($guard->timezone)->format('Y-m-d');
+                $dateToday = Carbon::now($guard->site->timezone)->format('Y-m-d');
                 $present = Attendance::where('guard_id', $guard->id)->where('day', $dateToday)->first();
 
                 if (!$present) {
