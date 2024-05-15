@@ -360,6 +360,7 @@ class AppController extends Controller
             'message' => 'Dashboard stats retrieved successfully',
             'totalpatrols' => count($allpatrols),
             'checkpoints' => $checkpoints,
+            'clocked_in' => $clockin_time,
             'incidents'=> $guard->site->incidents()->where('date', $today)->count(),
             'clocked_in_date' => $clockin,
         ], 200);
