@@ -20,9 +20,13 @@ class AppController extends Controller
             'guard_id' => 'required',
             'site_id' => 'required',
             'time' => 'required',
+            'created_at' => 'required',
         ]);
 
-        $site_patrols = Patrol::where('site_id', $request->site_id)->where('created_at', '>=', Carbon::today())->get();
+        //retrieve the site using the site_id
+        $site = Site::where('id', $request->site_id)->first();
+        //retrieve all patrols for the site for the current day
+        $site_patrols = $site->patrols()->whereDate('created_at', Carbon::now($site->timezone)->format('Y-m-d'))->get();
         $name = 'Patrol ' . ($site_patrols->count() + 1);
         $patrol = Patrol::create([
             'company_id' => $request->user()->company_id,
@@ -30,6 +34,8 @@ class AppController extends Controller
             'site_id' => $request->site_id,
             'start' => $request->time,
             'name' => $name,
+            'created_at' => $request->created_at,
+            'updated_at' => $request->created_at,
         ]);
         activity()
             ->causedBy($patrol->owner)
@@ -338,17 +344,24 @@ class AppController extends Controller
         $today = Carbon::now($guard->site->timezone)->format('Y-m-d');
 
         //get all patrols for the guard on the current day
-        $allpatrols = Patrol::where('guard_id', $guard->id)->where('created_at', '>=', Carbon::today())->where('end', '!=', null)->get();
+        $allpatrols = $guard->patrols()->whereDate('created_at', $today)->get();
         //get number of tags a guard is supposed to scan
         $checkpoints = $guard->site->tags->count();
+        //clockin day and time_in for the guard
+        $clocked_in_date = $guard->attendances()->where('day', $today)->first();
+        $clockin_time = $guard->attendances()->where('day', $today)->first()->time_in;
+
+        //concat the two to format 'Y-m-d H:i:s'
+        $clockin = $today . ' ' . $clockin_time;
+
 
         return response()->json([
             'success' => true,
             'message' => 'Dashboard stats retrieved successfully',
             'totalpatrols' => count($allpatrols),
             'checkpoints' => $checkpoints,
-            'clocked_in' => $guard->attendances()->where('day', $today)->first()->time_in,
             'incidents'=> $guard->site->incidents()->where('date', $today)->count(),
+            'clocked_in_date' => $clockin,
         ], 200);
 
     }
