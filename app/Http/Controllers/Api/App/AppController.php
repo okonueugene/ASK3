@@ -554,11 +554,16 @@ class AppController extends Controller
         //retrieve the patrol record
         $id = $request->input('id');
         $patrol = Patrol::where('id', $id)->first();
-
-        if (!$patrol && $patrol->type == 'unscheduled') {
-            //redirect to scan checkpoint
-            return response()->json(['success' => true, 'message' => "This is an unscheduled round"], 200);
+       //if patrol is null, return error
+        if (!$patrol) {
+            return response()->json(['success' => true, 'message' => 'Patrol not found'], 200);
         }
+        //if patrol exists, and is unscheduled patrol return error
+        if ($patrol && $patrol->type == 'unscheduled') {
+            return response()->json(['success' => true, 'message' => 'This is an Unscheduled patrol'], 200);
+        }
+
+        //if patrol is scheduled
 
         if ($patrol && $patrol->type == 'scheduled') {
             $guard = auth()->guard()->user();
