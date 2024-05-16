@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\App;
 
-use Carbon\Carbon;
-use App\Models\Guard;
-use App\Models\Attendance;
-use Illuminate\Http\Request;
 use App\Events\MarkAttendance;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
+use App\Models\Guard;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AuthenticationController extends Controller
 {
@@ -38,26 +38,26 @@ class AuthenticationController extends Controller
                     ], 200);
                 }
 
-            if ($guard->site_id) {
+                if ($guard->site_id) {
 
-                $guard->update([
-                    'last_login' => Carbon::now($guard->site->timezone)->toDateTimeString(),
-                ]);
+                    //update last login atttt
+                    $guard->update([
+                        'last_login_at' => Carbon::now($guard->site->timezone)->format('Y-m-d H:i:s'),
+                    ]);
 
-                //mark attendance
-                $dateToday = Carbon::now($guard->site->timezone)->format('Y-m-d');
-                $present = Attendance::where('guard_id', $guard->id)->where('day', $dateToday)->first();
+                    //mark attendance
+                    $dateToday = Carbon::now($guard->site->timezone)->format('Y-m-d');
+                    $present = Attendance::where('guard_id', $guard->id)->where('day', $dateToday)->first();
 
-                if (!$present) {
-                   event(new MarkAttendance($guard));
+                    if (!$present) {
+                        event(new MarkAttendance($guard));
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Guard not assigned to any site',
+                    ], 200);
                 }
-            }
-            else{
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Guard not assigned to any site',
-                ], 200);
-            }
                 $sites = DB::table('sites')->where('id', $guard->site_id)->first();
 
                 return response()->json([
@@ -72,7 +72,7 @@ class AuthenticationController extends Controller
                     'phone' => $guard->phone,
                     'id_number' => $guard->id_number,
                     'is_active' => $guard->is_active,
-                    'last_login_at' => $guard->last_login,
+                    'last_login_at' => $guard->last_login_at,
                     'token' => $data['token'],
                 ], 200);
             } else {
@@ -83,7 +83,7 @@ class AuthenticationController extends Controller
                 ], 200);
             }
         } else {
-           return response()->json([
+            return response()->json([
                 'success' => false,
                 'message' => 'Invalid Phone number or Password',
             ], 200);
@@ -93,7 +93,6 @@ class AuthenticationController extends Controller
     public function logout()
     {
         $guard = Auth::user();
-
 
         $guard->tokens()->each(function ($token, $key) {
             $token->delete();
@@ -110,22 +109,19 @@ class AuthenticationController extends Controller
             ]);
         }
 
-        if($guard)
-        {
+        if ($guard) {
             return response()->json([
                 'success' => true,
                 'message' => 'Logout successful',
             ], 200);
-        }
-        else
-        {
+        } else {
             return response()->json([
                 'success' => false,
                 'message' => 'Logout failed',
             ], 200);
         }
     }
-    
+
     public function profile()
     {
 
@@ -145,5 +141,4 @@ class AuthenticationController extends Controller
         }
     }
 
-        
 }

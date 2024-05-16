@@ -77,13 +77,21 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/site/site-activity/{id}', [SiteActivityController::class, 'index'])->name('site-activity');
         Route::get('/site/site-guards/{id}', [SiteGuardsController::class, 'index'])->name('site-guards');
         Route::get('/site/{id}/site-statistics', [SiteStatisticsController::class, 'index'])->name('site-statistics');
+
+
         Route::get('/site/site-tags/{id}', [SiteTagsController::class, 'index'])->name('site-tags');
         Route::post('/site/site-tag/{id}', [SiteTagsController::class, 'addSingleTag'])->name('addSingleTag');
         Route::post('/site/site-tag/multiple/{id} ', [SiteTagsController::class, 'addMultipleTags'])->name('addMultipleTags');
         Route::delete('/site/site-tag/{id}', [SiteTagsController::class, 'deleteTag'])->name('deleteTag');
+
+
         Route::get('/site/site-patrols/{id}', [SitePatrolsController::class, 'index'])->name('site-patrols');
-        Route::post('/site/site-patrols/{id}', [SitePatrolsController::class, 'addPatrol'])->name('addPatrol');
-        Route::put('/site/site-patrols/{id}', [SitePatrolsController::class, 'editPatrol'])->name('editPatrol');
+        Route::post('/site/site-patrols/{id}', [SitePatrolsController::class, 'store'])->name('addPatrol');
+        Route::put('/site/site-patrols/{id}', [SitePatrolsController::class, 'update'])->name('updatePatrol');
+        Route::delete('/site/site-patrols/{id}', [SitePatrolsController::class, 'destroy'])->name('deletePatrol');
+
+
+        
         Route::get('/site/site-incidents/{id}', [SiteIncidentsController::class, 'index'])->name('site-incidents');
 
 

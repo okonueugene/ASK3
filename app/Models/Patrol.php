@@ -15,7 +15,8 @@ class Patrol extends Model
         'end',
         'company_id',
         'site_id',
-        'guard_id'
+        'guard_id',
+        'type'
     ];
     public function site()
     {

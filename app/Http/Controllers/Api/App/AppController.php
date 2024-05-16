@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api\App;
 
-use Carbon\Carbon;
-use App\Models\Tag;
-use App\Models\Guard;
-use App\Models\Patrol;
-use App\Models\Incident;
-use Illuminate\Http\Request;
-use App\Models\PatrolHistory;
 use App\Http\Controllers\Controller;
+use App\Models\Guard;
+use App\Models\Incident;
+use App\Models\Patrol;
+use App\Models\PatrolHistory;
+use App\Models\Site;
+use App\Models\Tag;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AppController extends Controller
@@ -347,22 +348,17 @@ class AppController extends Controller
         $allpatrols = $guard->patrols()->whereDate('created_at', $today)->get();
         //get number of tags a guard is supposed to scan
         $checkpoints = $guard->site->tags->count();
-        //clockin day and time_in for the guard
-        $clocked_in_date = $guard->attendances()->where('day', $today)->first();
-        $clockin_time = $guard->attendances()->where('day', $today)->first()->time_in;
-
-        //concat the two to format 'Y-m-d H:i:s'
-        $clockin = $today . ' ' . $clockin_time;
-
+        //get the guards attendance record for the day
+        $clockin = $guard->attendances()->where('day', $today)->first();
 
         return response()->json([
             'success' => true,
             'message' => 'Dashboard stats retrieved successfully',
             'totalpatrols' => count($allpatrols),
             'checkpoints' => $checkpoints,
-            'clocked_in' => $clockin_time,
-            'incidents'=> $guard->site->incidents()->where('date', $today)->count(),
-            'clocked_in_date' => $clockin,
+            'clocked_in' => $clockin->time_in,
+            'incidents' => $guard->site->incidents()->where('date', $today)->count(),
+            'clocked_in_date' => $clockin->day . ' ' . $clockin->time_in,
         ], 200);
 
     }
@@ -370,13 +366,12 @@ class AppController extends Controller
     //Add an Incident
     public function addIncident(Request $request)
     {
-        $guard = Guard::where('id', auth()->guard()->user()->id)->first(); 
-
+        $guard = Guard::where('id', auth()->guard()->user()->id)->first();
 
         $this->validate($request, [
             'title' => 'required',
             'details' => 'required',
-            'actions_taken' => 'required'
+            'actions_taken' => 'required',
         ]);
 
         $time = Carbon::now($guard->site->timezone)->toDateTimeString();
@@ -387,7 +382,7 @@ class AppController extends Controller
             'company_id' => $guard->company_id,
             'guard_id' => $guard->id,
             'site_id' => $guard->site_id,
-            'incident_no' => random_int(100000, 999999),
+            'incident_no' => time(),
             'title' => $request->title,
             'details' => $request->details,
             'actions_taken' => $request->actions_taken,
@@ -441,8 +436,24 @@ class AppController extends Controller
 
         // $user->notify(new EmailNotification($email));
 
-        activity()->causedBy($incident->owner)
-            ->withProperties(['site_id' => $incident->owner->site_id])
+        // activity()
+        //     ->causedBy($patrol->owner)
+        //     ->event('updated')
+        //     ->withProperties(['patrol' => $patrol])
+        //     ->performedOn($patrol)
+        //     ->useLog('Patrol')
+        //     ->log('Patrol ended');
+
+        // activity()->causedBy($incident->owner)
+        //     ->withProperties(['site_id' => $incident->owner->site_id])
+        //     ->log($incident->owner->name . ' added a new Incident NO: ' . $incident->incident_no);
+
+        activity()
+            ->causedBy($incident->owner)
+            ->event('created')
+            ->performedOn($incident)
+            ->withProperties(['incident' => $incident])
+            ->useLog('Incident')
             ->log($incident->owner->name . ' added a new Incident NO: ' . $incident->incident_no);
 
         return response()->json([
@@ -500,6 +511,119 @@ class AppController extends Controller
                 'success' => false,
                 'message' => 'Incident not found',
             ]);
+        }
+    }
+
+    public function startSceduledPatrol(Request $request)
+    {
+        $id = $request->input('id');
+
+        $patrol = Patrol::where('id', $id)->first();
+
+        if ($patrol && $patrol->type == 'scheduled') {
+            activity()->causedBy($patrol->owner)
+                ->withProperties(['site_id' => $patrol->owner->site_id])
+                ->event('updated')
+                ->performedOn($patrol)
+                ->useLog('Patrol')
+                ->log($patrol->owner->name . ' started a scheduled patrol ' . $patrol->name);
+
+            return response()->json(['message' => "Patrol started successfully"]);
+        } else {
+            return response()->json(['message' => "Patrol not found"], 404);
+        }
+    }
+
+    public function doPatrol(Request $request)
+    {
+        $id = $request->input('id');
+        $patrol = Patrol::where('id', $id)->first();
+
+        if ($patrol->type == 'unscheduled') {
+            //redirect to scan checkpoint
+            return response()->json(['success' => true, 'message' => "This is an unscheduled round"], 200);
+        }
+
+        if ($patrol && $patrol->type == 'scheduled') {
+            $guard = auth()->guard()->user();
+            $guard->load('site');
+            $today = Carbon::now($guard->site->timezone)->toDateString('Y-m-d');
+
+            $code = $request->input('code');
+
+            $tag = Tag::where('code', $code)->first();
+
+            //Times
+            $time = Carbon::parse($request->input('current_time'))->format('H:i:s');
+            $start = Carbon::parse($patrol->start)->format('H:i:s');
+            $end = Carbon::parse($patrol->end)->format('H:i:s');
+
+            //Patrol tag ids in array
+            $tags_ids = $patrol->tags->pluck('id')->toArray();
+
+            if ($tag) {
+                if ($patrol->owner->id == $guard->id) {
+                    if (in_array($tag->id, $tags_ids)) {
+                        if ($time < $end && $time > $start) {
+                            $scanned = $patrol->history->where('date', $today)->where('patrol_id', $patrol->id)->where('tag_id', $tag->id)->first();
+                            if ($scanned == null) {
+                                PatrolHistory::updateOrCreate([
+                                    'company_id' => $guard->company_id,
+                                    'site_id' => $guard->site_id,
+                                    'guard_id' => $guard->id,
+                                    'patrol_id' => $patrol->id,
+                                    'tag_id' => $tag->id,
+                                    'date' => $today,
+                                    'time' => $time,
+                                    'status' => 'checked',
+                                    'updated_at' => Carbon::now()->toDateTimeString(),
+
+                                ]);
+
+                                return response()->json(['success' => true, 'message' => "Checkpoint created and scanned successfully"], 200);
+
+                            } else {
+                                if ($scanned && $scanned->status == 'checked') {
+                                    return response()->json(['success' => true, 'message' => "This checkpoint has already been scanned"], 200);
+                                } elseif ($scanned && $scanned->status == 'upcoming' || $scanned->status == 'missed') {
+                                    $scanned->update([
+                                        'time' => $time,
+                                        'status' => 'checked',
+                                        'updated_at' => Carbon::now()->toDateTimeString(),
+
+                                    ]);
+
+                                    return response()->json(['success' => true, 'message' => "Checkpoint scanned successfully"], 200);
+                                } else {
+                                    PatrolHistory::updateOrCreate([
+                                        'company_id' => $guard->company_id,
+                                        'site_id' => $guard->site_id,
+                                        'guard_id' => $guard->id,
+                                        'patrol_id' => $patrol->id,
+                                        'tag_id' => $tag->id,
+                                        'date' => $today,
+                                        'time' => $time,
+                                        'status' => 'checked',
+                                        'updated_at' => Carbon::now()->toDateTimeString(),
+                                    ]);
+
+                                    return response()->json(['success' => true, 'message' => "Checkpoint created and scanned successfully"], 200);
+                                }
+                            }
+                        } else {
+                            return response()->json(['success' => true, 'message' => "You do not have a round at this time"], 200);
+                        }
+                    } else {
+                        return response()->json(['success' => true, 'message' => "This checkpoint is not assigned to this round"], 200);
+                    }
+                } else {
+                    return response()->json(['success' => true, 'message' => "This round is not assigned to you"], 200);
+                }
+            } else {
+                return response()->json(['success' => true, 'message' => "This tag does not exist in our database"], 200);
+            }
+        } else {
+            return response()->json(['success' => true, 'message' => 'Patrol not found'], 200);
         }
     }
 }

@@ -21,7 +21,7 @@
                                                     <li>
                                                         <a href="javascript:void(0)"
                                                             class="btn btn-md btn-white btn-dim btn-outline-primary"
-                                                            data-bs-toggle="modal" data-bs-target="#addPatrolModal">
+                                                            onclick="addPatrol()">
                                                             <em class="icon ni ni ni-plus"></em>
                                                             <span>Scheduled Patrol</span>
                                                         </a>
@@ -126,8 +126,6 @@
                                                                                             <li>
                                                                                                 {{-- <a href="{{ route('admin.patrol-edit', $patrol->id) }}" --}}
                                                                                                 <a href="javascript:void(0)"
-                                                                                                    data-bs-toggle="modal"
-                                                                                                    data-bs-target="#editPatrolModal"
                                                                                                     onclick="editPatrol({{ $patrol }})">
                                                                                                     <em
                                                                                                         class="icon ni ni-edit"></em>
@@ -136,14 +134,20 @@
 
                                                                                             </li>
                                                                                             <li>
-                                                                                                {{-- <a href="{{ route('admin.patrol-delete', $patrol->id) }}" --}}
-                                                                                                <a href="javascript:void(0)"
-                                                                                                    onclick="deletePatrol({{ $patrol->id }})">
-                                                                                                    <em
-                                                                                                        class="icon ni ni-trash"></em>
-                                                                                                    <span>Delete
-                                                                                                        Patrol</span>
-                                                                                                </a>
+                                                                                                <form
+                                                                                                    action="{{ route('admin.deletePatrol', $patrol->id) }}"
+                                                                                                    method="POST">
+                                                                                                    @csrf
+                                                                                                    @method('DELETE')
+                                                                                                    <button type="submit"
+                                                                                                        class="btn btn-link text-danger"
+                                                                                                        onclick="return confirm('Are you sure you want to delete this patrol?')">
+                                                                                                        <em
+                                                                                                            class="icon ni ni-trash"></em>
+                                                                                                        <span>Delete</span>
+                                                                                                    </button>
+                                                                                                </form>
+
                                                                                             </li>
                                                                                         </ul>
                                                                                     </div>
@@ -188,7 +192,7 @@
                 </div>
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <form id="addSingleTagForm" action="{{ route('admin.addSingleTag', $site->id) }}" method="POST"
+                    <form id="addPatrolForm" action="{{ route('admin.addPatrol', $site->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="row">
@@ -198,7 +202,8 @@
                                         Guard</label>
                                     <div class="form-control-wrap">
                                         <div class="form-group">
-                                            <select class="custom-select form-select" data-search="on" id="guard_name">
+                                            <select class="custom-select form-select" data-search="on" id="guard_name"
+                                                name="guard_id">
                                                 <option>Select Guard</option>
                                                 @foreach ($siteguards as $siteguard)
                                                     <option value="{{ $siteguard->id }}">
@@ -254,22 +259,27 @@
                                     <h6 class="title mb-3">Select Checkpoints</h6>
                                     <div><span><input type="checkbox" id="checkAll"> Check All</span></div>
                                     <ul class="custom-control-group">
-                                        @foreach ($sitetags as $tag)
+                                        @foreach ($sitetags as $checkpoint)
                                             <li>
                                                 <div
                                                     class="custom-control custom-control-sm custom-checkbox custom-control-pro">
-                                                    <input type="checkbox" class="custom-control-input" name="tags[]"
-                                                        id="{{ $tag->id }}"><label class="custom-control-label"
-                                                        for="{{ $tag->id }}">{{ $tag->name == null ? $tag->code : $tag->location }}</label>
+                                                    <input type="checkbox" class="custom-control-input checkpointItem"
+                                                        id="checkpoint{{ $checkpoint->id }}"
+                                                        value="{{ $checkpoint->id }}">
+                                                    <label class="custom-control-label"
+                                                        for="checkpoint{{ $checkpoint->id }}">{{ $checkpoint->name }}</label>
                                                 </div>
                                             </li>
                                         @endforeach
-                                    </ul>
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="tags[]" id="tags">
+                        <input type="hidden" name="site_id" value="{{ $site->id }}">
                         <div class="form-group" style="margin-top: 20px;">
                             <button type="submit" class="btn btn-md btn-primary float-end">Add Patrol</button>
+                            <button type="button" class="btn btn-white btn-dim btn-outline-secondary float-end"
+                                onclick="closePatrol()">Close</button>
                         </div>
                     </form>
                 </div>
@@ -327,6 +337,14 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label for="tags" class="form-label">Checkpoints</label>
+                            <div class="form-control form-control-lg">
+                                <ul id="show_tags" class="list-group list-group-numbered"></ul>
+                            </div>
+                        </div>
+                    </div>
                     <br>
                     <button type="button" class="btn btn-white btn-dim btn-outline-secondary float-end"
                         data-bs-dismiss="modal">Close</button>
@@ -344,8 +362,10 @@
                 </div>
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <form id="editSingleTagForm" action="" method="POST" enctype="multipart/form-data">
+                    <form id="editSingleTagForm" action="{{ route('admin.updatePatrol', $site->id) }}" method="PUT"
+                        enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
                         <input type="hidden" name="patrol_id" id="patrol_id">
                         <div class="form-group">
                             <label for="name" class="form-label">Name</label>
@@ -377,6 +397,13 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="form-group">
+                            <label for="tags" class="form-label">Select Checkpoints</label>
+                            <div id="edit_checkpoints">
+                                <!-- Checkpoints will be populated here -->
+                            </div>
+                        </div>
+                        <input type="hidden" name="tags[]" id="edit_tags">
                         <div class="form-group" style="margin-top: 20px;">
                             <button type="submit" class="btn btn-md btn-primary float-end">Edit Patrol</button>
                         </div>
@@ -385,31 +412,69 @@
             </div>
         </div>
     </div>
+
+
 @endsection
 
 <script>
     //Render checkpoit div if inputs are not empty
-    window.onload = function() {
-        $('#addSingleTagForm').on('input', function() {
+
+
+
+    function validateInput() {
+        $('#addPatrolForm').on('input', function() {
             console.log($('#guard_name').val(), $('#round_name').val(), $('#start_time').val(), $(
                 '#end_time').val());
             if ($('#guard_name').val() != '' && $('#round_name').val() != '' && $('#start_time').val() !=
                 '' && $('#end_time').val() != '') {
                 $('#checkpoint').show();
-            } else {
-                $('#checkpoint').hide();
-            }
-        });
-
-        //Check All Checkpoints in the list 
-        $('#checkAll').click(function() {
-            if ($(this).is(':checked')) {
-                $('input:checkbox').prop('checked', true);
-            } else {
-                $('input:checkbox').prop('checked', false);
             }
         });
     }
+
+    function handleSelectTags() {
+        const checkAll = document.getElementById('checkAll');
+        const checkpointItems = document.querySelectorAll('.checkpointItem');
+        const tags = []; // Assuming you have a tags array to store selected IDs
+
+        // Check if "Check All" is selected
+        if (checkAll.checked) {
+            checkpointItems.forEach(item => {
+                item.checked = true;
+                tags.push(item.value); // Add checkpoint ID to tags array
+            });
+        } else {
+            // Loop through individual checkboxes
+            checkpointItems.forEach(item => {
+                if (item.checked) {
+                    tags.push(item.value); // Add checkpoint ID to tags array if checked
+                }
+            });
+        }
+
+        console.log(tags); // For demonstration purposes
+        //append the tags to the hidden input
+        $('#tags').val(tags);
+    }
+
+    function addPatrol() {
+        $('#addPatrolModal').modal('show');
+        //run the function to validate inputs
+        setInterval(() => {
+            validateInput();
+            handleSelectTags();
+        }, 1000);
+    }
+
+    function closePatrol() {
+        $('#addPatrolModal').modal('hide');
+        //reset the form
+        $('#addPatrolForm').trigger('reset');
+        //clear the interval
+        clearInterval();
+    }
+
+
 
     function showPatrol(patrol) {
         $('#name').text(patrol.name);
@@ -417,6 +482,23 @@
         $('#start').text(patrol.start);
         $('#end').text(patrol.end);
         patrol.type == 'scheduled' ? $('#type').text('Scheduled') : $('#type').text('Unscheduled');
+
+        if (patrol.tags) {
+            let tagsHtml = '';
+            patrol.tags.forEach(tag => {
+                tagsHtml += `
+          <li class="list-group-item">${tag.name ? tag.name : (tag.code ? tag.code : tag.location)}</li>
+      `;
+            });
+
+            $('#show_tags').empty();
+            $('#show_tags').append(tagsHtml);
+        } else {
+            // Handle case where patrol.tags is missing or empty (optional)
+            $('#show_tags').text('No tags associated with this patrol.');
+        }
+
+        $('#showPatrolModal').modal('show');
     }
 
     function editPatrol(patrol) {
@@ -424,5 +506,37 @@
         $('#edit_name').val(patrol.name);
         $('#edit_start').val(patrol.start);
         $('#edit_end').val(patrol.end);
+
+        //declare all the tags associated with the patrols site
+        const siteTags = {!! json_encode($sitetags) !!};
+        console.log(siteTags);
+        let checkpointsHtml = '';
+        siteTags.forEach(tag => {
+            const isChecked = patrol.tags.some(patrolTag => patrolTag.id === tag.id) ? 'checked' : '';
+            console.log(isChecked.length);
+
+            checkpointsHtml += `
+                    <div class="custom-control custom-control-sm custom-checkbox custom-control-pro">
+                        <input type="checkbox" class="custom-control-input checkpointItem" id="edit_checkpoint${tag.id}" value="${tag.id}" ${isChecked}>
+                        <label class="custom-control-label" for="edit_checkpoint${tag.id}">${tag.name}</label>
+                    </div>
+                `;
+        });
+        $('#edit_checkpoints').html(checkpointsHtml);
+        $('#editPatrolModal').modal('show');
+
+        $('#editSingleTagForm').on('submit', function(e) {
+            e.preventDefault();
+            let selectedTags = [];
+            $('.checkpointItem').each(function() {
+                if ($(this).is(':checked')) {
+                    selectedTags.push($(this).val());
+                }
+            });
+
+            $('#edit_tags').val(selectedTags.join(','));
+            this.submit();
+        });
+
     }
 </script>
