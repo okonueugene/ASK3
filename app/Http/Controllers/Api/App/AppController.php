@@ -555,7 +555,7 @@ class AppController extends Controller
         $id = $request->input('id');
         $patrol = Patrol::where('id', $id)->first();
 
-        if ($patrol->type == 'unscheduled') {
+        if (!$patrol && $patrol->type == 'unscheduled') {
             //redirect to scan checkpoint
             return response()->json(['success' => true, 'message' => "This is an unscheduled round"], 200);
         }
