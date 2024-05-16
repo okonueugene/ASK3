@@ -536,6 +536,22 @@ class AppController extends Controller
 
     public function doPatrol(Request $request)
     {
+        //validate request
+        $rules = [
+            'id' => 'required',
+            'code' => 'required',
+            'current_time' => 'required',
+        ];
+
+        $messages = [
+            'id.required' => 'Patrol ID is required',
+            'code.required' => 'Tag code is required',
+            'current_time.required' => 'Current time is required',
+        ];
+
+        $this->validate($request, $rules, $messages);
+
+        //retrieve the patrol record
         $id = $request->input('id');
         $patrol = Patrol::where('id', $id)->first();
 
