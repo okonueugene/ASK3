@@ -714,14 +714,6 @@ class AppController extends Controller
     {
         $patrol = Patrol::find($request->id);
 
-        if (!$patrol) {
-            return response()->json(['success' => true, 'message' => 'Patrol not found'], 200);
-        } else if ($patrol->type == 'unscheduled') {
-            return response()->json(['success' => true, 'message' => 'This is an Unscheduled patrol'], 200);
-        } else {
-            return response()->json(['success' => true, 'message' => 'Patrol found'], 200);
-        }
-
         $today = Carbon::now($patrol->site->timezone)->format('Y-m-d');
 
         if ($patrol) {
