@@ -682,7 +682,7 @@ class AppController extends Controller
                 'data' => $tags,
             ], 200);
         } else {
-            return response()->json(['message' => "Tags not found"], 404);
+            return response()->json(['message' => "Tags not found"], 200);
         }
 
     }
