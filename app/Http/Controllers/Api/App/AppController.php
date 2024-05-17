@@ -528,9 +528,9 @@ class AppController extends Controller
                 ->useLog('Patrol')
                 ->log($patrol->owner->name . ' started a scheduled patrol ' . $patrol->name);
 
-            return response()->json(['message' => "Patrol started successfully"]);
+            return response()->json(['message' => "Patrol started successfully"], 200);
         } else {
-            return response()->json(['message' => "Patrol not found"], 404);
+            return response()->json(['message' => "Patrol not found"], 200);
         }
     }
 
