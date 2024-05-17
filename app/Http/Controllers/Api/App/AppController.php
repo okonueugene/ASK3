@@ -727,10 +727,6 @@ class AppController extends Controller
             ->where('type', 'scheduled')
             ->first();
 
-        if (!$patrol) {
-            return response()->json(['message' => 'Invalid patrol ID or unscheduled patrol'], 400); // Use 400 for bad request
-        }
-
         $today = Carbon::now($patrol->site->timezone)->format('Y-m-d');
         $history = $patrol->history()
             ->where('date', $today)
@@ -738,9 +734,6 @@ class AppController extends Controller
             ->with('tag')
             ->get(); // Get all checked tags for the patrol
 
-        if ($history->isEmpty()) {
-            return response()->json(['message' => 'No checked tags found for this patrol'], 200);
-        }
 
         $data = [];
         foreach ($history as $entry) {
@@ -751,7 +744,7 @@ class AppController extends Controller
             ];
         }
 
-        return response()->json(['message' => true, 'data' => $data], 200);
+        return response()->json(['success' => true, 'data' => $data], 200);
     }
 
 }
