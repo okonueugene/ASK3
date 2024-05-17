@@ -60,6 +60,7 @@ class UpdateHistoryStatus extends Command
                         ->whereRelation('history', 'date', $today)
                         ->get();
 
+
                     // Loop through all patrols
                     foreach ($patrols as $patrol) {
                         $nowInSiteTimezone = Carbon::now()->timezone($patrol->site->timezone);
@@ -85,4 +86,4 @@ class UpdateHistoryStatus extends Command
             Log::info("Command ended - updated status");
         }
     }
-}
+} 

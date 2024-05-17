@@ -649,15 +649,11 @@ class AppController extends Controller
     }
 
     //list scheduled site patrols
-    public function scheduledSitePatrols(Request $request)
+    public function scheduledGuardPatrols(Request $request)
     {
-        $request->validate([
-            'site_id' => 'required',
-        ]);
+        $guard = auth()->guard()->user();
 
-        $site = Site::where('id', $request->site_id)->first();
-
-        $patrols = $site->patrols()->where('type', 'scheduled')->get();
+        $patrols = $guard->patrols()->where('type', 'scheduled')->get();
 
         if (count($patrols) > 0) {
             return response()->json([
@@ -674,8 +670,23 @@ class AppController extends Controller
         }
     }
     //tag by patrol id
-    //scanned checkpoints per patrol id
-    //Single Patrol
+    public function tagByPatrol(Request $request)
+    {
+        $id = $request->input('id');
+        $patrol = Patrol::where('id', $id)->where('type', 'scheduled')->first();
+        $tags = $patrol->tags;
+
+        if ($tags) {
+            return response()->json([
+                'success' => true,
+                'data' => $tags,
+            ], 200);
+        } else {
+            return response()->json(['message' => "Tags not found"], 404);
+        }
+
+    }
+    //Single Patrol History
     public function singlePatrol(Request $request)
     {
         $id = $request->input('id');
