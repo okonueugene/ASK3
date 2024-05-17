@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
-use App\Models\Site;
-use App\Models\Patrol;
 use App\Models\Company;
+use App\Models\Patrol;
+use App\Models\Site;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -55,6 +55,7 @@ class UpdateHistoryStatus extends Command
                     $nowInSiteTimezone = $now->copy()->setTimezone($site->timezone);
 
                     $patrols = Patrol::where('site_id', $site->id)
+                        ->where('type', 'scheduled')
                         ->where('end', '<', $nowInSiteTimezone->toDateTimeString())
                         ->whereRelation('history', 'date', $today)
                         ->get();

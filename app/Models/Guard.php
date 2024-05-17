@@ -61,6 +61,17 @@ class Guard extends Authenticatable
     {
         return $this->hasMany(Attendance::class, 'guard_id');
     }
+    public function scopeSearch($query, $term)
+    {
+        $term = "%term%";
+        $query->where(function ($query) use ($term) {
+            $query->where('name', 'like', $term)
+                ->orWhere('id_number', 'like', $term)
+                ->orWhere('phone', 'like', $term)
+                ->orWhere('email', 'like', $term);
+        });
+    }
+
     public function shifts()
     {
         return $this->hasMany(Shift::class);

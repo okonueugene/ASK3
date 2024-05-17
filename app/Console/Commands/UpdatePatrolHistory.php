@@ -58,7 +58,7 @@ class UpdatePatrolHistory extends Command
 
         if ($sites) {
             foreach ($sites as $site) {
-                $patrols = Patrol::with('tags')->where('site_id', $site->id)->get();
+                $patrols = Patrol::with('tags')->where('site_id', $site->id)->where('type', 'scheduled')->get();
 
                 foreach ($patrols as $patrol) {
                     if ($patrol->owner->shifts()->count() > 0) {

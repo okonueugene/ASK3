@@ -22,8 +22,8 @@ class Shift extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function guard()
+    public function user()
     {
-        return $this->belongsTo(Guard::class);
+        return $this->belongsTo(Guard::class, 'guard_id', 'id');
     }
 }

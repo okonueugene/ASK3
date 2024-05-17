@@ -554,7 +554,7 @@ class AppController extends Controller
         //retrieve the patrol record
         $id = $request->input('id');
         $patrol = Patrol::where('id', $id)->first();
-       //if patrol is null, return error
+        //if patrol is null, return error
         if (!$patrol) {
             return response()->json(['success' => true, 'message' => 'Patrol not found'], 200);
         }
@@ -647,4 +647,55 @@ class AppController extends Controller
             return response()->json(['success' => true, 'message' => 'Patrol not found'], 200);
         }
     }
+
+    //list scheduled site patrols
+    public function scheduledSitePatrols(Request $request)
+    {
+        $request->validate([
+            'site_id' => 'required',
+        ]);
+
+        $site = Site::where('id', $request->site_id)->first();
+
+        $patrols = $site->patrols()->where('type', 'scheduled')->get();
+
+        if (count($patrols) > 0) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Patrols retrieved successfully',
+                'data' => $patrols,
+            ]);
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Patrols found',
+            ]);
+        }
+    }
+    //tag by patrol id
+    //scanned checkpoints per patrol id
+    //Single Patrol
+    public function singlePatrol(Request $request)
+    {
+        $id = $request->input('id');
+        $patrol = Patrol::where('id', $id)->first();
+        $today = Carbon::now($patrol->site->timezone)->format('Y-m-d');
+
+        if ($patrol) {
+            $tags = $patrol->tags;
+
+            $histories = PatrolHistory::where('date', $today)->where('patrol_id', $patrol->id)->get();
+            $combined = array_replace_recursive($histories->toArray(), $tags->toArray());
+
+            return response()->json([
+                'success' => true,
+                'data' => $combined,
+            ], 200);
+        } else {
+            return response()->json(['message' => "Patrol not found"], 404);
+        }
+
+    }
+
 }

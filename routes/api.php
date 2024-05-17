@@ -28,6 +28,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum', 'ensure_json
         Route::post('/patrol/end', 'endPatrol');
         Route::post('/patrol/start-scheduled', 'startSceduledPatrol');
         Route::post('/patrol/scan-scheduled', 'doPatrol');
+        Route::get('/patrol/scheduled', 'scheduledSitePatrols');
 
         //tag routes
         Route::post('tag/add', 'addTag');
