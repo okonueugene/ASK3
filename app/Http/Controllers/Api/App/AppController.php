@@ -346,15 +346,23 @@ class AppController extends Controller
 
         //get all patrols for the guard on the current day
         $allpatrols = $guard->patrols()->whereDate('created_at', $today)->get();
+        $scheduled_patrols = $guard->patrols()->where('type', 'scheduled')->whereDate('created_at', $today)->get();
         //get number of tags a guard is supposed to scan
         $checkpoints = $guard->site->tags->count();
         //get the guards attendance record for the day
         $clockin = $guard->attendances()->where('day', $today)->first();
+        if (!$clockin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Guard has not clocked in today',
+            ]);
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Dashboard stats retrieved successfully',
             'totalpatrols' => count($allpatrols),
+            'scheduled_patrols' => count($scheduled_patrols),
             'checkpoints' => $checkpoints,
             'clocked_in' => $clockin->time_in,
             'incidents' => $guard->site->incidents()->where('date', $today)->count(),
@@ -743,7 +751,7 @@ class AppController extends Controller
             ];
         }
 
-        return response()->json(['success' => true, 'data' => $data], 200);
+        return response()->json(['message' => true, 'data' => $data], 200);
     }
 
 }
