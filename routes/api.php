@@ -30,12 +30,12 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum', 'ensure_json
         Route::post('/patrol/scan-scheduled', 'doPatrol');
         Route::get('/patrol/scheduled', 'scheduledGuardPatrols');
         Route::get('/patrol-history', 'singlePatrol');
-        Route::get('/patrol-tags', 'tagByPatrol');
+        Route::post('/patrol-tags', 'tagByPatrol');
 
         //tag routes
 
-        Route::post('tag/add', 'addTag');
-        Route::post('tag/site-tags', 'siteTags');
+        Route::post('/tag/add', 'addTag');
+        Route::post('/tag/site-tags', 'siteTags');
         Route::post('/dashboard-stats', 'dashboardStats');
         //incident routes
         Route::post('/incidents', 'addIncident');
