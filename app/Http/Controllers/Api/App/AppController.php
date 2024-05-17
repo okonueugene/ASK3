@@ -709,4 +709,40 @@ class AppController extends Controller
 
     }
 
+    //single patrol history of checked tags
+    public function collectedTags(Request $request)
+    {
+        $id = $request->input('id');
+        $patrol = Patrol::where('id', $id)->first();
+
+        if (!$patrol) {
+            return response()->json(['message' => "This patrol does not exist"], 200);
+        } else if ($patrol->type == 'unscheduled') {
+            return response()->json(['message' => "This is an Unscheduled patrol"], 200);
+        } else {
+            return response()->json(['message' => "The patrol has not been properly configured"], 200);
+        }
+
+        $today = Carbon::now($patrol->site->timezone)->format('Y-m-d');
+
+        if ($patrol) {
+            $history = PatrolHistory::where('date', $today)->where('patrol_id', $patrol->id)->where('status', 'checked')->first();
+            $history->load('tag');
+            $data = array();
+
+            //append history to data array
+            $data['name'] = $history->tag->name;
+            $data['location'] = $history->tag->location;
+            $data['time'] = $history->time;
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ], 200);
+        } else {
+            return response()->json(['message' => "Patrol not found"], 200);
+        }
+
+    }
+
 }

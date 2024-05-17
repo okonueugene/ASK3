@@ -126,7 +126,10 @@
                                                                                             <li>
                                                                                                 {{-- <a href="{{ route('admin.patrol-edit', $patrol->id) }}" --}}
                                                                                                 <a href="javascript:void(0)"
+                                                                                                    data-bs-toggle="modal"
+                                                                                                    data-bs-target="#editPatrolModal"
                                                                                                     onclick="editPatrol({{ $patrol }})">
+
                                                                                                     <em
                                                                                                         class="icon ni ni-edit"></em>
                                                                                                     <span>Edit Patrol</span>
@@ -362,7 +365,7 @@
                 </div>
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <form id="editSingleTagForm" action="{{ route('admin.updatePatrol', $site->id) }}" method="PUT"
+                    <form id="editSingleTagForm" action="{{ route('admin.updatePatrol', $site->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -373,7 +376,7 @@
                                 <input type="text" class="form-control" name="edit_name" id="edit_name"
                                     value="">
                             </div>
-                            @error('name')
+                            @error('edit_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -383,7 +386,7 @@
                                 <input type="time" class="form-control" name="edit_start" id="edit_start"
                                     value="">
                             </div>
-                            @error('start')
+                            @error('edit_start')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -393,7 +396,7 @@
                                 <input type="time" class="form-control" name="edit_end" id="edit_end"
                                     value="">
                             </div>
-                            @error('end')
+                            @error('edit_end')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -403,11 +406,12 @@
                                 <!-- Checkpoints will be populated here -->
                             </div>
                         </div>
-                        <input type="hidden" name="tags[]" id="edit_tags">
+                        <input type="hidden" name="tags" id="edit_tags">
                         <div class="form-group" style="margin-top: 20px;">
                             <button type="submit" class="btn btn-md btn-primary float-end">Edit Patrol</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -417,14 +421,9 @@
 @endsection
 
 <script>
-    //Render checkpoit div if inputs are not empty
-
-
-
     function validateInput() {
         $('#addPatrolForm').on('input', function() {
-            console.log($('#guard_name').val(), $('#round_name').val(), $('#start_time').val(), $(
-                '#end_time').val());
+
             if ($('#guard_name').val() != '' && $('#round_name').val() != '' && $('#start_time').val() !=
                 '' && $('#end_time').val() != '') {
                 $('#checkpoint').show();
@@ -452,7 +451,6 @@
             });
         }
 
-        console.log(tags); // For demonstration purposes
         //append the tags to the hidden input
         $('#tags').val(tags);
     }
@@ -501,42 +499,55 @@
         $('#showPatrolModal').modal('show');
     }
 
-    function editPatrol(patrol) {
-        $('#patrol_id').val(patrol.id);
-        $('#edit_name').val(patrol.name);
-        $('#edit_start').val(patrol.start);
-        $('#edit_end').val(patrol.end);
+    function handleEditedSelectedTags() 
+    {
+        const checkAll = document.getElementById('checkAll');
+        const checkpointItems = document.querySelectorAll('.checkpointItem');
+        const tags = []; // Assuming you have a tags array to store selected IDs
 
-        //declare all the tags associated with the patrols site
+        // Check if "Check All" is selected
+        if (checkAll.checked) {
+            checkpointItems.forEach(item => {
+                item.checked = true;
+                tags.push(item.value); // Add checkpoint ID to tags array
+            });
+        } else {
+            // Loop through individual checkboxes
+            checkpointItems.forEach(item => {
+                if (item.checked) {
+                    tags.push(item.value); // Add checkpoint ID to tags array if checked
+                }
+            });
+        }
+
+        //append the tags to the hidden input
+        $('#edit_tags').val(tags);
+    }
+
+    function editPatrol(patrol) {
+        document.getElementById('patrol_id').value = patrol.id;
+        document.getElementById('edit_name').value = patrol.name;
+        document.getElementById('edit_start').value = patrol.start;
+        document.getElementById('edit_end').value = patrol.end;
+
         const siteTags = {!! json_encode($sitetags) !!};
-        console.log(siteTags);
         let checkpointsHtml = '';
         siteTags.forEach(tag => {
             const isChecked = patrol.tags.some(patrolTag => patrolTag.id === tag.id) ? 'checked' : '';
-            console.log(isChecked.length);
-
             checkpointsHtml += `
-                    <div class="custom-control custom-control-sm custom-checkbox custom-control-pro">
-                        <input type="checkbox" class="custom-control-input checkpointItem" id="edit_checkpoint${tag.id}" value="${tag.id}" ${isChecked}>
-                        <label class="custom-control-label" for="edit_checkpoint${tag.id}">${tag.name}</label>
-                    </div>
-                `;
+            <div class="custom-control custom-control-sm custom-checkbox custom-control-pro">
+                <input type="checkbox" class="custom-control-input checkpointItem" id="edit_checkpoint${tag.id}" value="${tag.id}" ${isChecked}>
+                <label class="custom-control-label" for="edit_checkpoint${tag.id}">${tag.name}</label>
+            </div>
+        `;
         });
-        $('#edit_checkpoints').html(checkpointsHtml);
+        document.getElementById('edit_checkpoints').innerHTML = checkpointsHtml;
         $('#editPatrolModal').modal('show');
 
-        $('#editSingleTagForm').on('submit', function(e) {
+        document.getElementById('editSingleTagForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            let selectedTags = [];
-            $('.checkpointItem').each(function() {
-                if ($(this).is(':checked')) {
-                    selectedTags.push($(this).val());
-                }
-            });
-
-            $('#edit_tags').val(selectedTags.join(','));
+            handleEditedSelectedTags();
             this.submit();
         });
-
     }
 </script>

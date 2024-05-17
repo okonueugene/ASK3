@@ -88,9 +88,9 @@ class SitePatrolsController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    public function update(Request $request)
+
+    public function update(Request $request, $siteId)
     {
-        dd($request->all());
         $request->validate([
             'edit_name' => 'required|min:3|max:50|string',
             'edit_start' => 'required',
@@ -107,11 +107,10 @@ class SitePatrolsController extends Controller
             $patrol->end = $request->edit_end;
             $patrol->save();
 
-            $tagIds = explode(',', $request->tags[0]);
+            $tagIds = explode(',', $request->tags);
             $patrol->tags()->sync($tagIds);
 
             $today = Carbon::now($patrol->site->timezone)->format('Y-m-d');
-
             $patrol->history()->delete();
 
             foreach ($tagIds as $tag) {
