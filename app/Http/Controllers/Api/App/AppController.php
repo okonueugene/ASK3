@@ -712,15 +712,15 @@ class AppController extends Controller
     //single patrol history of checked tags
     public function collectedTags(Request $request)
     {
-        $id = $request->input('id');
-        $patrol = Patrol::where('id', $id)->first();
+        $patrol = Patrol::find($request->id);
 
         if (!$patrol) {
             return response()->json(['message' => "This patrol does not exist"], 200);
         } else if ($patrol->type == 'unscheduled') {
             return response()->json(['message' => "This is an Unscheduled patrol"], 200);
         } else {
-            return response()->json(['message' => "The patrol has not been properly configured"], 200);
+            dd($patrol->history ?? 'No history');
+            return response()->json(['message' => "The patrol has no history"], 200);
         }
 
         $today = Carbon::now($patrol->site->timezone)->format('Y-m-d');
@@ -728,6 +728,7 @@ class AppController extends Controller
         if ($patrol) {
             $history = PatrolHistory::where('date', $today)->where('patrol_id', $patrol->id)->where('status', 'checked')->first();
             $history->load('tag');
+
             $data = array();
 
             //append history to data array
@@ -739,10 +740,7 @@ class AppController extends Controller
                 'success' => true,
                 'data' => $data,
             ], 200);
-        } else {
-            return response()->json(['message' => "Patrol not found"], 200);
-        }
-
+        } 
     }
 
 }
