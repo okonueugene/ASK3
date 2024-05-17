@@ -14,7 +14,7 @@ return new class () extends Migration {
             $table->id();
             $table->unsignedBigInteger('company_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->enum('type', ['qr','nfc','virtual'])->nullable();
             $table->string('code');
             $table->string('location')->nullable();
