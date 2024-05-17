@@ -232,6 +232,28 @@ class AppController extends Controller
                         'message' => 'Tag updated successfully and assigned to ' . $tag->site->name,
                         'data' => $tag,
                     ]);
+                } else if ($tag->site_id == $request->site_id && !$tag->name && !$tag->location) {
+                    // Update tag
+                    $tag->update([
+                        'name' => $request->name,
+                        'location' => $request->location,
+                        'lat' => $request->lat,
+                        'long' => $request->long,
+                    ]);
+
+                    // Log the activity
+                    activity()
+                        ->causedBy(auth()->user())
+                        ->event('updated')
+                        ->performedOn($tag)
+                        ->withProperties(['tag' => $tag])
+                        ->log('Tag updated and assigned to site ' . $tag->site->name);
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Tag updated successfully and assigned to ' . $tag->site->name,
+                        'data' => $tag,
+                    ]);
                 } else {
 
                     return response()->json([
@@ -733,7 +755,6 @@ class AppController extends Controller
             ->where('status', 'checked')
             ->with('tag')
             ->get(); // Get all checked tags for the patrol
-
 
         $data = [];
         foreach ($history as $entry) {
