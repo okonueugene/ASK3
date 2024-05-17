@@ -712,26 +712,38 @@ class AppController extends Controller
     //single patrol history of checked tags
     public function collectedTags(Request $request)
     {
-        $patrol = Patrol::find($request->id);
+        $patrolId = $request->get('id'); // Use get() for better readability
+
+        // Validate patrol existence and type in a single step
+        $patrol = Patrol::where('id', $patrolId)
+            ->where('type', 'scheduled')
+            ->first();
+
+        if (!$patrol) {
+            return response()->json(['message' => 'Invalid patrol ID or unscheduled patrol'], 400); // Use 400 for bad request
+        }
 
         $today = Carbon::now($patrol->site->timezone)->format('Y-m-d');
+        $history = $patrol->history()
+            ->where('date', $today)
+            ->where('status', 'checked')
+            ->with('tag')
+            ->get(); // Get all checked tags for the patrol
 
-        if ($patrol) {
-            $history = PatrolHistory::where('date', $today)->where('patrol_id', $patrol->id)->where('status', 'checked')->first();
-            $history->load('tag');
+        if ($history->isEmpty()) {
+            return response()->json(['message' => 'No checked tags found for this patrol'], 200);
+        }
 
-            $data = array();
+        $data = [];
+        foreach ($history as $entry) {
+            $data[] = [
+                'name' => $entry->tag->name,
+                'location' => $entry->tag->location,
+                'time' => $entry->time,
+            ];
+        }
 
-            //append history to data array
-            $data['name'] = $history->tag->name;
-            $data['location'] = $history->tag->location;
-            $data['time'] = $history->time;
-
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-            ], 200);
-        } 
+        return response()->json(['success' => true, 'data' => $data], 200);
     }
 
 }
