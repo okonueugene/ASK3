@@ -90,6 +90,7 @@ class SitePatrolsController extends Controller
     }
     public function update(Request $request)
     {
+        dd($request->all());
         $request->validate([
             'edit_name' => 'required|min:3|max:50|string',
             'edit_start' => 'required',
