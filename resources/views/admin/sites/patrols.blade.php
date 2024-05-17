@@ -123,35 +123,39 @@
                                                                                                     <span>Show Patrol</span>
                                                                                                 </a>
                                                                                             </li>
-                                                                                            <li>
-                                                                                                {{-- <a href="{{ route('admin.patrol-edit', $patrol->id) }}" --}}
-                                                                                                <a href="javascript:void(0)"
-                                                                                                    data-bs-toggle="modal"
-                                                                                                    data-bs-target="#editPatrolModal"
-                                                                                                    onclick="editPatrol({{ $patrol }})">
+                                                                                            @if ($patrol->type == 'scheduled')
+                                                                                                <li>
+                                                                                                    {{-- <a href="{{ route('admin.patrol-edit', $patrol->id) }}" --}}
+                                                                                                    <a href="javascript:void(0)"
+                                                                                                        data-bs-toggle="modal"
+                                                                                                        data-bs-target="#editPatrolModal"
+                                                                                                        onclick="editPatrol({{ $patrol }})">
 
-                                                                                                    <em
-                                                                                                        class="icon ni ni-edit"></em>
-                                                                                                    <span>Edit Patrol</span>
-                                                                                                </a>
-
-                                                                                            </li>
-                                                                                            <li>
-                                                                                                <form
-                                                                                                    action="{{ route('admin.deletePatrol', $patrol->id) }}"
-                                                                                                    method="POST">
-                                                                                                    @csrf
-                                                                                                    @method('DELETE')
-                                                                                                    <button type="submit"
-                                                                                                        class="btn btn-link text-danger"
-                                                                                                        onclick="return confirm('Are you sure you want to delete this patrol?')">
                                                                                                         <em
-                                                                                                            class="icon ni ni-trash"></em>
-                                                                                                        <span>Delete</span>
-                                                                                                    </button>
-                                                                                                </form>
+                                                                                                            class="icon ni ni-edit"></em>
+                                                                                                        <span>Edit
+                                                                                                            Patrol</span>
+                                                                                                    </a>
 
-                                                                                            </li>
+                                                                                                </li>
+                                                                                                <li>
+                                                                                                    <form
+                                                                                                        action="{{ route('admin.deletePatrol', $patrol->id) }}"
+                                                                                                        method="POST">
+                                                                                                        @csrf
+                                                                                                        @method('DELETE')
+                                                                                                        <button
+                                                                                                            type="submit"
+                                                                                                            class="btn btn-link text-danger"
+                                                                                                            onclick="return confirm('Are you sure you want to delete this patrol?')">
+                                                                                                            <em
+                                                                                                                class="icon ni ni-trash"></em>
+                                                                                                            <span>Delete</span>
+                                                                                                        </button>
+                                                                                                    </form>
+
+                                                                                                </li>
+                                                                                            @endif
                                                                                         </ul>
                                                                                     </div>
                                                                                 </div>
@@ -499,8 +503,7 @@
         $('#showPatrolModal').modal('show');
     }
 
-    function handleEditedSelectedTags() 
-    {
+    function handleEditedSelectedTags() {
         const checkAll = document.getElementById('checkAll');
         const checkpointItems = document.querySelectorAll('.checkpointItem');
         const tags = []; // Assuming you have a tags array to store selected IDs
