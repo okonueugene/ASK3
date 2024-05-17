@@ -719,7 +719,6 @@ class AppController extends Controller
         } else if ($patrol->type == 'unscheduled') {
             return response()->json(['message' => "This is an Unscheduled patrol"], 200);
         } else {
-            dd($patrol->history ?? 'No history');
             return response()->json(['message' => "The patrol has no history"], 200);
         }
 
