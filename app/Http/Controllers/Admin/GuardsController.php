@@ -40,6 +40,13 @@ class GuardsController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
 
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn(Guard::latest()->first())
+            ->useLog('Guard')
+            ->log('added guard');
+
         return redirect()->back()->with('success', 'Guard added successfully');
     }
 

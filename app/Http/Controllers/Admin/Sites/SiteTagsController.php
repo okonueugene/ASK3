@@ -13,7 +13,6 @@ class SiteTagsController extends Controller
     public $site;
     private const CODE_LENGTH = 11;
 
-
     public function index($id)
     {
         $title = 'Site Tags';
@@ -52,7 +51,11 @@ class SiteTagsController extends Controller
             'lat' => 0.0,
             'long' => 0.0,
         ]);
-
+        //log the tag creation
+        activity()
+            ->performedOn($tag)
+            ->causedBy(auth()->user())
+            ->log('Tag created');
         //return success message
         return redirect()->back()->with('success', 'Tag added successfully');
     }
@@ -99,6 +102,12 @@ class SiteTagsController extends Controller
             ]);
         }
 
+        //log the tag creation
+        activity()
+            ->performedOn($tag)
+            ->causedBy(auth()->user())
+            ->log('Tags created');
+
         //return success message
         return redirect()->back()->with('success', 'Tags added successfully');
     }
@@ -111,6 +120,12 @@ class SiteTagsController extends Controller
 
         //delete the tag
         $tag->delete();
+
+        //log the tag deletion
+        activity()
+            ->performedOn($tag)
+            ->causedBy(auth()->user())
+            ->log('Tag deleted');
 
         //return success message
         return response()->json([

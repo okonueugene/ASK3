@@ -631,6 +631,14 @@ class AppController extends Controller
 
                                 ]);
 
+                                //log activity
+                                activity()->causedBy($patrol->owner)
+                                    ->withProperties(['site_id' => $patrol->owner->site_id])
+                                    ->event('updated')
+                                    ->performedOn($patrol)
+                                    ->useLog('Patrol')
+                                    ->log($patrol->owner->name . ' scanned tag ' . $tag->name);
+
                                 return response()->json(['success' => true, 'message' => "Checkpoint created and scanned successfully"], 200);
 
                             } else {
@@ -657,6 +665,14 @@ class AppController extends Controller
                                         'status' => 'checked',
                                         'updated_at' => Carbon::now()->toDateTimeString(),
                                     ]);
+
+                                    //log activity
+                                    activity()->causedBy($patrol->owner)
+                                        ->withProperties(['site_id' => $patrol->owner->site_id])
+                                        ->event('updated')
+                                        ->performedOn($patrol)
+                                        ->useLog('Patrol')
+                                        ->log($patrol->owner->name . ' scanned tag ' . $tag->name);
 
                                     return response()->json(['success' => true, 'message' => "Checkpoint created and scanned successfully"], 200);
                                 }

@@ -81,6 +81,13 @@ class SitePatrolsController extends Controller
 
             DB::commit();
 
+            //log activity
+            activity()
+                ->performedOn($patrol)
+                ->causedBy(auth()->user())
+                ->withProperties(['guard_id' => $request->guard_id])
+                ->log('Patrol created');
+
             return redirect()->back()->with('success', 'Patrol created successfully');
 
         } catch (\Exception $e) {
@@ -126,6 +133,13 @@ class SitePatrolsController extends Controller
 
             DB::commit();
 
+            //log activity
+            activity()
+                ->performedOn($patrol)
+                ->causedBy(auth()->user())
+                ->withProperties(['guard_id' => $patrol->guard_id])
+                ->log('Patrol updated');
+
             return redirect()->back()->with('success', 'Patrol updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -137,6 +151,12 @@ class SitePatrolsController extends Controller
     {
         $patrol = Patrol::findOrFail($id);
         $patrol->delete();
+
+        //log activity
+        activity()
+            ->performedOn($patrol)
+            ->causedBy(auth()->user())
+            ->log('Patrol deleted');
 
         return redirect()->back()->with('success', 'Patrol deleted successfully');
     }

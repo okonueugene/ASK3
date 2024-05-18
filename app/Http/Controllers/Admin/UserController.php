@@ -35,6 +35,13 @@ class UserController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
+        //log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn(User::latest()->first())
+            ->useLog('User')
+            ->log('added user');
+
         return redirect()->back()->with('success', 'User created successfully');
     }
 
@@ -56,6 +63,13 @@ class UserController extends Controller
             'password' => Hash::make($request->new_password)
         ]);
 
+        //log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->useLog('User')
+            ->log('updated user');
+
 
         return redirect()->back()->with('success', 'User updated successfully');
     }
@@ -64,6 +78,13 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
+
+        //log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->useLog('User')
+            ->log('deleted user');
 
         return redirect()->back()->with('success', 'User deleted successfully');
     }

@@ -60,6 +60,15 @@ class AuthenticationController extends Controller
                 }
                 $sites = DB::table('sites')->where('id', $guard->site_id)->first();
 
+                //log activity
+                activity()
+                    ->causedBy($guard)
+                    ->performedOn($guard)
+                    ->useLog('Guard')
+                    ->log('Guard logged in');
+
+                //return response
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Login successful',
@@ -102,6 +111,13 @@ class AuthenticationController extends Controller
         $day = Carbon::now($guard->site->timezone)->toDateString();
 
         $present = Attendance::where('guard_id', $guard->id)->where('day', $day)->first();
+
+        //log activity
+        activity()
+            ->causedBy($guard)
+            ->performedOn($guard)
+            ->useLog('Guard')
+            ->log('Guard logged out');
 
         if ($present) {
             $present->update([
