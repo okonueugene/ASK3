@@ -84,8 +84,13 @@
                                                                                 href="#">{{ $activity->created_at }}</a></span>
                                                                     </td>
                                                                     <td class="nk-tb-col">
-                                                                        <span class="tb-lead"><a
-                                                                                href="#">{{ $activity->causer_id }}</a></span>
+                                                                        <span class="tb-lead"><a href="#">
+                                                                                @if (isset($activity->causer))
+                                                                                    {{ $activity->causer->name }}
+                                                                                @else
+                                                                                    {{ $activity->causer_id }} (Unknown)
+                                                                                @endif
+                                                                            </a></span>
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
