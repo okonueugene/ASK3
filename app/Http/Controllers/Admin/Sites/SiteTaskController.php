@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Sites;
 
 use App\Http\Controllers\Controller;
-use App\Models\Guard;
 use App\Models\Site;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -33,12 +32,9 @@ class SiteTaskController extends Controller
             'to' => 'required',
         ]);
 
-        $guard = Guard::findOrFail($request->guard_id);
+        $site = Site::findOrFail($request->site_id);
 
-
-        $task = new Task();
-
-        $task->company_id = $guard->company_id;
+        $task->company_id = $site->company_id;
         $task->guard_id = $request->guard_id;
         $task->site_id = $request->site_id;
         $task->title = $request->title;
