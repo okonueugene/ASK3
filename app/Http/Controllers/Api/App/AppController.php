@@ -944,4 +944,24 @@ class AppController extends Controller
         }
     }
 
+    //clock out
+    public function clockOut(Request $request)
+    {
+        $guard = auth()->guard()->user();
+
+        $today = Carbon::now($guard->site->timezone)->format('Y-m-d');
+
+        $attendance = $guard->attendances()->where('day', $today)->first();
+
+        if ($attendance) {
+            $attendance->update([
+                'time_out' => $request->time,
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Clocked out successfully'], 200);
+        } else {
+            return response()->json(['success' => false, 'message' => 'You have not clocked in today'], 200);
+        }
+    }
+
 }
