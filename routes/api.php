@@ -148,7 +148,7 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum', 'ensure_json
 
         //tasks
         Route::get('/tasks', 'guardTasks');
-        Route::post('/task/{id}', 'ShowTask');
+        Route::post('/tasks/{id}', 'ShowTask');
         Route::post('/task/complete', 'completeTask');
 
     });
