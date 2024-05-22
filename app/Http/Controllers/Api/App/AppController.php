@@ -818,7 +818,7 @@ class AppController extends Controller
             'guard_id' => $guard->id,
             'site_id' => $site->id,
             'date' => $date,
-            'time' => date('H:i:s'),
+            'time' => $time,
             'latitude' => $lat,
             'longitude' => $long,
         ]);
