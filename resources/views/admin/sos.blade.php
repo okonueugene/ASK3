@@ -38,6 +38,7 @@
                                                         </div>
                                                     </th>
                                                     <th class="nk-tb-col"><span class="sub-text">Guard</span></th>
+                                                    <th class="nk-tb-col tb-col-mb"><span class="sub-text">Site</span></th>
                                                     <th class="nk-tb-col tb-col-mb"><span class="sub-text">Latitude</span>
                                                     </th>
                                                     <th class="nk-tb-col tb-col-md"><span class="sub-text">Longitude</span>
@@ -76,6 +77,9 @@
                                                                     <span>{{ $sos->owner->phone }}</span>
                                                                 </div>
                                                             </div>
+                                                        </td>
+                                                        <td class="nk-tb-col tb-col-mb">
+                                                            <span>{{ $sos->site->name }}</span>
                                                         </td>
                                                         <td class="nk-tb-col tb-col-mb">
                                                             <span>{{ $sos->latitude }}</span>
