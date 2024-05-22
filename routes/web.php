@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Activitylog\Models\Activity;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\SosController;
 use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Auth\LoginActivityController;
 use App\Http\Controllers\Reports\AttendanceController;
 use App\Http\Controllers\Admin\Sites\OverviewController;
 use App\Http\Controllers\Admin\Sites\SiteTagsController;
+use App\Http\Controllers\Admin\Sites\SiteTaskController;
 use App\Http\Controllers\Reports\PatrolReportsController;
 use App\Http\Controllers\Admin\Sites\SiteGuardsController;
 use App\Http\Controllers\Admin\Sites\SitePatrolsController;
@@ -94,6 +96,12 @@ Route::group(['middleware' => ['auth']], function () {
         
         Route::get('/site/site-incidents/{id}', [SiteIncidentsController::class, 'index'])->name('site-incidents');
 
+        //tasks
+        Route::get('/site/site-tasks/{id}', [SiteTaskController::class, 'index'])->name('site-tasks');
+        Route::post('/site/site-tasks', [SiteTaskController::class, 'store'])->name('addTask');
+        Route::put('/site/site-tasks/{id}', [SiteTaskController::class, 'update'])->name('updateTask');
+        Route::delete('/site/site-tasks/{id}', [SiteTaskController::class, 'destroy'])->name('deleteTask');
+
 
         Route::get('/guards', [GuardsController::class, 'index'])->name('guards');
         Route::post('/guards', [GuardsController::class, 'addGuard'])->name('addGuard');
@@ -140,5 +148,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/client/invitation', [ClientController::class, 'inviteClient'])->name('client-invitation');
     Route::post('/client/invitation/register', [ClientController::class, 'registerClient'])->name('register-client');
     Route::delete('/client/invitation/{id}', [ClientController::class, 'deleteInvitation'])->name('delete-invitation');
+
+    //sos alerts
+    Route::get('/sos-alerts', [SosController::class, 'index'])->name('sos-alerts');
 
 });

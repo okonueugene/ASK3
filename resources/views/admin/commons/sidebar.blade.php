@@ -73,9 +73,14 @@
                                             href="{{ route('admin.site-incidents', $site->id) }}"><em
                                                 class="icon ni ni-alert-fill"></em><span> Incidents</span></a>
                                     </li>
+                                    <li>
+                                        <a class="{{ request()->routeIs('admin.site-tasks') ? 'active' : '' }}"
+                                            href="{{ route('admin.site-tasks', $site->id) }}"><em
+                                                class="icon ni ni-folder-fill"></em><span> Tasks</span></a>
+                                    </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div>site-tasks
                     </div>
                 </div>
             </div>

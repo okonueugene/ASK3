@@ -96,7 +96,7 @@
                                                                             data-toggle="dropdown"><em
                                                                                 class="icon ni ni-more-h"></em></a>
                                                                         <div class="dropdown-menu dropdown-menu-right">
-                                                                            <ul class="link-list-opt no-bdr">
+                                                                            {{-- <ul class="link-list-opt no-bdr">
                                                                                 <li><a
                                                                                         href="{{ route('admin.incident.show', $incident->id) }}"><em
                                                                                             class="icon ni ni-eye"></em><span>View
@@ -109,7 +109,7 @@
                                                                                         href="{{ route('admin.incident.destroy', $incident->id) }}"><em
                                                                                             class="icon ni ni-trash"></em><span>Delete</span></a>
                                                                                 </li>
-                                                                            </ul>
+                                                                            </ul> --}}
                                                                         </div>
                                                                     </div>
                                                                 </li>

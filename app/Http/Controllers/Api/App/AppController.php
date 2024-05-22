@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Api\App;
 
+use App\Events\SosEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Guard;
 use App\Models\Incident;
 use App\Models\Patrol;
 use App\Models\PatrolHistory;
 use App\Models\Site;
+use App\Models\Sos;
 use App\Models\Tag;
+use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -782,6 +785,163 @@ class AppController extends Controller
         }
 
         return response()->json(['success' => true, 'data' => $data], 200);
+    }
+
+    //recieve sos alert
+    public function sosAlert(Request $request)
+    {
+
+        // //validate request
+        $request->validate([
+            'date' => 'required',
+            'time' => 'required',
+            'lat' => 'required',
+            'long' => 'required',
+        ]);
+
+        $guard = auth()->guard()->user();
+
+        $site = $guard->site;
+
+        $date = $request->input('date');
+
+        $time = $request->input('time');
+
+        $lat = $request->input('lat');
+
+        $long = $request->input('long');
+
+        //create sos log to database
+
+        $sos = Sos::create([
+            'company_id' => $guard->company_id,
+            'guard_id' => $guard->id,
+            'site_id' => $site->id,
+            'date' => $date,
+            'time' => date('H:i:s'),
+            'latitude' => $lat,
+            'longitude' => $long,
+        ]);
+
+        //log activity
+        activity()->causedBy($guard)
+            ->withProperties(['site_id' => $site->id])
+            ->event('created')
+            ->performedOn($sos)
+            ->useLog('Sos')
+            ->log($guard->name . ' raised an SOS alert');
+
+        //call the sos event
+        if ($sos) {
+
+            event(new SosEvent($sos));
+        }
+
+        return response()->json(['success' => true, 'message' => 'SOS alert raised successfully'], 200);
+
+    }
+
+    //get all tasks for a guard
+    public function guardTasks(Request $request)
+    {
+        $tasks = auth()->guard()->user()->tasks()->where('created_at', '>=', Carbon::today())->get();
+
+        if (count($tasks) > 0) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Tasks retrieved successfully',
+                'data' => $tasks,
+            ]);
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Tasks found',
+            ]);
+        }
+    }
+
+    public function ShowTask($id)
+    {
+        $task = Task::where('id', $id)->first();
+
+        if (!$task) {
+            return response()->json(['success' => false, 'message' => 'Task not found'], 200);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $task,
+        ], 200);
+    }
+
+    //Complete Task
+    public function completeTask(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|exists:tasks,id',
+            'comments' => 'nullable|string',
+        ]);
+
+        $id = $request->input('id');
+
+        $task = Task::where('id', $id)->first();
+
+        if ($task) {
+            $task->update([
+                'status' => 'completed',
+                'comments' => $request->comments,
+            ]);
+
+            $img = $request->file;
+            $img1 = $request->file1;
+            $img2 = $request->file2;
+
+            if ($img != null) {
+                $filename = "IMG" . rand() . ".jpg";
+                $decoded = base64_decode($img);
+
+                $task->addMediaFromString($decoded)
+                    ->usingFileName($filename)
+                    ->toMediaCollection('tasks');
+            }
+
+            if ($img1 != null) {
+                $filename = "IMG" . rand() . ".jpg";
+
+                $decoded = base64_decode($img1);
+
+                $task->addMediaFromString($decoded)
+                    ->usingFileName($filename)
+                    ->toMediaCollection('tasks');
+            }
+
+            if ($img2 != null) {
+                $filename = "IMG" . rand() . ".jpg";
+
+                $decoded = base64_decode($img2);
+
+                $task->addMediaFromString($decoded)
+                    ->usingFileName($filename)
+                    ->toMediaCollection('tasks');
+            }
+
+            //log activity
+            activity()->causedBy($task->owner)
+                ->withProperties(['site_id' => $task->owner->site_id])
+                ->event('updated')
+                ->performedOn($task)
+                ->useLog('Task')
+                ->log($task->owner->name . ' completed task ' . $task->title);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Task updated succesfully',
+                'data' => $task,
+            ]);
+
+        } else {
+            return response()->json(['message' => 'Task not found'], 404);
+        }
     }
 
 }
