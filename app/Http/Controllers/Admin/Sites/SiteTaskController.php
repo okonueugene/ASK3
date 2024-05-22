@@ -33,10 +33,12 @@ class SiteTaskController extends Controller
             'to' => 'required',
         ]);
 
+        $guard = Guard::findOrFail($request->guard_id);
+
 
         $task = new Task();
 
-        $task->company_id = $site->company_id;
+        $task->company_id = $guard->company_id;
         $task->guard_id = $request->guard_id;
         $task->site_id = $request->site_id;
         $task->title = $request->title;
