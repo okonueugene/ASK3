@@ -861,6 +861,18 @@ class AppController extends Controller
         }
     }
 
+    //total tasks for a guard
+    public function totalTasks(Request $request)
+    {
+        $tasks = auth()->guard()->user()->tasks()->where('created_at', '>=', Carbon::today())->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tasks retrieved successfully',
+            'data' => $tasks,
+        ]);
+    }
+
     public function ShowTask($id)
     {
         $task = Task::where('id', $id)->first();
