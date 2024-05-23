@@ -150,7 +150,6 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum', 'ensure_json
         Route::get('/tasks', 'guardTasks');
         Route::post('/tasks/{id}', 'ShowTask');
         Route::post('/task/complete', 'completeTask');
-        Route::get('/tasks/total-tasks', 'totalTasks');
 
         //clock out
         Route::post('/clock-out', 'clockOut');

@@ -363,6 +363,7 @@ class AppController extends Controller
         ]);
 
         $guard = Guard::where('id', $request->guard_id)->first();
+        $tasks = $guard->tasks()->whereDate('created_at', '>=', Carbon::now($guard->site->timezone)->startOfDay())->get();
 
         date_default_timezone_set('Africa/Nairobi');
 
@@ -392,6 +393,7 @@ class AppController extends Controller
             'clocked_in' => $clockin->time_in,
             'incidents' => $guard->site->incidents()->where('date', $today)->count(),
             'clocked_in_date' => $clockin->day . ' ' . $clockin->time_in,
+            'total_tasks' => count($tasks),
         ], 200);
 
     }
@@ -859,18 +861,6 @@ class AppController extends Controller
                 'message' => 'No Tasks found',
             ]);
         }
-    }
-
-    //total tasks for a guard
-    public function totalTasks(Request $request)
-    {
-        $tasks = auth()->guard()->user()->tasks()->where('created_at', '>=', Carbon::today())->count();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Tasks retrieved successfully',
-            'data' => $tasks,
-        ]);
     }
 
     public function ShowTask($id)
