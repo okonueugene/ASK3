@@ -458,30 +458,6 @@ class AppController extends Controller
                 ->usingFileName($filename)
                 ->toMediaCollection('incident_images');
         }
-        // $user = $incident->company->users()->first();
-
-        // $email = [
-        //     'subject' => 'New Incident',
-        //     'greeting' => 'Hi ' . $user->name . ',',
-        //     'body' => $incident->owner->name . ' has added a new Incident NO: ' . $incident->incident_no,
-        //     'thanks' => 'Thank you for using ASKARI',
-        //     'actionText' => 'View Incident',
-        //     'actionURL' => url('/app/sites/' . $incident->siteIncident->id . '/incidents'),
-        // ];
-
-        // $user->notify(new EmailNotification($email));
-
-        // activity()
-        //     ->causedBy($patrol->owner)
-        //     ->event('updated')
-        //     ->withProperties(['patrol' => $patrol])
-        //     ->performedOn($patrol)
-        //     ->useLog('Patrol')
-        //     ->log('Patrol ended');
-
-        // activity()->causedBy($incident->owner)
-        //     ->withProperties(['site_id' => $incident->owner->site_id])
-        //     ->log($incident->owner->name . ' added a new Incident NO: ' . $incident->incident_no);
 
         activity()
             ->causedBy($incident->owner)

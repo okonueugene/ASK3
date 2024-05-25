@@ -174,6 +174,7 @@
                                         </div><!-- .card-preview -->
                                     </div> <!-- nk-block -->
                                 </div>
+                                @include('admin.commons.sidebar')
                             </div>
                         </div>
                     </div>
