@@ -74,7 +74,8 @@
                                                                     </td>
                                                                     <td class="nk-tb-col">
                                                                         <span
-                                                                            class="tb-sub">{{ ucfirst($incident->status) }}</span>
+                                                                            class="btn btn-sm btn-{{ $incident->status == 'open' ? 'warning' : 'success' }}">{{ ucFirst($incident->status) }}</span>
+
                                                                     </td>
                                                                     <td class="nk-tb-col">
                                                                         <span class="tb-sub">{{ $incident->date }}</span>
@@ -100,9 +101,11 @@
                                                                                             </li>
                                                                                             <li>
                                                                                                 <a href="javascript:void(0)"
-                                                                                                    data-bs-toggle="modal"
-                                                                                                    data-bs-target="#editIncident{{ $incident->id }}"><em
-                                                                                                        class="icon ni ni-edit"></em><span>Edit</span></a>
+                                                                                                    onclick="editIncident({{ $incident }})">
+                                                                                                    <em
+                                                                                                        class="icon ni ni-edit"></em>
+                                                                                                    <span>Edit</span>
+                                                                                                </a>
                                                                                             </li>
                                                                                             <li>
                                                                                                 <a href="javascript:void(0)"
@@ -243,38 +246,102 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editIncident" tabindex="-1" aria-labelledby="editIncidentModalExample"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Incident</h5>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="editIncidentForm"
+                        method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="card-body">
+                            <div class="nk-block">
+                                <div class="form-group">
+                                    <label for="edit_police_ref" class="form-label">Police Reference</label>
+                                    <div class="form-control-wrap">
+                                        <input type="text" class="form-control" name="edit_police_ref"
+                                            id="edit_police_ref" value="">
+                                    </div>
+                                    @error('edit_police_ref')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="edit_status" class="form-label">Status</label>
+                                    <div class="form-control-wrap">
+                                        <select class="form-select" name="edit_status" id="edit_status">
+
+                                        </select>
+                                    </div>
+                                    @error('edit_status')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+<script>
+    function viewIncident(incident) {
+        $('#incident_no').text(incident.incident_no);
+        $('#title').text(incident.title);
+        $('#details').text(incident.details);
+        $('#status').text(incident.status);
+        $('#date').text(incident.date);
+        $('#time').text(incident.time);
+        $('#reported_by').text(incident.owner.name);
 
-@section('scripts')
-    <script>
-        function viewIncident(incident) {
-            $('#incident_no').text(incident.incident_no);
-            $('#title').text(incident.title);
-            $('#details').text(incident.details);
-            $('#status').text(incident.status);
-            $('#date').text(incident.date);
-            $('#time').text(incident.time);
-            $('#reported_by').text(incident.owner.name);
+        if (incident.media.length > 0) {
+            var mediaHtml = '<br><h6>Media:</h6><div class="media-container">';
+            for (var i = 0; i < incident.media.length; i++) {
+                const regex = /http:\/\/localhost\/storage\//;
+                let media = incident.media[i].original_url.replace(regex, '');
+                // Pass the media through the asset helper
+                media = "{{ asset('storage') }}/" + media;
 
-            if (incident.media.length > 0) {
-                var mediaHtml = '<br><h6>Media:</h6><div class="media-container">';
-                for (var i = 0; i < incident.media.length; i++) {
-                    const regex = /http:\/\/localhost\/storage\//;
-                    let media = incident.media[i].original_url.replace(regex, '');
-                    // Pass the media through the asset helper
-                    media = "{{ asset('storage') }}/" + media;
-
-                    // Create a container for each media and its title
-                    mediaHtml += '<div class="media-item">';
-                    mediaHtml += '<img src="' + media + '" class="img-fluid" alt="img">';
-                    mediaHtml += '<div class="media-title">Media ' + (incident.media[i].file_name) + '</div>';
-                    mediaHtml += '</div>';
-                }
-                mediaHtml += '</div><br><br>'; // Add a line break between media groups
-                $('#mediaList').html(mediaHtml);
-            } else {
-                $('#media').text('No media attached');
+                // Create a container for each media and its title
+                mediaHtml += '<div class="media-item">';
+                mediaHtml += '<img src="' + media + '" class="img-fluid" alt="img">';
+                mediaHtml += '<div class="media-title">Media ' + (incident.media[i].file_name) + '</div>';
+                mediaHtml += '</div>';
             }
-
+            mediaHtml += '</div><br><br>'; // Add a line break between media groups
+            $('#mediaList').html(mediaHtml);
+        } else {
+            $('#media').text('No media attached');
         }
-    </script>
+
+    }
+
+    function editIncident(incident) {
+        $('#edit_police_ref').val(incident.police_ref ? incident.police_ref : 'N/A');
+        $('#edit_status').html('<option value="open" ' + (incident.status == 'open' ? 'selected' : '') + '>Open</option><option value="closed" ' + (incident.status == 'closed' ? 'selected' : '') + '>Closed</option>');
+        
+
+        //show the edit incident modal
+        $('#editIncident').modal('show');
+
+        //set the form action
+        $('#editIncidentForm').attr('action', "{{ route('admin.incidentUpdate', '') }}" + '/' + incident.id);
+
+        //on modal close, reset the form
+        $('#editIncident').on('hidden.bs.modal', function () {
+            $('#editIncidentForm').trigger('reset');
+        });
+
+    }
+</script>
+   

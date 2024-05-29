@@ -151,7 +151,7 @@
                                                         </td>
                                                         <td class="nk-tb-col tb-col-lg">
                                                             @if ($record->time_out)
-                                                                <span>{{ Carbon\Carbon::parse($record->time_in)->diffInHours($record->time_out) }}</span>
+                                                                <span>{{ Carbon\Carbon::parse($record->time_in)->floatDiffInHours($record->time_out) }}</span>
                                                             @else
                                                                 <span class="text-danger">Not Available</span>
                                                             @endif

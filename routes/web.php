@@ -96,6 +96,8 @@ Route::group(['middleware' => ['auth']], function () {
 
         
         Route::get('/site/site-incidents/{id}', [SiteIncidentsController::class, 'index'])->name('site-incidents');
+        Route::put('/site/site-incidents/{id}', [SiteIncidentsController::class, 'update'])->name('incidentUpdate');
+        Route::delete('/site/site-incidents/{id}', [SiteIncidentsController::class, 'destroy'])->name('deleteIncident');
 
         //tasks
         Route::get('/site/site-tasks/{id}', [SiteTaskController::class, 'index'])->name('site-tasks');
