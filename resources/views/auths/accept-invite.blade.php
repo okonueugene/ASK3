@@ -158,7 +158,7 @@
         const checkbox = document.getElementById('checkbox');
         const defaultMessage = checkbox.validationMessage; // Get default message
 
-        checkbox.setCustomValidity('Please agree to the terms and conditions'); // Set custom message
+        checkbox.setCustomValidity('Please agree to the terms and conditions to continue'); // Set custom message
         // Optionally, reset the message on checkbox change
         checkbox.addEventListener('change', () => {
             checkbox.setCustomValidity('');
