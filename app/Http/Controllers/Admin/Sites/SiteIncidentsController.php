@@ -41,4 +41,11 @@ class SiteIncidentsController extends Controller
             return redirect()->back()->with('error', 'Incident not updated');
         }
     }
+
+    public function destroy($id)
+    {
+        $incident = Incident::findOrFail($id);
+        $incident->delete();
+        return redirect()->back()->with('success', 'Incident deleted successfully');
+    }
 }

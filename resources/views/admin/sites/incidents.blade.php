@@ -108,10 +108,21 @@
                                                                                                 </a>
                                                                                             </li>
                                                                                             <li>
-                                                                                                <a href="javascript:void(0)"
-                                                                                                    data-bs-toggle="modal"
-                                                                                                    data-bs-target="#deleteIncident{{ $incident->id }}"><em
-                                                                                                        class="icon ni ni-trash"></em><span>Delete</span></a>
+                                                                                                <form
+                                                                                                action="{{ route('admin.deleteIncident', $incident->id) }}"
+                                                                                                method="POST">
+                                                                                                @csrf
+                                                                                                @method('DELETE')
+                                                                                                <button
+                                                                                                    type="submit"
+                                                                                                    class="btn btn-link text-danger"
+                                                                                                    onclick="return confirm('Are you sure you want to delete this incident?')">
+                                                                                                    <em
+                                                                                                        class="icon ni ni-trash"></em>
+                                                                                                    <span>Delete</span>
+                                                                                                </button>
+                                                                                            </form>
+
                                                                                             </li>
                                                                                         </ul>
                                                                                     </div>
@@ -256,8 +267,7 @@
                 </div>
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <form id="editIncidentForm"
-                        method="POST">
+                    <form id="editIncidentForm" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="card-body">
@@ -328,8 +338,10 @@
 
     function editIncident(incident) {
         $('#edit_police_ref').val(incident.police_ref ? incident.police_ref : 'N/A');
-        $('#edit_status').html('<option value="open" ' + (incident.status == 'open' ? 'selected' : '') + '>Open</option><option value="closed" ' + (incident.status == 'closed' ? 'selected' : '') + '>Closed</option>');
-        
+        $('#edit_status').html('<option value="open" ' + (incident.status == 'open' ? 'selected' : '') +
+            '>Open</option><option value="closed" ' + (incident.status == 'closed' ? 'selected' : '') +
+            '>Closed</option>');
+
 
         //show the edit incident modal
         $('#editIncident').modal('show');
@@ -338,10 +350,9 @@
         $('#editIncidentForm').attr('action', "{{ route('admin.incidentUpdate', '') }}" + '/' + incident.id);
 
         //on modal close, reset the form
-        $('#editIncident').on('hidden.bs.modal', function () {
+        $('#editIncident').on('hidden.bs.modal', function() {
             $('#editIncidentForm').trigger('reset');
         });
 
     }
 </script>
-   
