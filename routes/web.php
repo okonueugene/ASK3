@@ -45,6 +45,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::post('/login', [LoginController::class, 'login'])->name('loginUser');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/client/invitation', [ClientController::class, 'acceptInvite'])->name('accept-invitation');
+Route::get('/guard/invitation', [GuardsController::class, 'acceptInvite'])->name('accept-guard-invitation');    
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/login-activity', [LoginActivityController::class, 'index'])->name('login-activity');
@@ -114,6 +115,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/guards/assign', [GuardsController::class, 'assignGuardToSite'])->name('assignGuardToSite');
         Route::post('/site/{id}/guards', [GuardsController::class, 'getSiteGuards'])->name('getSiteGuards');
 
+
         //incidents
         Route::get('/incidents', [IncidentsController::class, 'index'])->name('incidents');
         Route::post('/incidents', [IncidentsController::class, 'addIncident'])->name('addIncident');
@@ -151,5 +153,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     //sos alerts
     Route::get('/sos-alerts', [SosController::class, 'index'])->name('sos-alerts');
+
+    //guard invite
+    Route::post('/guard/invite', [GuardsController::class, 'inviteGuardsToSite'])->name('guard-invite');
+    Route::post('/guard/invite/register', [GuardsController::class, 'registerGuard'])->name('register-guard');
+    Route::delete('/guard/invitation/{id}', [GuardsController::class, 'deleteInvitation'])->name('delete-guard-invitation');
 
 });

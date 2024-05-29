@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Guard;
 use App\Models\Site;
+use App\Models\Guard;
+use App\Mail\SendInvite;
+use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class GuardsController extends Controller
 {
@@ -170,10 +174,10 @@ class GuardsController extends Controller
     public function assignGuardToSite(Request $request)
     {
         $guard = Guard::findOrfail($request->guard_id);
-   
+
         if (!$guard) {
             return response()->json([
-                'message' => 'Guard not found'
+                'message' => 'Guard not found',
             ], 404);
         }
 
@@ -200,4 +204,118 @@ class GuardsController extends Controller
             'id' => $id,
         ]);
     }
+
+    //invites guards to a site
+    public function inviteGuardsToSite(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:guards',
+        ]);
+
+        $token = md5(time() . $request->email);
+
+        $newInvitation = Invitation::create([
+            'email' => $request->email,
+            'token' => $token,
+            'company_id' => auth()->user()->company_id,
+            'user_id' => auth()->user()->id,
+        ]);
+
+        $url = URL::temporarySignedRoute(
+            'accept-guard-invitation',
+            now()->addMinutes(30),
+            ['email' => $request->email, 'token' => $token]
+        );
+
+        $mailData = [
+            'url' => $url,
+            'name' => $request->name,
+            'company' => auth()->user()->company->name,
+        ];
+
+        $success = Mail::to($request->email)->send(new SendInvite($mailData));
+
+
+        if ($success) {
+            return redirect()->back()->with('success', 'Guard invited successfully');
+        }
+        else {
+            return redirect()->back()->with('error', 'Failed to invite guard');
+        }
+
+    }
+
+    public function acceptInvite(Request $request)
+    {
+        $email = $request->query('email');
+        $token = $request->query('token');
+
+        $invitation = Invitation::where('email', $email)->where('token', $token)->first();
+
+        // Check if the invitation exists and is not accepted
+        if (!$invitation || $invitation->is_accepted) {
+            // Render a view with a user-friendly message
+            return view('auths.invalid-invitation');
+        }
+
+        // Check if the invitation link has expired
+        if ($invitation->created_at->addMinutes(30)->isPast()) {
+            // Render a view with a user-friendly message
+            return view('auths.expired-invitation');
+        }
+
+        return view('auths.accept-guard-invite', compact('invitation', 'token', 'email'));
+
+    }
+
+    public function registerGuard(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'password' => 'required|min:6',
+            'password_confirmation' => 'required|same:password',
+            'phone' => 'required|numeric|regex:/^\d+$/',
+            'id_number' => 'required|unique:guards',
+            'email' => 'required|email|unique:guards',
+        ]);
+
+        $token = $request->query('token');
+
+        $invitation = Invitation::where('token', $token)->first();
+
+        // Check if the invitation exists and is not accepted
+        if (!$invitation || $invitation->is_accepted || $invitation->created_at->addMinutes(30)->isPast()) {
+            // Render a view with a user-friendly message
+            return view('auths.invalid-invitation');
+        }
+
+        $guard = Guard::create([
+            'company_id' => $invitation->company_id,
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'id_number' => $request->input('id_number'),
+            'password' => Hash::make($request->input('password')),
+        ]);
+
+        // Mark the invitation as accepted
+        $invitation->update(['is_accepted' => true]);
+
+        // Redirect to login with a success message
+        if ($guard) {
+            return redirect()->route('login')->with('success', 'Guard registered successfully');
+        }
+
+    }
+
+    public function deleteInvitation($id)
+    {
+        $invitation = Invitation::findOrFail($id);
+        $invitation->delete();
+
+        return response()->json([
+            'message' => 'Invitation deleted successfully',
+        ]);
+    }
+
 }

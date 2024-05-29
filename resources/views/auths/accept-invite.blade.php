@@ -47,8 +47,8 @@
                                     <div class="form-group">
                                         <label class="form-label" for="name">Name</label>
                                         <div class="form-control-wrap">
-                                            <input type="text" class="form-control form-control-lg" id="name" name="name"
-                                                placeholder="Enter your name">
+                                            <input type="text" class="form-control form-control-lg" id="name"
+                                                name="name" placeholder="Enter your name">
                                         </div>
                                         @error('name')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -57,8 +57,8 @@
                                     <div class="form-group">
                                         <label class="form-label" for="email">Email or Username</label>
                                         <div class="form-control-wrap">
-                                            <input type="text" class="form-control form-control-lg" id="email" name="email"
-                                                value="{{ $invitation->email }}"
+                                            <input type="text" class="form-control form-control-lg" id="email"
+                                                name="email" value="{{ $invitation->email }}"
                                                 placeholder="Enter your email address or username">
                                         </div>
                                         @error('email')
@@ -73,8 +73,8 @@
                                                 <em class="passcode-icon icon-show icon ni ni-eye"></em>
                                                 <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
                                             </a>
-                                            <input type="password" class="form-control form-control-lg" id="password" name="password"
-                                                placeholder="Enter your passcode">
+                                            <input type="password" class="form-control form-control-lg" id="password"
+                                                name="password" placeholder="Enter your passcode">
                                         </div>
                                         @error('password')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -84,11 +84,12 @@
                                         <label class="form-label" for="password">Confirm Passcode</label>
                                         <div class="form-control-wrap">
                                             <a href="#" class="form-icon form-icon-right passcode-switch lg"
-                                                data-target="password">
+                                                data-target="password_confirmation">
                                                 <em class="passcode-icon icon-show icon ni ni-eye"></em>
                                                 <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
                                             </a>
-                                            <input type="password" class="form-control form-control-lg" id="password" name="password_confirmation"
+                                            <input type="password" class="form-control form-control-lg"
+                                                id="password_confirmation" name="password_confirmation"
                                                 placeholder="Confirm your passcode">
                                         </div>
                                         @error('password_confirmation')
@@ -97,7 +98,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="custom-control custom-control-xs custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="checkbox" required>
                                             <label class="custom-control-label" for="checkbox">I agree to
                                                 Askari Technologies <a href="#">Privacy Policy</a> &amp; <a
                                                     href="#">
@@ -128,38 +129,7 @@
                                         <li class="nav-item dropup">
                                             <a class="dropdown-toggle dropdown-indicator has-indicator nav-link"
                                                 data-bs-toggle="dropdown" data-offset="0,10"><span>English</span></a>
-                                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
-                                                <ul class="language-list">
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/english.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">English</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/spanish.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">Español</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/french.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">Français</span>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/turkey.png" alt=""
-                                                                class="language-flag">
-                                                            <span class="language-name">Türkçe</span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
+
                                         </li>
                                     </ul>
                                 </div>
@@ -184,5 +154,15 @@
     <script src="{{ asset('/assets/js/bundle.js?ver=3.2.2') }}"></script>
     <script src="{{ asset('/assets/js/scripts.js?ver=3.2.2') }}"></script>
     <!-- select region modal -->
+    <script>
+        const checkbox = document.getElementById('checkbox');
+        const defaultMessage = checkbox.validationMessage; // Get default message
+
+        checkbox.setCustomValidity('Please agree to the terms and conditions'); // Set custom message
+        // Optionally, reset the message on checkbox change
+        checkbox.addEventListener('change', () => {
+            checkbox.setCustomValidity('');
+        });
+    </script>
 
 </html>

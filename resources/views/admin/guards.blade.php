@@ -468,11 +468,11 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title">Invite A Client</h5>
+                    <h5 class="modal-title">Invite A Guard</h5>
                 </div>
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <form id="inviteClientForm" action="{{ route('client-invitation') }}" method="POST"
+                    <form id="inviteClientForm" action="{{ route('guard-invite') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
@@ -490,12 +490,11 @@
                         @enderror
 
                         <div class="form-group">
-                            <label for="phone" class="form-label">Phone Number</label>
+                            <label for="email" class="form-label">Email</label>
                             <div class="form-control-wrap">
-                                <input type="text" class="form-control" name="phone" placeholder="Client Phone Number">
+                                <input type="email" class="form-control" name="email" placeholder="Client Email">
                             </div>
                         </div>
-
                         @error('email')
                             <div class="form-group">
                                 <div class="alert alert-danger" role="alert">
