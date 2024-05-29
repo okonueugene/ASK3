@@ -439,11 +439,8 @@
                         <div class="form-group">
                             <label for="name" class="form-label">Select Site</label>
                             <div class="form-control-wrap">
-                                <select name="site_id" id="site_id" class="form-control">
+                                <select name="site_id" id="site_id" class="custom-select form-select">
                                     <option value="">Select Site</option>
-                                    @foreach ($sites as $site)
-                                        <option value="{{ $site->id }}">{{ $site->name }}</option>
-                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -517,6 +514,8 @@
         </div>
     </div>
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 <script>
     function clearForm() {
         //clear all forms
@@ -733,13 +732,28 @@
                 });
         });
     }
-</script>
-<script>
-    $(document).ready(function() {
-        $('.custom-select').select2();
 
-        $('.custom-select').on('change', function(e) {
-            @this.set($(this).attr('name'), e.target.value);
+    //initialize select2 with search
+    $(document).ready(function() {
+
+        let sites = @json($sites);
+
+        sites.forEach(site => {
+            $('#site_id').append(`<option value="${site.id}">${site.name}</option>`);
+        });
+
+        $('.custom-select').select2({
+            placeholder: 'Select Site',
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: true,
+            dropdownParent: $('#assignSiteGuardModal'),
+            searching: true,
+        });
+
+        $('.custom-select').on('change', function() {
+            let site_id = $(this).val();
+            console.log(site_id);
         });
     });
 </script>
