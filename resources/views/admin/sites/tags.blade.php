@@ -96,7 +96,8 @@
                                                                             <input type="checkbox"
                                                                                 class="custom-control-input item-checkbox"
                                                                                 id="item-{{ $tag->id }}"
-                                                                                value="{{ $tag->id }}">
+                                                                                value="{{ $tag->id }}"
+                                                                                data-tag = "{{ json_encode($tag) }}">
                                                                             <label class="custom-control-label"
                                                                                 for="item-{{ $tag->id }}"></label>
                                                                         </div>
@@ -123,7 +124,7 @@
                                                                     </td>
                                                                     <td class="nk-tb-col tb-col-md">
 
-                                                                        <span>{{ $tag->code }}</span>
+                                                                        <span id="tag-code">{{ $tag->code }}</span>
 
                                                                     </td>
                                                                     <td class="nk-tb-col tb-col-lg">
@@ -254,43 +255,46 @@
     </div>
 @endsection
 <script>
-    function deleteTag(id) {
-        if (confirm('Are you sure you want to delete this tag?')) {
-            let url = "{{ route('admin.deleteTag', ':id') }}";
-            url = url.replace(':id', id);
-
-            axios.delete(url)
-                .then(function(response) {
-                    if (response.data.success) {
-                        displaySuccess(response.data.message);
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        displayError(response.data.error);
-                    }
-                })
-                .catch(function(error) {
-                    displayError(error.response.data.error);
-                });
-        }
-    }
-    // Select/Deselect all checkboxes
     document.addEventListener('DOMContentLoaded', function() {
+        // Add Tag
+        function deleteTag(id) {
+            if (confirm('Are you sure you want to delete this tag?')) {
+                let url = "{{ route('admin.deleteTag', ':id') }}";
+                url = url.replace(':id', id);
+
+                axios.delete(url)
+                    .then(function(response) {
+                        if (response.data.success) {
+                            displaySuccess(response.data.message);
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            displayError(response.data.error);
+                        }
+                    })
+                    .catch(function(error) {
+                        displayError(error.response.data.error);
+                    });
+            }
+        }
+        // Select/Deselect all checkboxes
         const selectAllCheckbox = document.getElementById('select-all');
         const itemCheckboxes = document.querySelectorAll('.item-checkbox');
         const selectedIds = new Set();
-
+        const selectedData = new Set();
         // Function to update selected IDs
         function updateSelectedIds() {
             selectedIds.clear();
             itemCheckboxes.forEach(checkbox => {
                 if (checkbox.checked) {
                     selectedIds.add(checkbox.value);
+                    const taData = JSON.parse(checkbox.getAttribute('data-tag'));
+                    selectedData.add(taData);
                 }
 
             });
-            console.log(Array.from(selectedIds));
+
             document.getElementById('dropdownMenuButton').style.display = 'block';
 
         }
@@ -356,43 +360,88 @@
             }
         });
 
-        // // Handle bulk delete
-        // document.getElementById('bulk-delete').addEventListener('click', function() {
-        //     if (selectedIds.size > 0) {
-        //         if (confirm('Are you sure you want to delete selected items?')) {
-        //             fetch('{{ route('admin.clients') }}', {
-        //                     method: 'POST',
-        //                     headers: {
-        //                         'Content-Type': 'application/json',
-        //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                     },
-        //                     body: JSON.stringify({
-        //                         ids: Array.from(selectedIds)
-        //                     })
-        //                 }).then(response => response.json())
-        //                 .then(data => {
-        //                     if (data.status === 'success') {
-        //                         window.location.reload();
-        //                     } else {
-        //                         alert('Error deleting items');
-        //                     }
-        //                 }).catch(error => {
-        //                     console.error('Error:', error);
-        //                 });
-        //         }
-        //     } else {
-        //         alert('No items selected');
-        //     }
-        // });
+        // Bulk print
+        document.getElementById('bulk-print').addEventListener('click', function() {
+            if (selectedIds.size > 0) {
 
-        // // Handle bulk print
-        // document.getElementById('bulk-print').addEventListener('click', function() {
-        //     if (selectedIds.size > 0) {
-        //         window.open('{{ route('admin.clients') }}' + '?ids=' + Array.from(selectedIds).join(
-        //             ','), '_blank');
-        //     } else {
-        //         alert('No items selected');
-        //     }
-        // });
+                //remove duplicates by using id
+                const tags = Array.from(selectedData).filter((v, i, a) => a.findIndex(t => (t.id === v
+                    .id)) === i);
+
+                console.log(tags);
+
+                const printHtml = [];
+
+                let tagCount = 0;
+                let gridHtml = `<div class="tag-grid">`;
+
+                for (const tag of tags) {
+                    console.log(tag.code);
+
+
+                    gridHtml += `<div class="tag-item">`;
+                    if (tag.type === 'qr') {
+                        let qrCode = tag.code;
+                        gridHtml += `<span>{!! QrCode::size(50)->generate('${qrCode}') !!}</span>`;
+                    }
+                    gridHtml += `<p>${tag.name}</p></div>`;
+
+                    tagCount++;
+
+                    // Add page break after every 16 codes (4x4 grid)
+                    if (tagCount % 16 === 0) {
+                        printHtml.push(gridHtml + '</div>');
+                        gridHtml = `<div class="tag-grid">`; // Start a new grid for next page
+                    }
+                }
+
+                // Handle remaining codes if not a multiple of 16
+                if (gridHtml.length > 0) {
+                    gridHtml += '</div>';
+                    printHtml.push(gridHtml);
+                }
+
+                const finalPrintHtml = printHtml.join('<div class="page-break"></div>');
+
+                const printWindow = window.open('', '_blank');
+
+                printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Tags</title>
+          <style>
+            @media print {
+  .tag-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 1rem; /* Adjust spacing as needed */
+    margin: 1rem; /* Add margin for spacing around the grid */
+  }
+
+  .tag-item {
+    text-align: center;
+  }
+
+  .page-break {
+    page-break-after: always;
+  }
+}
+          </style>
+        </head>
+        <body>
+          ${finalPrintHtml}
+        </body>
+      </html>
+    `);
+
+                printWindow.document.close();
+
+                printWindow.print();
+            } else {
+                alert('No items selected');
+            }
+        });
+
+
     });
 </script>
