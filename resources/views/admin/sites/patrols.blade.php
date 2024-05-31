@@ -56,8 +56,7 @@
                                                                 </th>
                                                                 <th class="nk-tb-col"><span class="sub-text">Timing</span>
                                                                 </th>
-                                                                <th class="nk-tb-col"><span class="sub-text">Actions</span>
-                                                                </th>
+                                                                <th class="nk-tb-col nk-tb-col-tools text-end">Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

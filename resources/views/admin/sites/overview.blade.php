@@ -75,49 +75,50 @@
                                                 <h6 class="title">Scheduled Events</h6>
                                             </div>
                                             @if (count($data['patrols']) > 0)
-                                            <div class="nk-tb-list mt-n2">
-                                                <div class="nk-tb-item nk-tb-head">
-                                                    <div class="nk-tb-col tb-col-md"><span>Round Name</span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm"><span>Guard</span></div>
-                                                    <div class="nk-tb-col tb-col-md"><span>From</span></div>
-                                                    <div class="nk-tb-col"><span class="d-none d-sm-inline">To</span>
-                                                    </div>
-                                                </div>
-                                                @foreach ($data['patrols'] as $patrol)
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col tb-col-md">
-                                                        <span class="tb-sub">{{ $patrol->name }}</span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-purple-dim">
-                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($patrol->owner->name) }}"
-                                                                    alt="data">
-                                                            </div>
-                                                            <div class="user-name">
-                                                                <span class="tb-lead">{{ $patrol->owner->name }}</span>
-                                                            </div>
+                                                <div class="nk-tb-list mt-n2">
+                                                    <div class="nk-tb-item nk-tb-head">
+                                                        <div class="nk-tb-col tb-col-md"><span>Round Name</span>
+                                                        </div>
+                                                        <div class="nk-tb-col tb-col-sm"><span>Guard</span></div>
+                                                        <div class="nk-tb-col tb-col-md"><span>From</span></div>
+                                                        <div class="nk-tb-col"><span class="d-none d-sm-inline">To</span>
                                                         </div>
                                                     </div>
-                                                    <div class="nk-tb-col tb-col-md">
-                                                        <span class="tb-sub">{{ $patrol->start }}</span>
-                                                    </div>
-                                                    <div class="nk-tb-col">
-                                                        <span class="tb-sub">{{ $patrol->end }}</span>
-                                                    </div>
+                                                    @foreach ($data['patrols'] as $patrol)
+                                                        <div class="nk-tb-item">
+                                                            <div class="nk-tb-col tb-col-md">
+                                                                <span class="tb-sub">{{ $patrol->name }}</span>
+                                                            </div>
+                                                            <div class="nk-tb-col tb-col-sm">
+                                                                <div class="user-card">
+                                                                    <div class="user-avatar sm bg-purple-dim">
+                                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($patrol->owner->name) }}"
+                                                                            alt="data">
+                                                                    </div>
+                                                                    <div class="user-name">
+                                                                        <span
+                                                                            class="tb-lead">{{ $patrol->owner->name }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="nk-tb-col tb-col-md">
+                                                                <span class="tb-sub">{{ $patrol->start }}</span>
+                                                            </div>
+                                                            <div class="nk-tb-col">
+                                                                <span class="tb-sub">{{ $patrol->end }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-                                                @endforeach
-                                            </div>
-                                            <div class="card-inner">
-                                                <ul class="pagination justify-content-center justify-content-md-start">
-                                                    {{ $data['patrols']->links() }}
-                                                </ul><!-- .pagination -->
-                                            </div><!-- .card-inner -->
+                                                <div class="card-inner">
+                                                    <ul class="pagination justify-content-center justify-content-md-start">
+                                                        {{ $data['patrols']->links() }}
+                                                    </ul><!-- .pagination -->
+                                                </div><!-- .card-inner -->
                                             @else
-                                            <div class="card-inner">
-                                                <p class="text-center">No data avalailable</p>
-                                            </div>
+                                                <div class="card-inner">
+                                                    <p class="text-center">No data avalailable</p>
+                                                </div>
                                             @endif
                                         </div><!-- .card -->
                                     </div>
@@ -128,54 +129,59 @@
                                                     class="d-flex justify-space-between">
                                                     <h6 class="title">Tasks</h6>
                                                     {{-- <a href="{{ route('client.client-tasks') }}" --}}
-                                                        {{-- class="btn btn-secondary btn-sm">View Reports</a> --}}
+                                                    {{-- class="btn btn-secondary btn-sm">View Reports</a> --}}
                                                 </div>
                                             </div>
                                             @if (count($data['tasks']) > 0)
-                                            <div class="nk-tb-list mt-n2">
-                                                <div class="nk-tb-item nk-tb-head">
-                                                    <div class="nk-tb-col tb-col-sm"><span>Guard</span></div>
-                                                    <div class="nk-tb-col tb-col-md"><span>Date</span></div>
-                                                    <div class="nk-tb-col"><span class="d-none d-sm-inline">Status</span>
-                                                    </div>
-                                                </div>
-                                                @foreach ($data['tasks'] as $task)
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-purple-dim">
-                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($task->owner->name) }}"
-                                                                    alt="data">
-                                                            </div>
-                                                            <div class="user-name">
-                                                                <span class="tb-lead">{{ $task->owner->name }}</span>
-                                                            </div>
+                                                <div class="nk-tb-list mt-n2">
+                                                    <div class="nk-tb-item nk-tb-head">
+                                                        <div class="nk-tb-col tb-col-sm"><span>Guard</span></div>
+                                                        <div class="nk-tb-col tb-col-md"><span>From</span></div>
+                                                        <div class="nk-tb-col tb-col-md"><span>To</span></div>
+                                                        <div class="nk-tb-col"><span
+                                                                class="d-none d-sm-inline">Status</span>
                                                         </div>
                                                     </div>
-                                                    <div class="nk-tb-col tb-col-md">
-                                                        <span class="tb-sub">{{ $task->date }}</span>
-                                                    </div>
-                                                    <div class="nk-tb-col">
-                                                        @if ($task->status === 'completed')
-                                                        <span
-                                                            class="badge badge-dot badge-dot-xs badge-success">Completed</span>
-                                                        @else
-                                                            <span class="badge badge-dot badge-dot-xs badge-danger">Not
-                                                                Done</span>
-                                                        @endif
-                                                    </div>
+                                                    @foreach ($data['tasks'] as $task)
+                                                        <div class="nk-tb-item">
+                                                            <div class="nk-tb-col tb-col-sm">
+                                                                <div class="user-card">
+                                                                    <div class="user-avatar sm bg-purple-dim">
+                                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($task->owner->name) }}"
+                                                                            alt="data">
+                                                                    </div>
+                                                                    <div class="user-name">
+                                                                        <span
+                                                                            class="tb-lead">{{ $task->owner->name }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="nk-tb-col tb-col-md">
+                                                                <span class="tb-sub">{{ $task->from }}</span>
+                                                            </div>
+                                                            <div class="nk-tb-col tb-col-md">
+                                                                <span class="tb-sub">{{ $task->to }}</span>
+                                                            </div>
+                                                            <div class="nk-tb-col">
+                                                                @if ($task->status === 'completed')
+                                                                    <span class="btn btn-sm bg-success">Completed</span>
+                                                                @else
+                                                                    <span class="btn btn-sm bg-danger">Not
+                                                                        Done</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-                                                @endforeach
-                                            </div>
-                                            <div class="card-inner">
-                                                <ul class="pagination justify-content-center justify-content-md-start">
-                                                    {{ $data['tasks']->links() }}
-                                                </ul><!-- .pagination -->
-                                            </div><!-- .card-inner -->
+                                                <div class="card-inner">
+                                                    <ul class="pagination justify-content-center justify-content-md-start">
+                                                        {{ $data['tasks']->links() }}
+                                                    </ul><!-- .pagination -->
+                                                </div><!-- .card-inner -->
                                             @else
-                                            <div class="card-inner">
-                                                <p class="text-center">No data avalailable</p>
-                                            </div>
+                                                <div class="card-inner">
+                                                    <p class="text-center">No data avalailable</p>
+                                                </div>
                                             @endif
                                         </div><!-- .card -->
                                     </div>
@@ -186,55 +192,56 @@
                                                     class="d-flex justify-space-between">
                                                     <h6 class="title">DOBS</h6>
                                                     {{-- <a href="{{ route('client.client-dobs') }}" --}}
-                                                        {{-- class="btn btn-secondary btn-sm">View
+                                                    {{-- class="btn btn-secondary btn-sm">View
                                                         Reports</a> --}}
                                                 </div>
                                             </div>
                                             @if (count($data['dobs']) > 0)
-                                            <div class="nk-tb-list mt-n2">
-                                                <div class="nk-tb-item nk-tb-head">
-                                                    <div class="nk-tb-col"><span>DOB No.</span></div>
-                                                    <div class="nk-tb-col tb-col-sm"><span>Guard</span></div>
-                                                    <div class="nk-tb-col tb-col-md"><span>Date</span></div>
-                                                    <div class="nk-tb-col"><span class="d-none d-sm-inline">Duty
-                                                            Start</span>
-                                                    </div>
-                                                </div>
-                                                @foreach ($data['dobs'] as $dob)
-                                                <div class="nk-tb-item">
-                                                    <div class="nk-tb-col">
-                                                        <span class="tb-lead"><a
-                                                                        href="#">#{{ $dob->dob_no }}</a></span>
-                                                    </div>
-                                                    <div class="nk-tb-col tb-col-sm">
-                                                        <div class="user-card">
-                                                            <div class="user-avatar sm bg-purple-dim">
-                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($dob->owner->name) }}"
-                                                                    alt="data">
-                                                            </div>
-                                                            <div class="user-name">
-                                                                <span class="tb-lead">{{ $dob->owner->name }}</span>
-                                                            </div>
+                                                <div class="nk-tb-list mt-n2">
+                                                    <div class="nk-tb-item nk-tb-head">
+                                                        <div class="nk-tb-col"><span>DOB No.</span></div>
+                                                        <div class="nk-tb-col tb-col-sm"><span>Guard</span></div>
+                                                        <div class="nk-tb-col tb-col-md"><span>Date</span></div>
+                                                        <div class="nk-tb-col"><span class="d-none d-sm-inline">Duty
+                                                                Start</span>
                                                         </div>
                                                     </div>
-                                                    <div class="nk-tb-col tb-col-md">
-                                                        <span class="tb-sub">{{ $dob->date }}</span>
-                                                    </div>
-                                                    <div class="nk-tb-col">
-                                                        <span class="tb-sub">{{ $dob->time_duty_start }}</span>
-                                                    </div>
+                                                    @foreach ($data['dobs'] as $dob)
+                                                        <div class="nk-tb-item">
+                                                            <div class="nk-tb-col">
+                                                                <span class="tb-lead"><a
+                                                                        href="#">#{{ $dob->dob_no }}</a></span>
+                                                            </div>
+                                                            <div class="nk-tb-col tb-col-sm">
+                                                                <div class="user-card">
+                                                                    <div class="user-avatar sm bg-purple-dim">
+                                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($dob->owner->name) }}"
+                                                                            alt="data">
+                                                                    </div>
+                                                                    <div class="user-name">
+                                                                        <span
+                                                                            class="tb-lead">{{ $dob->owner->name }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="nk-tb-col tb-col-md">
+                                                                <span class="tb-sub">{{ $dob->date }}</span>
+                                                            </div>
+                                                            <div class="nk-tb-col">
+                                                                <span class="tb-sub">{{ $dob->time_duty_start }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-                                                @endforeach
-                                            </div>
-                                            <div class="card-inner">
-                                                <ul class="pagination justify-content-center justify-content-md-start">
-                                                    {{ $data['dobs']->links() }}
-                                                </ul><!-- .pagination -->
-                                            </div><!-- .card-inner -->
+                                                <div class="card-inner">
+                                                    <ul class="pagination justify-content-center justify-content-md-start">
+                                                        {{ $data['dobs']->links() }}
+                                                    </ul><!-- .pagination -->
+                                                </div><!-- .card-inner -->
                                             @else
-                                            <div class="card-inner">
-                                                <p class="text-center">No data avalailable</p>
-                                            </div>
+                                                <div class="card-inner">
+                                                    <p class="text-center">No data avalailable</p>
+                                                </div>
                                             @endif
                                         </div><!-- .card -->
                                     </div>
@@ -245,7 +252,7 @@
                                                     class="d-flex justify-space-between">
                                                     <h6 class="title">Incidents</h6>
                                                     {{-- <a href="{{ route('client.client-incidents') }}" --}}
-                                                        {{-- class="btn btn-secondary btn-sm">View Reports</a> --}}
+                                                    {{-- class="btn btn-secondary btn-sm">View Reports</a> --}}
                                                 </div>
                                             </div>
                                             @if (count($data['incidents']) > 0)
@@ -286,8 +293,11 @@
                                                                     class="tb-sub tb-amount">{{ $incident->time }}</span>
                                                             </div>
                                                             <div class="nk-tb-col">
-                                                                <span
-                                                                    class="badge badge-dot badge-dot-xs badge-success">{{ $incident->status }}</span>
+                                                                @if ($incident->status === 'resolved')
+                                                                    <span class="btn btn-sm bg-success">Resolved</span>
+                                                                @else
+                                                                    <span class="btn btn-sm bg-danger">Pending</span>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     @endforeach

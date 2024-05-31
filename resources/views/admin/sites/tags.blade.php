@@ -35,6 +35,28 @@
                                                 </ul>
                                             </div>
                                         </div>
+                                        <a href="javascript:void(0)" style="display: none;"
+                                            class="dropdown-toggle btn btn-icon btn-trigger float-end"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false" data-bs-toggle="dropdown">
+                                            <em class="icon ni ni-menu-alt-r"></em>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <ul class="link-list-opt no-bdr">
+                                                    <li>
+                                                        <a href="javascript:void(0)" id="bulk-print">
+                                                            <em class="icon ni ni-printer"></em>
+                                                            <span>Print Selected</span>
+                                                        </a>
+                                                        <a href="javascript:void(0)" id="bulk-delete">
+                                                            <em class="icon ni ni-trash"></em>
+                                                            <span>Delete Selected</span>
+                                                        </a>
+
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </a>
                                     </div>
                                     <div class="nk-block">
                                         <div class="card card-bordered card-preview">
@@ -48,9 +70,9 @@
                                                                     <div
                                                                         class="custom-control custom-control-sm custom-checkbox notext">
                                                                         <input type="checkbox" class="custom-control-input"
-                                                                            id="uid">
+                                                                            id="select-all">
                                                                         <label class="custom-control-label"
-                                                                            for="uid"></label>
+                                                                            for="select-all"></label>
                                                                     </div>
                                                                 </th>
                                                                 <th class="nk-tb-col"><span class="sub-text">Name</span>
@@ -65,7 +87,6 @@
                                                                 </th>
                                                             </tr>
                                                         </thead>
-
                                                         <tbody>
                                                             @foreach ($tags as $tag)
                                                                 <tr>
@@ -73,9 +94,11 @@
                                                                         <div
                                                                             class="custom-control custom-control-sm custom-checkbox notext">
                                                                             <input type="checkbox"
-                                                                                class="custom-control-input" id="uid1">
+                                                                                class="custom-control-input item-checkbox"
+                                                                                id="item-{{ $tag->id }}"
+                                                                                value="{{ $tag->id }}">
                                                                             <label class="custom-control-label"
-                                                                                for="uid1"></label>
+                                                                                for="item-{{ $tag->id }}"></label>
                                                                         </div>
                                                                     </td>
                                                                     <td class="nk-tb-col">
@@ -252,4 +275,124 @@
                 });
         }
     }
+    // Select/Deselect all checkboxes
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const selectedIds = new Set();
+
+        // Function to update selected IDs
+        function updateSelectedIds() {
+            selectedIds.clear();
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedIds.add(checkbox.value);
+                }
+
+            });
+            console.log(Array.from(selectedIds));
+            document.getElementById('dropdownMenuButton').style.display = 'block';
+
+        }
+
+        // Select/Deselect all checkboxes
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateSelectedIds();
+            });
+        }
+
+        // Listen for changes on individual checkboxes
+        if (itemCheckboxes) {
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (!this.checked) {
+                        selectAllCheckbox.checked = false;
+                    } else if (Array.from(itemCheckboxes).every(cb => cb.checked)) {
+                        selectAllCheckbox.checked = true;
+                    }
+                    updateSelectedIds();
+                });
+            });
+        }
+
+        document.getElementById('bulk-delete').addEventListener('click', function() {
+            if (selectedIds.size > 0) {
+                if (confirm('Are you sure you want to delete selected items?')) {
+                    const url = "{{ route('admin.deleteMultipleTags', ':ids') }}";
+                    const ids = Array.from(selectedIds).join(',');
+
+
+                    axios.delete(url.replace(':ids', ids), {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: {
+                                ids: Array.from(selectedIds)
+                            }
+                        })
+                        .then(function(response) {
+                            if (response.data.success) {
+                                displaySuccess(response.data.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                displayError(response.data.error);
+                                console.log(response.data);
+                            }
+                        })
+                        .catch(function(error) {
+                            displayError(error.response.data.error || 'An error occurred');
+                            console.log(error.response.data);
+                        });
+                }
+            } else {
+                alert('No items selected');
+            }
+        });
+
+        // // Handle bulk delete
+        // document.getElementById('bulk-delete').addEventListener('click', function() {
+        //     if (selectedIds.size > 0) {
+        //         if (confirm('Are you sure you want to delete selected items?')) {
+        //             fetch('{{ route('admin.clients') }}', {
+        //                     method: 'POST',
+        //                     headers: {
+        //                         'Content-Type': 'application/json',
+        //                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //                     },
+        //                     body: JSON.stringify({
+        //                         ids: Array.from(selectedIds)
+        //                     })
+        //                 }).then(response => response.json())
+        //                 .then(data => {
+        //                     if (data.status === 'success') {
+        //                         window.location.reload();
+        //                     } else {
+        //                         alert('Error deleting items');
+        //                     }
+        //                 }).catch(error => {
+        //                     console.error('Error:', error);
+        //                 });
+        //         }
+        //     } else {
+        //         alert('No items selected');
+        //     }
+        // });
+
+        // // Handle bulk print
+        // document.getElementById('bulk-print').addEventListener('click', function() {
+        //     if (selectedIds.size > 0) {
+        //         window.open('{{ route('admin.clients') }}' + '?ids=' + Array.from(selectedIds).join(
+        //             ','), '_blank');
+        //     } else {
+        //         alert('No items selected');
+        //     }
+        // });
+    });
 </script>

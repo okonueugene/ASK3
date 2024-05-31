@@ -85,6 +85,8 @@ class SiteTagsController extends Controller
         ]);
         //get the number of tags to be added
         $numberOfTags = $request->number;
+        //number of tags belonging to the site
+        $siteTags = Tag::where('site_id', $id)->count();
 
         //loop through the number of tags
         for ($i = 0; $i < $numberOfTags; $i++) {
@@ -95,7 +97,9 @@ class SiteTagsController extends Controller
             $tag = Tag::create([
                 'company_id' => auth()->user()->company_id,
                 'site_id' => $id,
+                'name' => 'Tag ' . $siteTags + $i + 1,
                 'type' => 'qr',
+                'location' => 'Location ' . $siteTags + $i + 1,
                 'code' => $randomString,
                 'lat' => 0.0,
                 'long' => 0.0,
@@ -131,6 +135,40 @@ class SiteTagsController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Tag deleted successfully',
+        ]);
+    }
+
+    //delete multiple tags
+    public function deleteMultipleTags(Request $request)
+    {
+        //validate the request
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|integer|exists:tags,id',
+        ]);
+
+        //get the ids
+        $ids = $request->ids;
+
+        //find the tags
+        $tags = Tag::whereIn('id', $ids)->get();
+
+        //delete the tags
+        foreach ($tags as $tag) {
+            $tag->delete();
+
+            //log the tag deletion
+            activity()
+                ->event('delete')
+                ->performedOn($tag)
+                ->causedBy(auth()->user())
+                ->log('Tag deleted');
+        }
+
+        //return success message
+        return response()->json([
+            'success' => true,
+            'message' => 'Tags deleted successfully',
         ]);
     }
 }
