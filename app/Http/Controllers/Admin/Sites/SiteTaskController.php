@@ -72,14 +72,15 @@ class SiteTaskController extends Controller
 
         $task = Task::findOrFail($id);
 
-        $task->guard_id = $request->guard_id;
-        $task->title = $request->title;
-        $task->description = $request->description;
-        $task->comments = $request->comments;
-        $task->from = $request->from;
-        $task->to = $request->to;
-
-        $task->save();
+       $task->update([
+            'guard_id' => $request->guard_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'comments' => $request->comments,
+            'from' => $request->from,
+            'to' => $request->to,
+            'status' => $request->status,
+        ]);
 
         //log activity
         activity()
