@@ -29,6 +29,22 @@
                                                 </ul>
                                             </div>
                                         </div>
+                                        <a href="javascript:void(0)" style="display: none;"
+                                            class="dropdown-toggle btn btn-icon btn-trigger float-end"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false" data-bs-toggle="dropdown">
+                                            <em class="icon ni ni-menu-alt-r"></em>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <ul class="link-list-opt no-bdr">
+                                                    <li>
+                                                        <a href="javascript:void(0)" id="bulk-delete">
+                                                            <em class="icon ni ni-trash text-danger"></em>
+                                                            <span>Delete Selected</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </a>
                                     </div>
                                     <div class="nk-block">
                                         <div class="card card-bordered card-preview">
@@ -42,9 +58,9 @@
                                                                     <div
                                                                         class="custom-control custom-control-sm custom-checkbox notext">
                                                                         <input type="checkbox" class="custom-control-input"
-                                                                            id="uid">
+                                                                            id="select-all">
                                                                         <label class="custom-control-label"
-                                                                            for="uid"></label>
+                                                                            for="select-all"></label>
                                                                     </div>
                                                                 </th>
                                                                 <th class="nk-tb-col"><span class="sub-text">Guard</span>
@@ -65,10 +81,13 @@
                                                                     <td class="nk-tb-col nk-tb-col-check">
                                                                         <div
                                                                             class="custom-control custom-control-sm custom-checkbox notext">
-                                                                            <input type="checkbox"
-                                                                                class="custom-control-input" id="uid1">
+                                                                             <input type="checkbox"
+                                                                                class="custom-control-input item-checkbox"
+                                                                                id="item-{{ $patrol->id }}"
+                                                                                value="{{ $patrol->id }}"
+                                                                             >
                                                                             <label class="custom-control-label"
-                                                                                for="uid1"></label>
+                                                                                for="item-{{ $patrol->id }}"></label>
                                                                         </div>
                                                                     </td>
                                                                     <td class="nk-tb-col">
@@ -424,38 +443,159 @@
 @endsection
 
 <script>
-    function validateInput() {
-        $('#addPatrolForm').on('input', function() {
-
-            if ($('#guard_name').val() != '' && $('#round_name').val() != '' && $('#start_time').val() !=
-                '' && $('#end_time').val() != '') {
-                $('#checkpoint').show();
-            }
-        });
-    }
-
-    function handleSelectTags() {
+    document.addEventListener('DOMContentLoaded', function() {
         const checkAll = document.getElementById('checkAll');
         const checkpointItems = document.querySelectorAll('.checkpointItem');
-        const tags = []; // Assuming you have a tags array to store selected IDs
+
+        function validateInput() {
+            $('#addPatrolForm').on('input', function() {
+
+                if ($('#guard_name').val() != '' && $('#round_name').val() != '' && $('#start_time')
+                    .val() !=
+                    '' && $('#end_time').val() != '') {
+                    $('#checkpoint').show();
+                }
+            });
+        }
+
+        function handleSelectTags() {
+            const tags = [];
+
+            // Toggle checkbox states based on "Check All"
+            checkpointItems.forEach(item => {
+                item.checked = checkAll.checked;
+            });
+
+            // Update tags array based on currently checked items
+            tags.length = 0;
+            checkpointItems.forEach(item => {
+                if (item.checked) {
+                    tags.push(item.value);
+                }
+            });
+
+            // Update the hidden input with the updated tags array
+            $('#tags').val(tags);
+        }
+
+        // Attach event listener to "Check All" checkbox
+        if (checkAll) {
+            checkAll.addEventListener('change', handleSelectTags);
+        }
+
+        // Attach event listener to individual checkboxes
+        if (checkpointItems) {
+            checkpointItems.forEach(item => {
+                item.addEventListener('change', handleSelectTags);
+            });
+        }
+
+
+        // Select/Deselect all checkboxes
+        const selectAllCheckbox = document.getElementById('select-all');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const selectedIds = new Set();
+        // Function to update selected IDs
+        function updateSelectedIds() {
+            selectedIds.clear();
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedIds.add(checkbox.value);
+               
+                }
+
+            });
+
+            document.getElementById('dropdownMenuButton').style.display = 'block';
+
+        }
+
+        // Select/Deselect all checkboxes
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateSelectedIds();
+            });
+        }
+
+        // Listen for changes on individual checkboxes
+        if (itemCheckboxes) {
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (!this.checked) {
+                        selectAllCheckbox.checked = false;
+                    } else if (Array.from(itemCheckboxes).every(cb => cb.checked)) {
+                        selectAllCheckbox.checked = true;
+                    }
+                    updateSelectedIds();
+                });
+            });
+        }
+
+        document.getElementById('bulk-delete').addEventListener('click', function() {
+            if (selectedIds.size > 0) {
+                if (confirm('Are you sure you want to delete selected items?')) {
+                    const url = "{{ route('admin.deleteMultiplePatrols', ':ids') }}";
+                    const ids = Array.from(selectedIds).join(',');
+
+
+                    axios.delete(url.replace(':ids', ids), {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: {
+                                ids: Array.from(selectedIds)
+                            }
+                        })
+                        .then(function(response) {
+                            if (response.data.success) {
+                                displaySuccess(response.data.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                displayError(response.data.error);
+                                console.log(response.data);
+                            }
+                        })
+                        .catch(function(error) {
+                            displayError(error.response.data.error || 'An error occurred');
+                            console.log(error.response.data);
+                        });
+                }
+            } else {
+                alert('No items selected');
+            }
+        });
+
+
+    });
+
+    function handleEditedSelectedTags() {
+        const checkAll = document.getElementById('checkAll');
+        const checkpointItems = document.querySelectorAll('.checkpointItem');
+        const tags = [];
 
         // Check if "Check All" is selected
         if (checkAll.checked) {
             checkpointItems.forEach(item => {
                 item.checked = true;
-                tags.push(item.value); // Add checkpoint ID to tags array
+                tags.push(item.value);
             });
         } else {
             // Loop through individual checkboxes
             checkpointItems.forEach(item => {
                 if (item.checked) {
-                    tags.push(item.value); // Add checkpoint ID to tags array if checked
+                    tags.push(item.value);
                 }
             });
         }
 
         //append the tags to the hidden input
-        $('#tags').val(tags);
+        $('#edit_tags').val(tags);
     }
 
     function addPatrol() {
@@ -463,8 +603,9 @@
         //run the function to validate inputs
         setInterval(() => {
             validateInput();
-            handleSelectTags();
         }, 1000);
+        handleSelectTags();
+
     }
 
     function closePatrol() {
@@ -474,7 +615,6 @@
         //clear the interval
         clearInterval();
     }
-
 
 
     function showPatrol(patrol) {
@@ -502,30 +642,6 @@
         $('#showPatrolModal').modal('show');
     }
 
-    function handleEditedSelectedTags() {
-        const checkAll = document.getElementById('checkAll');
-        const checkpointItems = document.querySelectorAll('.checkpointItem');
-        const tags = []; // Assuming you have a tags array to store selected IDs
-
-        // Check if "Check All" is selected
-        if (checkAll.checked) {
-            checkpointItems.forEach(item => {
-                item.checked = true;
-                tags.push(item.value); // Add checkpoint ID to tags array
-            });
-        } else {
-            // Loop through individual checkboxes
-            checkpointItems.forEach(item => {
-                if (item.checked) {
-                    tags.push(item.value); // Add checkpoint ID to tags array if checked
-                }
-            });
-        }
-
-        //append the tags to the hidden input
-        $('#edit_tags').val(tags);
-    }
-
     function editPatrol(patrol) {
         document.getElementById('patrol_id').value = patrol.id;
         document.getElementById('edit_name').value = patrol.name;
@@ -535,7 +651,8 @@
         const siteTags = {!! json_encode($sitetags) !!};
         let checkpointsHtml = '';
         siteTags.forEach(tag => {
-            const isChecked = patrol.tags.some(patrolTag => patrolTag.id === tag.id) ? 'checked' : '';
+            const isChecked = patrol.tags.some(patrolTag => patrolTag.id === tag.id) ? 'checked' :
+                '';
             checkpointsHtml += `
             <div class="custom-control custom-control-sm custom-checkbox custom-control-pro">
                 <input type="checkbox" class="custom-control-input checkpointItem" id="edit_checkpoint${tag.id}" value="${tag.id}" ${isChecked}>

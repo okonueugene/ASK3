@@ -40,6 +40,23 @@
                                                 </ul>
                                             </div>
                                         </div>
+                                        <a href="javascript:void(0)" style="display: none;"
+                                            class="dropdown-toggle btn btn-icon btn-trigger float-end"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false" data-bs-toggle="dropdown">
+                                            <em class="icon ni ni-menu-alt-r"></em>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <ul class="link-list-opt no-bdr">
+                                                    <li>
+                                                        <a href="javascript:void(0)" id="bulk-delete">
+                                                            <em class="icon ni ni-trash text-danger"></em>
+                                                            <span>Delete Selected</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </a>
                                     </div><!-- .nk-block-head -->
                                     <div class="nk-block">
                                         <div class="card card-bordered card-preview">
@@ -53,9 +70,9 @@
                                                                     <div
                                                                         class="custom-control custom-control-sm custom-checkbox notext">
                                                                         <input type="checkbox" class="custom-control-input"
-                                                                            id="uid">
+                                                                            id="select-all">
                                                                         <label class="custom-control-label"
-                                                                            for="uid"></label>
+                                                                            for="select-all"></label>
                                                                     </div>
                                                                 </th>
                                                                 <th class="nk-tb-col"><span class="sub-text">Guard </span>
@@ -70,13 +87,15 @@
                                                         <tbody>
                                                             @foreach ($tasks as $task)
                                                                 <tr class="nk-tb-item">
-                                                                    <td class="nk-tb-col nk-tb-col-check">
+                                                                    <td class="nk-tb-col">
                                                                         <div
                                                                             class="custom-control custom-control-sm custom-checkbox notext">
                                                                             <input type="checkbox"
-                                                                                class="custom-control-input" id="uid1">
+                                                                                class="custom-control-input item-checkbox"
+                                                                                id="item-{{ $task->id }}"
+                                                                                value="{{ $task->id }}">
                                                                             <label class="custom-control-label"
-                                                                                for="uid1"></label>
+                                                                                for="item-{{ $task->id }}"></label>
                                                                         </div>
                                                                     </td>
                                                                     <td class="nk-tb-col">
@@ -135,11 +154,9 @@
                                                                                                     method="POST">
                                                                                                     @csrf
                                                                                                     @method('DELETE')
-                                                                                                    <button
-                                                                                                     type="submit"
-                                                                                                     class="dropdown-item"
-                                                                                                     onclick="return confirm('Are you sure you want to delete this task?')"
-                                                                                                     >
+                                                                                                    <button type="submit"
+                                                                                                        class="dropdown-item"
+                                                                                                        onclick="return confirm('Are you sure you want to delete this task?')">
                                                                                                         Delete
                                                                                                     </button>
                                                                                                 </form>
@@ -174,7 +191,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalExample" aria-hidden="true">
+        <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalExample"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <!-- Modal Header -->
@@ -313,7 +331,7 @@
                 </div>
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <form id="editTaskForm" action="{{ route('admin.updateTask' , $task->id) }}" method="POST">
+                    <form id="editTaskForm" action="{{ route('admin.updateTask', $task->id) }}" method="POST">
                         @csrf
                         @method ('PUT')
                         <div class="form-group">
@@ -374,11 +392,11 @@
                                     <option value="completed">Completed</option>
                                 </select>
                             </div>
-                        <input type="hidden" name="site_id" value="{{ $site->id }}">
-                        <input type="hidden" name="task_id" id="task_id">
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-md float-end">Edit Task</button>
-                        </div>
+                            <input type="hidden" name="site_id" value="{{ $site->id }}">
+                            <input type="hidden" name="task_id" id="task_id">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-md float-end">Edit Task</button>
+                            </div>
                     </form>
                 </div>
             </div>
@@ -415,4 +433,85 @@
 
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select/Deselect all checkboxes
+        const selectAllCheckbox = document.getElementById('select-all');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const selectedIds = new Set();
+        // Function to update selected IDs
+        function updateSelectedIds() {
+            selectedIds.clear();
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedIds.add(checkbox.value);
+                }
+
+            });
+
+            document.getElementById('dropdownMenuButton').style.display = 'block';
+
+        }
+
+        // Select/Deselect all checkboxes
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateSelectedIds();
+            });
+        }
+
+        // Listen for changes on individual checkboxes
+        if (itemCheckboxes) {
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (!this.checked) {
+                        selectAllCheckbox.checked = false;
+                    } else if (Array.from(itemCheckboxes).every(cb => cb.checked)) {
+                        selectAllCheckbox.checked = true;
+                    }
+                    updateSelectedIds();
+                });
+            });
+        }
+
+        document.getElementById('bulk-delete').addEventListener('click', function() {
+            if (selectedIds.size > 0) {
+                if (confirm('Are you sure you want to delete selected items?')) {
+                    const url = "{{ route('admin.deleteMultipleTasks', ':ids') }}";
+                    const ids = Array.from(selectedIds).join(',');
+
+
+                    axios.delete(url.replace(':ids', ids), {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: {
+                                ids: Array.from(selectedIds)
+                            }
+                        })
+                        .then(function(response) {
+                            if (response.data.success) {
+                                displaySuccess(response.data.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                displayError(response.data.error);
+                                console.log(response.data);
+                            }
+                        })
+                        .catch(function(error) {
+                            displayError(error.response.data.error || 'An error occurred');
+                            console.log(error.response.data);
+                        });
+                }
+            } else {
+                alert('No items selected');
+            }
+        });
+
+    });
 </script>

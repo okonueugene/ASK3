@@ -107,4 +107,31 @@ class SiteTaskController extends Controller
 
         return redirect()->back()->with('success', 'Task deleted successfully');
     }
+
+    public function deleteMultipleTasks(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|integer|exists:tasks,id',
+        ]);
+
+        $ids = $request->ids;
+
+        $tasks = Task::whereIn('id', $ids)->get();
+
+        foreach ($tasks as $task) {
+            $task->delete();
+
+            activity()
+                ->event('delete')
+                ->performedOn($task)
+                ->causedBy(auth()->user())
+                ->log('Task deleted');
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task deleted successfully',
+        ]);
+    }
 }

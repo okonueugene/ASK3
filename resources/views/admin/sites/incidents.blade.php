@@ -23,6 +23,23 @@
                                                     data-target="userAside"><em class="icon ni ni-menu-alt-r"></em></a>
                                             </div>
                                         </div>
+                                        <a href="javascript:void(0)" style="display: none;"
+                                            class="dropdown-toggle btn btn-icon btn-trigger float-end"
+                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false" data-bs-toggle="dropdown">
+                                            <em class="icon ni ni-menu-alt-r"></em>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <ul class="link-list-opt no-bdr">
+                                                    <li>
+                                                        <a href="javascript:void(0)" id="bulk-delete">
+                                                            <em class="icon ni ni-trash text-danger"></em>
+                                                            <span>Delete Selected</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </a>
                                     </div>
                                     <div class="nk-block">
                                         <div class="card card-bordered card-preview">
@@ -36,9 +53,9 @@
                                                                     <div
                                                                         class="custom-control custom-control-sm custom-checkbox notext">
                                                                         <input type="checkbox" class="custom-control-input"
-                                                                            id="uid">
+                                                                            id="select-all">
                                                                         <label class="custom-control-label"
-                                                                            for="uid"></label>
+                                                                            for="select-all"></label>
                                                                     </div>
                                                                 </th>
                                                                 <th class="nk-tb-col"><span class="sub-text">Incident
@@ -60,9 +77,11 @@
                                                                         <div
                                                                             class="custom-control custom-control-sm custom-checkbox notext">
                                                                             <input type="checkbox"
-                                                                                class="custom-control-input" id="uid1">
+                                                                                class="custom-control-input item-checkbox"
+                                                                                id="item-{{ $incident->id }}"
+                                                                                value="{{ $incident->id }}">
                                                                             <label class="custom-control-label"
-                                                                                for="uid1"></label>
+                                                                                for="item-{{ $incident->id }}"></label>
                                                                         </div>
                                                                     </td>
                                                                     <td class="nk-tb-col">
@@ -109,19 +128,18 @@
                                                                                             </li>
                                                                                             <li>
                                                                                                 <form
-                                                                                                action="{{ route('admin.deleteIncident', $incident->id) }}"
-                                                                                                method="POST">
-                                                                                                @csrf
-                                                                                                @method('DELETE')
-                                                                                                <button
-                                                                                                    type="submit"
-                                                                                                    class="btn btn-link text-danger"
-                                                                                                    onclick="return confirm('Are you sure you want to delete this incident?')">
-                                                                                                    <em
-                                                                                                        class="icon ni ni-trash"></em>
-                                                                                                    <span>Delete</span>
-                                                                                                </button>
-                                                                                            </form>
+                                                                                                    action="{{ route('admin.deleteIncident', $incident->id) }}"
+                                                                                                    method="POST">
+                                                                                                    @csrf
+                                                                                                    @method('DELETE')
+                                                                                                    <button type="submit"
+                                                                                                        class="btn btn-link text-danger"
+                                                                                                        onclick="return confirm('Are you sure you want to delete this incident?')">
+                                                                                                        <em
+                                                                                                            class="icon ni ni-trash"></em>
+                                                                                                        <span>Delete</span>
+                                                                                                    </button>
+                                                                                                </form>
 
                                                                                             </li>
                                                                                         </ul>
@@ -249,7 +267,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button onclick="$('#viewIncident').modal('hide')" type="button"
+                                    class="btn btn-secondary">Close</button>
                             </div>
                         </div>
                     </div>
@@ -355,4 +374,87 @@
         });
 
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select/Deselect all checkboxes
+        const selectAllCheckbox = document.getElementById('select-all');
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+        const selectedIds = new Set();
+        const selectedData = new Set();
+        // Function to update selected IDs
+        function updateSelectedIds() {
+            selectedIds.clear();
+            itemCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedIds.add(checkbox.value);
+                }
+
+            });
+
+            document.getElementById('dropdownMenuButton').style.display = 'block';
+
+        }
+
+        // Select/Deselect all checkboxes
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                itemCheckboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateSelectedIds();
+            });
+        }
+
+        // Listen for changes on individual checkboxes
+        if (itemCheckboxes) {
+            itemCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (!this.checked) {
+                        selectAllCheckbox.checked = false;
+                    } else if (Array.from(itemCheckboxes).every(cb => cb.checked)) {
+                        selectAllCheckbox.checked = true;
+                    }
+                    updateSelectedIds();
+                });
+            });
+        }
+
+        document.getElementById('bulk-delete').addEventListener('click', function() {
+            if (selectedIds.size > 0) {
+                if (confirm('Are you sure you want to delete selected items?')) {
+                    const url = "{{ route('admin.deleteMultipleIncidents', ':ids') }}";
+                    const ids = Array.from(selectedIds).join(',');
+
+
+                    axios.delete(url.replace(':ids', ids), {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: {
+                                ids: Array.from(selectedIds)
+                            }
+                        })
+                        .then(function(response) {
+                            if (response.data.success) {
+                                displaySuccess(response.data.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                displayError(response.data.error);
+                                console.log(response.data);
+                            }
+                        })
+                        .catch(function(error) {
+                            displayError(error.response.data.error || 'An error occurred');
+                            console.log(error.response.data);
+                        });
+                }
+            } else {
+                alert('No items selected');
+            }
+        });
+
+    });
 </script>

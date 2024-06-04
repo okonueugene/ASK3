@@ -48,4 +48,31 @@ class SiteIncidentsController extends Controller
         $incident->delete();
         return redirect()->back()->with('success', 'Incident deleted successfully');
     }
+
+    public function deleteMultipleIncidents(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|integer|exists:incidents,id',
+        ]);
+
+        $ids = $request->ids;
+
+        $incidents = Incident::whereIn('id', $ids)->get();
+
+        foreach ($incidents as $incident) {
+            $incident->delete();
+
+            activity()
+                ->event('delete')
+                ->performedOn($incident)
+                ->causedBy(auth()->user())
+                ->log('Incident deleted');
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Incident deleted successfully',
+        ]);
+    }
 }

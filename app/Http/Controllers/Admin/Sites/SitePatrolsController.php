@@ -160,4 +160,32 @@ class SitePatrolsController extends Controller
 
         return redirect()->back()->with('success', 'Patrol deleted successfully');
     }
+
+    public function deleteMultiplePatrols(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|integer|exists:patrols,id',
+        ]);
+
+        $ids = $request->ids;
+
+        $patrols = Patrol::whereIn('id', $ids)->get();
+
+        foreach ($patrols as $patrol) {
+            $patrol->delete();
+
+            //log the patrol deletion
+            activity()
+                ->event('delete')
+                ->performedOn($patrol)
+                ->causedBy(auth()->user())
+                ->log('Patrol deleted');
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Patrols deleted successfully',
+        ]);
+    }
 }

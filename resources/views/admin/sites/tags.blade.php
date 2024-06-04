@@ -429,10 +429,6 @@
   .tag-item {
     text-align: center;
   }
-
-  .page-break {
-    page-break-after: always;
-  }
 }
           </style>
         </head>
