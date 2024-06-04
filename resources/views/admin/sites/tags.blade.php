@@ -254,6 +254,7 @@
         </div>
     </div>
 @endsection
+<script src="{{ asset('assets/js/qrious.min.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Add Tag
@@ -376,13 +377,20 @@
                 let gridHtml = `<div class="tag-grid">`;
 
                 for (const tag of tags) {
-                    console.log(tag.code);
-
 
                     gridHtml += `<div class="tag-item">`;
                     if (tag.type === 'qr') {
-                        let qrCode = tag.code;
-                        gridHtml += `<span>{!! QrCode::size(50)->generate('${qrCode}') !!}</span>`;
+                        // Generate QR code
+                        var qr = new QRious({
+                            element: document.createElement('canvas'),
+                            value: tag.code,
+                            size: 100
+                        });
+                        gridHtml += `<img src="${qr.toDataURL()}" alt="${tag.code}" />`;
+
+                    } else {
+                        gridHtml +=
+                            `<img src="https://ui-avatars.com/api/?name=${encodeURIComponent(tag.name)}" alt="${tag.code}" />`;
                     }
                     gridHtml += `<p>${tag.name}</p></div>`;
 
@@ -414,7 +422,7 @@
   .tag-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-gap: 1rem; /* Adjust spacing as needed */
+    grid-gap: 0.75rem; /* Adjust spacing as needed */
     margin: 1rem; /* Add margin for spacing around the grid */
   }
 
