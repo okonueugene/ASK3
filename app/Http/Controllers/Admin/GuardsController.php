@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Site;
-use App\Models\Guard;
+use App\Http\Controllers\Controller;
 use App\Mail\SendInvite;
+use App\Models\Guard;
 use App\Models\Invitation;
+use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class GuardsController extends Controller
 {
@@ -47,6 +47,7 @@ class GuardsController extends Controller
         // Log activity
         activity()
             ->causedBy(auth()->user())
+            ->event('created')
             ->performedOn(Guard::latest()->first())
             ->useLog('Guard')
             ->log('added guard');
@@ -82,6 +83,7 @@ class GuardsController extends Controller
 
         activity()
             ->causedBy(auth()->user())
+            ->event('updated')
             ->performedOn($guard)
             ->withProperties(['guard' => $guard])
             ->useLog('Guard')
@@ -184,6 +186,7 @@ class GuardsController extends Controller
         DB::table('guards')->where('id', $request->guard_id)->update(['site_id' => $request->site_id]);
 
         activity()
+            ->event('update')
             ->causedBy(auth()->user())
             ->performedOn($guard)
             ->withProperties(['site_id' => $request->site_id])
@@ -235,11 +238,9 @@ class GuardsController extends Controller
 
         $success = Mail::to($request->email)->send(new SendInvite($mailData));
 
-
         if ($success) {
             return redirect()->back()->with('success', 'Guard invited successfully');
-        }
-        else {
+        } else {
             return redirect()->back()->with('error', 'Failed to invite guard');
         }
 

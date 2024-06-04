@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Sites;
 
-use App\Models\Site;
-use App\Models\Incident;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Incident;
+use App\Models\Site;
+use Illuminate\Http\Request;
 
 class SiteIncidentsController extends Controller
 {
@@ -18,15 +18,14 @@ class SiteIncidentsController extends Controller
         return view('admin.sites.incidents', compact('title', 'site', 'incidents'));
     }
 
-
     public function update(Request $request, $id)
     {
 
         $police_ref = $request->edit_police_ref;
 
-        if($police_ref === 'N/A') {
-          //set police ref to null
-            $police_ref = null; 
+        if ($police_ref === 'N/A') {
+            //set police ref to null
+            $police_ref = null;
         }
 
         $incident = Incident::where('id', $id)->update([
@@ -34,10 +33,16 @@ class SiteIncidentsController extends Controller
             'police_ref' => $police_ref,
         ]);
 
-        if($incident) {
+        if ($incident) {
+            //log activity
+            activity()
+                ->event('update')
+                ->performedOn(Incident::findOrFail($id))
+                ->causedBy(auth()->user())
+                ->log('Incident updated');
+
             return redirect()->back()->with('success', 'Incident updated successfully');
-        }
-        else {
+        } else {
             return redirect()->back()->with('error', 'Incident not updated');
         }
     }
@@ -46,6 +51,13 @@ class SiteIncidentsController extends Controller
     {
         $incident = Incident::findOrFail($id);
         $incident->delete();
+        //log activity
+        activity()
+            ->event('delete')
+            ->performedOn($incident)
+            ->causedBy(auth()->user())
+            ->log('Incident deleted');
+            
         return redirect()->back()->with('success', 'Incident deleted successfully');
     }
 

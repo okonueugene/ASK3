@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -15,7 +15,7 @@ class UserController extends Controller
         $title = 'Users';
         $users = User::all();
 
-        return view ('admin.users', compact('users', 'title'));
+        return view('admin.users', compact('users', 'title'));
     }
 
     public function store(Request $request)
@@ -25,18 +25,19 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|max:50|confirmed',
             'password_confirmation' => 'required|min:8|max:50',
-            'user_type' => 'required|in:admin,client'
+            'user_type' => 'required|in:admin,client',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'user_type' => $request->user_type,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
         //log activity
         activity()
+            ->event('created')
             ->causedBy(auth()->user())
             ->performedOn(User::latest()->first())
             ->useLog('User')
@@ -60,16 +61,16 @@ class UserController extends Controller
             'name' => $request->new_name,
             'email' => $request->new_email,
             'user_type' => $request->new_user_type,
-            'password' => Hash::make($request->new_password)
+            'password' => Hash::make($request->new_password),
         ]);
 
         //log activity
         activity()
+            ->event('updated')
             ->causedBy(auth()->user())
             ->performedOn($user)
             ->useLog('User')
             ->log('updated user');
-
 
         return redirect()->back()->with('success', 'User updated successfully');
     }
@@ -81,6 +82,7 @@ class UserController extends Controller
 
         //log activity
         activity()
+            ->event('deleted')
             ->causedBy(auth()->user())
             ->performedOn($user)
             ->useLog('User')

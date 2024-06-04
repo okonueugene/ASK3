@@ -49,6 +49,14 @@ class ClientController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('created')
+            ->performedOn($user)
+            ->useLog('Client')
+            ->log('added client');
+
         return redirect()->back()->with('success', 'Client created successfully');
     }
 
@@ -78,6 +86,14 @@ class ClientController extends Controller
             $request->password ? 'password' : '' => Hash::make($request->password)
         ]);
 
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('updated')
+            ->performedOn($client)
+            ->useLog('Client')
+            ->log('updated client');
+
         return response()->json([
             'message' => 'Client updated successfully',
             'client' => $client,
@@ -89,6 +105,14 @@ class ClientController extends Controller
     {
         $client = User::findOrFail($id);
         $client->delete();
+
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('delete')
+            ->performedOn($client)
+            ->useLog('Client')
+            ->log('deleted client');
 
         return response()->json([
             'message' => 'Client deleted successfully',
@@ -105,6 +129,14 @@ class ClientController extends Controller
             'is_active' => $status
         ]);
 
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('update')
+            ->performedOn($client)
+            ->useLog('Client')
+            ->log('updated client status');
+
         return response()->json([
             'message' => 'Client status updated successfully',
             'status' => 'success'
@@ -119,6 +151,14 @@ class ClientController extends Controller
               'user_id' => $id
          ]);
 
+         // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('update')
+            ->performedOn($site)
+            ->useLog('Site')
+            ->log('assigned site to client');
+
         return response()->json([
             'message' => 'Site assigned to client successfully',
             'status' => 'success'
@@ -132,6 +172,14 @@ class ClientController extends Controller
         $site->update([
             'user_id' => null
         ]);
+
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('update')
+            ->performedOn($site)
+            ->useLog('Site')
+            ->log('removed site from client');
 
         return response()->json([
             'message' => 'Site removed from client successfully',
@@ -154,6 +202,8 @@ class ClientController extends Controller
            'user_id' => auth()->user()->id,
        ]);
 
+       // Generate a signed URL
+
        $url = URL::temporarySignedRoute(
         'accept-invitation',
         now()->addMinutes(30),
@@ -171,6 +221,14 @@ class ClientController extends Controller
          ];
 
             Mail::to($newInvitation->email)->send(new SendInvite($mailData));
+
+            // Log activity
+            activity()
+                ->causedBy(auth()->user())
+                ->event('create')
+                ->performedOn($newInvitation)
+                ->useLog('Invitation')
+                ->log('sent invitation');
 
             return redirect()->back()->with('success', 'Invitation sent successfully');
 
@@ -235,6 +293,15 @@ class ClientController extends Controller
 
       // Redirect to login with a success message
       if ($user) {
+
+        // Log activity
+        activity()
+            ->causedBy($user)
+            ->event('create')
+            ->performedOn($user)
+            ->useLog('Client')
+            ->log('registered client');
+
         return redirect()->route('login')->with('success', 'Client created successfully');
       }
       else {
@@ -247,6 +314,14 @@ class ClientController extends Controller
     {
         $invitation = Invitation::findOrFail($id);
         $invitation->delete();
+
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('delete')
+            ->performedOn($invitation)
+            ->useLog('Invitation')
+            ->log('deleted invitation');
 
         return redirect()->back()->with([
             'message' => 'Invitation deleted successfully',

@@ -35,7 +35,6 @@ class SiteTaskController extends Controller
 
         $guard = Guard::findOrFail($request->guard_id);
 
-
         $task = new Task();
 
         $task->company_id = $guard->company_id;
@@ -52,6 +51,7 @@ class SiteTaskController extends Controller
 
         //log activity
         activity()
+            ->event('create')
             ->performedOn($task)
             ->causedBy(auth()->user())
             ->withProperties(['guard_id' => $request->guard_id])
@@ -72,7 +72,7 @@ class SiteTaskController extends Controller
 
         $task = Task::findOrFail($id);
 
-       $task->update([
+        $task->update([
             'guard_id' => $request->guard_id,
             'title' => $request->title,
             'description' => $request->description,
@@ -84,6 +84,7 @@ class SiteTaskController extends Controller
 
         //log activity
         activity()
+            ->event('update')
             ->performedOn($task)
             ->causedBy(auth()->user())
             ->withProperties(['guard_id' => $request->guard_id])
@@ -100,6 +101,7 @@ class SiteTaskController extends Controller
 
         //log activity
         activity()
+            ->event('delete')
             ->performedOn($task)
             ->causedBy(auth()->user())
             ->withProperties(['guard_id' => $task->guard_id])

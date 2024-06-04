@@ -83,6 +83,7 @@ class SitePatrolsController extends Controller
 
             //log activity
             activity()
+                ->event('create')
                 ->performedOn($patrol)
                 ->causedBy(auth()->user())
                 ->withProperties(['guard_id' => $request->guard_id])
@@ -135,6 +136,7 @@ class SitePatrolsController extends Controller
 
             //log activity
             activity()
+                ->event('update')
                 ->performedOn($patrol)
                 ->causedBy(auth()->user())
                 ->withProperties(['guard_id' => $patrol->guard_id])
@@ -154,6 +156,7 @@ class SitePatrolsController extends Controller
 
         //log activity
         activity()
+            ->event('delete')
             ->performedOn($patrol)
             ->causedBy(auth()->user())
             ->log('Patrol deleted');

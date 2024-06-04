@@ -53,6 +53,7 @@ class SiteTagsController extends Controller
         ]);
         //log the tag creation
         activity()
+            ->event('create')
             ->performedOn($tag)
             ->causedBy(auth()->user())
             ->log('Tag created');
@@ -108,6 +109,7 @@ class SiteTagsController extends Controller
 
         //log the tag creation
         activity()
+            ->event('create')
             ->performedOn($tag)
             ->causedBy(auth()->user())
             ->log('Tags created');
@@ -127,6 +129,7 @@ class SiteTagsController extends Controller
 
         //log the tag deletion
         activity()
+            ->event('delete')
             ->performedOn($tag)
             ->causedBy(auth()->user())
             ->log('Tag deleted');
