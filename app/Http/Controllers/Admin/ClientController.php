@@ -21,9 +21,9 @@ class ClientController extends Controller
         $title = 'Clients';
 
         $clients = User::where('company_id', auth()->user()->company_id)
-        ->where('user_type', 'client')
-        ->orderBy('id', 'DESC')
-        ->get();
+            ->where('user_type', 'client')
+            ->orderBy('id', 'DESC')
+            ->get();
 
         $sites = Site::where('company_id', auth()->user()->company_id)->get();
 
@@ -46,7 +46,7 @@ class ClientController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'user_type' => 'client',
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
         // Log activity
@@ -83,7 +83,7 @@ class ClientController extends Controller
         $client->update([
             $request->name ? 'name' : '' => $request->name,
             $request->email ? 'email' : '' => $request->email,
-            $request->password ? 'password' : '' => Hash::make($request->password)
+            $request->password ? 'password' : '' => Hash::make($request->password),
         ]);
 
         // Log activity
@@ -97,7 +97,7 @@ class ClientController extends Controller
         return response()->json([
             'message' => 'Client updated successfully',
             'client' => $client,
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 
@@ -116,7 +116,7 @@ class ClientController extends Controller
 
         return response()->json([
             'message' => 'Client deleted successfully',
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 
@@ -126,7 +126,7 @@ class ClientController extends Controller
         $status = $client->is_active == 1 ? 0 : 1;
 
         $client->update([
-            'is_active' => $status
+            'is_active' => $status,
         ]);
 
         // Log activity
@@ -139,19 +139,19 @@ class ClientController extends Controller
 
         return response()->json([
             'message' => 'Client status updated successfully',
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 
     public function assignSiteToClient(Request $request, $id)
     {
-       $site = Site::findOrFail($request->site_id);
+        $site = Site::findOrFail($request->site_id);
 
-         $site->update([
-              'user_id' => $id
-         ]);
+        $site->update([
+            'user_id' => $id,
+        ]);
 
-         // Log activity
+        // Log activity
         activity()
             ->causedBy(auth()->user())
             ->event('update')
@@ -161,7 +161,7 @@ class ClientController extends Controller
 
         return response()->json([
             'message' => 'Site assigned to client successfully',
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 
@@ -170,7 +170,7 @@ class ClientController extends Controller
         $site = Site::where('user_id', $id)->first();
 
         $site->update([
-            'user_id' => null
+            'user_id' => null,
         ]);
 
         // Log activity
@@ -183,7 +183,7 @@ class ClientController extends Controller
 
         return response()->json([
             'message' => 'Site removed from client successfully',
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 
@@ -193,71 +193,68 @@ class ClientController extends Controller
             'email' => 'required|email|unique:users,email',
         ]);
 
-       $token =  sha1(time());
+        $token = sha1(time());
 
-       $newInvitation = Invitation::create([
-           'email' => $request->email,
-           'token' => $token,
-           'company_id' => auth()->user()->company_id,
-           'user_id' => auth()->user()->id,
-       ]);
+        $newInvitation = Invitation::create([
+            'email' => $request->email,
+            'token' => $token,
+            'company_id' => auth()->user()->company_id,
+            'user_id' => auth()->user()->id,
+        ]);
 
-       // Generate a signed URL
+        // Generate a signed URL
 
-       $url = URL::temporarySignedRoute(
-        'accept-invitation',
-        now()->addMinutes(30),
-        ['email' => $request->email]
-    );
-    
+        $url = URL::temporarySignedRoute(
+            'accept-invitation',
+            now()->addMinutes(30),
+            ['email' => $request->email]
+        );
+
         // Append the token as a query parameter
-         $url .= '&token=' . $token;
+        $url .= '&token=' . $token;
 
-
-         $mailData = [
+        $mailData = [
             'url' => $url,
             'company' => $newInvitation->company->company_name,
             'name' => $request->name,
-         ];
+        ];
 
-            Mail::to($newInvitation->email)->send(new SendInvite($mailData));
+        Mail::to($newInvitation->email)->send(new SendInvite($mailData));
 
-            // Log activity
-            activity()
-                ->causedBy(auth()->user())
-                ->event('create')
-                ->performedOn($newInvitation)
-                ->useLog('Invitation')
-                ->log('sent invitation');
+        // Log activity
+        activity()
+            ->causedBy(auth()->user())
+            ->event('create')
+            ->performedOn($newInvitation)
+            ->useLog('Invitation')
+            ->log('sent invitation');
 
-            return redirect()->back()->with('success', 'Invitation sent successfully');
+        return redirect()->back()->with('success', 'Invitation sent successfully');
 
     }
 
     public function acceptInvite(Request $request)
     {
- 
-        $email = $request->query('email'); 
+
+        $email = $request->query('email');
 
         $token = $request->query('token');
 
-    
         $invitation = Invitation::where('email', $email)->where('token', $token)->first();
 
-         // Check if the invitation exists and is not accepted
-         if (!$invitation || $invitation->is_accepted) {
+        // Check if the invitation exists and is not accepted
+        if (!$invitation || $invitation->is_accepted) {
             // Render a view with a user-friendly message
             return view('auths.invalid-invitation');
         }
 
-                // Check if the invitation link has expired
+        // Check if the invitation link has expired
         if ($invitation->created_at->addMinutes(30)->isPast()) {
             // Render a view with a user-friendly message
             return view('auths.expired-invitation');
         }
 
-
-        return view ('auths.accept-invite', compact('invitation', 'token'));
+        return view('auths.accept-invite', compact('invitation', 'token'));
     }
 
     public function registerClient(Request $request)
@@ -274,8 +271,7 @@ class ClientController extends Controller
 
         $invitation = Invitation::where('token', $token)->where('email', $request->email)->first();
 
-
-      if (!$invitation || $invitation->is_accepted || $invitation->created_at->addMinutes(30)->isPast()) {
+        if (!$invitation || $invitation->is_accepted || $invitation->created_at->addMinutes(30)->isPast()) {
             // Render a view with a user-friendly message
             return view('auths.invalid-invitation');
         }
@@ -285,30 +281,30 @@ class ClientController extends Controller
             'name' => $request->name,
             'email' => $invitation->email,
             'user_type' => 'client',
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
-      // Mark the invitation as accepted
-      $invitation->update(['is_accepted' => true]);
+        // Mark the invitation as accepted
+        $invitation->update(['is_accepted' => 1]);
 
-      // Redirect to login with a success message
-      if ($user) {
 
-        // Log activity
-        activity()
-            ->causedBy($user)
-            ->event('create')
-            ->performedOn($user)
-            ->useLog('Client')
-            ->log('registered client');
+        // Redirect to login with a success message
+        if ($user) {
 
-        return redirect()->route('login')->with('success', 'Client created successfully');
-      }
-      else {
-        return view('auths.invalid-invitation');
-      }
+            // Log activity
+            activity()
+                ->causedBy($user)
+                ->event('create')
+                ->performedOn($user)
+                ->useLog('Client')
+                ->log('registered client');
+
+            return redirect()->route('login')->with('success', 'Client created successfully');
+        } else {
+            return view('auths.invalid-invitation');
+        }
     }
-    
+
     //delete invitation
     public function deleteInvitation($id)
     {
@@ -325,7 +321,7 @@ class ClientController extends Controller
 
         return redirect()->back()->with([
             'message' => 'Invitation deleted successfully',
-            'status' => 'success'
+            'status' => 'success',
         ]);
     }
 }
