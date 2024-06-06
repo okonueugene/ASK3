@@ -112,8 +112,7 @@
             <tr>
                 <td width="33.3%" align="center">
                     <img style="display:block;" height="100px"
-                    src="https://askaritechnologies.com/wp-content/uploads/2022/11/ASKARI-LOGO-PNG-01-100x88.png"
-                    />
+                        src="https://askaritechnologies.com/wp-content/uploads/2022/11/ASKARI-LOGO-PNG-01-100x88.png" />
                 </td>
                 <td width="33.3%" align="center">
 
@@ -165,7 +164,11 @@
                 <td class="nk-tb-col tb-col-md">{{ $record->time_in }}</td>
                 <td class="nk-tb-col tb-col-md">{{ $record->time_out ?? 'N/A' }}</td>
                 <td class="ml-2 badge badge-success">
-                    {{ $record->time_out ? \Carbon\Carbon::parse($record->time_out)->diffInHours($record->time_in) : 'N/A' }}
+                    @if ($record->time_out)
+                        <span>{{ Carbon\Carbon::parse($record->time_in)->floatDiffInHours($record->time_out) }}</span>
+                    @else
+                        <span>N/A</span>
+                    @endif
                 </td>
 
             </tr>

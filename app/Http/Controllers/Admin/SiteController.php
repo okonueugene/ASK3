@@ -23,6 +23,8 @@ class SiteController extends Controller
 
         $countries = config('sitedata.countries');
         $timezones = config('sitedata.timezones');
+
+
         return view('admin.sites', compact('title', 'sites', 'countries', 'timezones'));
     }
 
@@ -85,6 +87,7 @@ class SiteController extends Controller
 
     public function updateSite(UpdateSiteRequest $request, $id)
     {
+
         try {
             \DB::beginTransaction();
 

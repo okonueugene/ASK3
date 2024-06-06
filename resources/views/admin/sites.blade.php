@@ -229,11 +229,11 @@
                                 <div class="form-group">
                                     <label class="form-label" for="site-country">Country</label>
                                     <div class="form-control-wrap">
-                                        <select class="form-select" id="country" name="country" required>
-                                            <option value="0">Select Country</option>
-                                            @foreach ($countries as $country)
+                                        <select class="custom-select form-select" id="country" name="country" required>
+                                            <option value="">Select Country</option>
+                                            {{-- @foreach ($countries as $country)
                                                 <option value="{{ $country }}">{{ $country }}</option>
-                                            @endforeach
+                                            @endforeach --}}
                                         </select>
                                     </div>
                                     @error('country')
@@ -245,11 +245,12 @@
                                 <div class="form-group">
                                     <label class="form-label" for="site-timezone">Timezone</label>
                                     <div class="form-control-wrap">
-                                        <select class="form-select" id="timezone" name="timezone" required>
-                                            <option value="0">Select Timezone</option>
-                                            @foreach ($timezones as $timezone)
+                                        <select class="custom-select form-select" id="timezone" name="timezone"
+                                            required>
+                                            <option value="">Select Timezone</option>
+                                            {{-- @foreach ($timezones as $timezone)
                                                 <option value="{{ $timezone }}">{{ $timezone }}</option>
-                                            @endforeach
+                                            @endforeach --}}
                                         </select>
                                     </div>
                                     @error('timezone')
@@ -378,10 +379,7 @@
                                     <label class="form-label" for="site-country">Country</label>
                                     <div class="form-control-wrap">
                                         <select class="form-select" id="update-country" name="update-country" required>
-                                            <option value="0">Select Country</option>
-                                            @foreach ($countries as $country)
-                                                <option value="{{ $country }}">{{ $country }}</option>
-                                            @endforeach
+
                                         </select>
                                     </div>
                                 </div>
@@ -391,10 +389,6 @@
                                     <label class="form-label" for="site-timezone">Timezone</label>
                                     <div class="form-control-wrap">
                                         <select class="form-select" id="update-timezone" name="update-timezone" required>
-                                            <option value="0">Select Timezone</option>
-                                            @foreach ($timezones as $timezone)
-                                                <option value="{{ $timezone }}">{{ $timezone }}</option>
-                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -454,6 +448,7 @@
     <!-- content @e -->
 @endsection
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
     function closeModal() {
         $('#addSiteModal').modal('hide');
@@ -611,8 +606,8 @@
                 let site = response.data.site;
                 $('#update-name').val(site.name);
                 $('#update-location').val(site.location);
-                $('#update-country').val(site.country);
-                $('#update-timezone').val(site.timezone);
+                $('#update-country').val(site.country).trigger('change');
+                $('#update-timezone').val(site.timezone).trigger('change');
                 $('#update-lat').val(site.lat);
                 $('#update-long').val(site.long);
 
@@ -666,15 +661,17 @@
 
     }
 
-    async  function initMap(site) {
+    async function initMap(site) {
         // Parse the values from the input fields
         var inputLat = parseFloat($('#update-lat').val());
         var inputLng = parseFloat($('#update-long').val());
 
         // Use the input values if they are valid, otherwise use the site values
-        var initialLat = !isNaN(inputLat) ? inputLat : (site && !isNaN(parseFloat(site.lat)) ? parseFloat(site.lat) :
+        var initialLat = !isNaN(inputLat) ? inputLat : (site && !isNaN(parseFloat(site.lat)) ? parseFloat(site
+                .lat) :
             0);
-        var initialLng = !isNaN(inputLng) ? inputLng : (site && !isNaN(parseFloat(site.long)) ? parseFloat(site.long) :
+        var initialLng = !isNaN(inputLng) ? inputLng : (site && !isNaN(parseFloat(site.long)) ? parseFloat(site
+                .long) :
             0);
 
         // Check if the coordinates are valid numbers
@@ -756,4 +753,56 @@
                 console.log(error);
             });
     }
+
+    // Initialize select2 with search
+    $(document).ready(function() {
+        let countries = @json($countries);
+        let timezones = @json($timezones);
+
+        $('#country').select2({
+            data: countries,
+            allowClear: true,
+            placeholder: 'Select Country',
+            dropdownParent: $('#addSiteModal'),
+            dropdownAutoWidth: true,
+            width: '100%',
+            searching: true
+        });
+        $('#update-country').select2({
+            data: countries,
+            allowClear: true,
+            placeholder: 'Select Country',
+            dropdownParent: $('#updateSiteModal'),
+            dropdownAutoWidth: true,
+            width: '100%',
+            searching: true
+        });
+
+        $('#timezone').select2({
+            data: timezones,
+            allowClear: true,
+            placeholder: 'Select Timezone',
+            dropdownParent: $('#addSiteModal'),
+            dropdownAutoWidth: true,
+            width: '100%',
+            searching: true
+        });
+        $('#update-timezone').select2({
+            data: timezones,
+            allowClear: true,
+            placeholder: 'Select Timezone',
+            dropdownParent: $('#updateSiteModal'),
+            dropdownAutoWidth: true,
+            width: '100%',
+            searching: true
+        });
+
+        $('#country, #update-country').on('change', function() {
+            $(this).val();
+        });
+
+        $('#timezone, #update-timezone').on('change', function() {
+            $(this).val();
+        });
+    });
 </script>

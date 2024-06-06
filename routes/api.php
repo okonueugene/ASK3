@@ -17,104 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('guard/login', [AuthenticationController::class, 'login']);
 
- //get all tasks for a guard
-//  public function guardTasks(Request $request)
-//  {
-//      $tasks = auth()->guard()->user()->tasks()->with('media')->orderBy('created_at', 'DESC')->whereDate('date', Carbon::today())->get();
-
-//      if (count($tasks) > 0) {
-//          return response()->json([
-//              'success' => true,
-//              'message' => 'Tasks retrieved successfully',
-//              'data' => $tasks,
-//          ]);
-
-//      } else {
-//          return response()->json([
-//              'success' => false,
-//              'message' => 'No Tasks found',
-//          ]);
-//      }
-//  }
-
-//  public function ShowTask(Request $request, Task $task)
-//  {
-//      return response()->json([
-//          'success' => true,
-//          'data' => $task,
-//      ], 200);
-//  }
-
-//  //Complete Task
-//  public function completeTask(Request $request, Task $task)
-//  {
-//      $this->validate($request, [
-//          'id' => 'required|exists:tasks,id',
-//          'comments' => 'nullable|string',
-//      ]);
-
-//      $id = $request->input('id');
-
-//      $task = Task::where('id', $id)->first();
-
-//      if ($task) {
-//          $task->update([
-//              'status' => 'completed',
-//              'comments' => $request->comments,
-//          ]);
-
-//          $img = $request->file;
-//          $img1 = $request->file1;
-//          $img2 = $request->file2;
-
-//          if ($img != null) {
-//              $filename = "IMG" . rand() . ".jpg";
-//              $decoded = base64_decode($img);
-
-//              $task->addMediaFromString($decoded)
-//                  ->usingFileName($filename)
-//                  ->toMediaCollection('tasks');
-//          }
-
-//          if ($img1 != null) {
-//              $filename = "IMG" . rand() . ".jpg";
-
-//              $decoded = base64_decode($img1);
-
-//              $task->addMediaFromString($decoded)
-//                  ->usingFileName($filename)
-//                  ->toMediaCollection('tasks');
-//          }
-
-//          if ($img2 != null) {
-//              $filename = "IMG" . rand() . ".jpg";
-
-//              $decoded = base64_decode($img2);
-
-//              $task->addMediaFromString($decoded)
-//                  ->usingFileName($filename)
-//                  ->toMediaCollection('tasks');
-//          }
-
-//          //log activity
-//          activity()->causedBy($task->owner)
-//              ->withProperties(['site_id' => $task->owner->site_id])
-//              ->event('updated')
-//              ->performedOn($task)
-//              ->useLog('Task')
-//              ->log($task->owner->name . ' completed task ' . $task->title);
-
-//          return response()->json([
-//              'success' => true,
-//              'message' => 'Task updated succesfully',
-//              'data' => $task,
-//          ]);
-
-//      } else {
-//          return response()->json(['message' => 'Task not found'], 404);
-//      }
-//  }
-
 Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum', 'ensure_json_header']], function () {
 
     Route::get('/profile', [AuthenticationController::class, 'profile']);
@@ -153,6 +55,8 @@ Route::group(['prefix' => 'guard', 'middleware' => ['auth:sanctum', 'ensure_json
 
         //clock out
         Route::post('/clock-out', 'clockOut');
+        //site activities
+        Route::get('/site-activities', 'siteActivity');
 
     });
 

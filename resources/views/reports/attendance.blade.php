@@ -34,11 +34,11 @@
                                         <div class="form-group">
                                             <label class="form-label">Filter By Site</label>
                                             <div class="form-control-wrap mr-2">
-                                                <select id="selectedSite" class="form-control">
-                                                    <option selected>Choose Site</option>
-                                                    @foreach ($sites as $site)
+                                                <select class="custom-select form-select" id="selectedSite" name="site_id">
+                                                    <option value="" selected>Choose Site</option>
+                                                    {{-- @foreach ($sites as $site)
                                                         <option value="{{ $site->id }}">{{ $site->name }}</option>
-                                                    @endforeach
+                                                    @endforeach --}}
                                                 </select>
                                             </div>
                                         </div>
@@ -47,11 +47,11 @@
                                     <div class="form-group mr-2">
                                         <label class="form-label">Filter By Guard</label>
                                         <div class="form-control-wrap">
-                                            <select id="selectedGuard" class="form-control" name="city_id">
+                                            <select class="custom-select form-select" id="selectedGuard" name="guard_id">
                                                 <option value="" selected>Choose Guard</option>
-                                                @foreach ($guards as $guard)
+                                                {{-- @foreach ($guards as $guard)
                                                     <option value="{{ $guard->id }}">{{ $guard->name }}</option>
-                                                @endforeach
+                                                @endforeach --}}
                                             </select>
                                         </div>
                                     </div>
@@ -87,8 +87,8 @@
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
                                     @if (count($records) > 0)
-                                        <table id="attendance-report" class="datatable-init nk-tb-list nk-tb-ulist"
-                                            data-auto-responsive="false">
+                                        <table id="attendance-report"
+                                            class="table table-stripped-columns table-hover table-bordered">
                                             <thead>
                                                 <tr class="nk-tb-item nk-tb-head">
                                                     <th class="nk-tb-col nk-tb-col-check">
@@ -182,8 +182,44 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-    //listen for the click event on the site filter
     $(document).ready(function() {
+        // Initialize DataTable once
+        let dataTable = $('#attendance-report').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "responsive": true,
+            "autoWidth": false,
+            "searching": true,
+            "lengthChange": true,
+            "lengthMenu": [10, 25, 50, 75, 100],
+            "pageLength": 10,
+            "order": [
+                [3, "desc"]
+            ]
+        });
+
+        // Initialize select2 with search
+        let guards = @json($guards);
+        let sites = @json($sites);
+
+        $('#selectedSite').select2({
+            placeholder: 'Choose Site',
+            allowClear: true,
+            data: sites
+        });
+
+        // Add guards to the select2 dropdown
+        $('#selectedGuard').select2({
+            placeholder: 'Choose Guard',
+            allowClear: true,
+            data: guards
+        });
+
+
+
+        //get the selected site
+
         $('#selectedSite').on('change', function() {
             //get the selected site
             let siteId = $(this).val();
@@ -215,6 +251,24 @@
                 });
         });
     });
+
+    const diffInHours = (endTime, startTime) => {
+        // Split the times into hours, minutes, and seconds
+        const [endHours, endMinutes, endSeconds] = endTime.split(':').map(parseFloat);
+        const [startHours, startMinutes, startSeconds] = startTime.split(':').map(parseFloat);
+
+        // Calculate the total difference in seconds
+
+        let diffInSeconds = (endHours * 3600 + endMinutes * 60 + endSeconds) - (startHours * 3600 + startMinutes *
+            60 + startSeconds);
+
+        // Convert the total difference to hours as a fraction
+        let hours = diffInSeconds / 3600;
+
+        // Return the hours
+        return hours;
+
+    }
 
     const filterRecords = () => {
 
@@ -277,7 +331,7 @@
                         `<span>${record.day}</span>`,
                         `<span>${record.time_in}</span>`,
                         `<span>${record.time_out ? record.time_out : 'Not Available'}</span>`,
-                        `<span>${record.time_out ? diffInHours(record.time_in, record.time_out) : 'Not Available'}</span>`
+                        `<span>${record.time_out ? diffInHours(record.time_out, record.time_in) : 'Not Available'}</span>`
                     ]).draw(false);
                 });
                 //remove the spinner

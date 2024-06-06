@@ -33,7 +33,7 @@
                     <div class="nk-block">
                         <div class="card card-bordered card-stretch">
                             <div class="card-inner">
-                                <table class="datatable-init nk-tb-list nk-tb-ulist" data-auto-responsive="false"
+                                <table class="table table-striped table-bordered table-hover"
                                     id="users-table">
                                     <thead>
                                         <tr class="nk-tb-item">

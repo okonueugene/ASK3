@@ -1,4 +1,8 @@
 @extends('admin.layouts.layout')
+
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" />
+</head>
 @section('content')
     <div class="nk-content ">
         <div class="container-fluid">
@@ -34,11 +38,8 @@
                                         <div class="form-group">
                                             <label class="form-label">Filter By Site</label>
                                             <div class="form-control-wrap mr-2">
-                                                <select id="selectedSite" class="form-control">
-                                                    <option selected>Choose Site</option>
-                                                    @foreach ($sites as $site)
-                                                        <option value="{{ $site->id }}">{{ $site->name }}</option>
-                                                    @endforeach
+                                                <select class="custom-select form-select" id="selectedSite" name="site_id">
+                                                    <option value="" selected>Choose Site</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -47,11 +48,8 @@
                                     <div class="form-group mr-2">
                                         <label class="form-label">Filter By Guard</label>
                                         <div class="form-control-wrap">
-                                            <select id="selectedGuard" class="form-control" name="city_id">
+                                            <select class="custom-select form-select" id="selectedGuard" name="guard_id">
                                                 <option value="" selected>Choose Guard</option>
-                                                @foreach ($guards as $guard)
-                                                    <option value="{{ $guard->id }}">{{ $guard->name }}</option>
-                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -87,7 +85,7 @@
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
                                     @if (count($records) > 0)
-                                        <table id="patrol-report" class="datatable-init nk-tb-list nk-tb-ulist"
+                                        <table id="patrol-report" class="table table-striped-columns table-bordered"
                                             data-auto-responsive="false">
                                             <thead>
                                                 <tr class="nk-tb-item nk-tb-head">
@@ -172,29 +170,24 @@
     </div>
 @endsection
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 <script>
-    //listen for the click event on the site filter
     $(document).ready(function() {
+        // Initialize DataTable once
+        let dataTable = $('#patrol-report').DataTable({
+            "responsive": true,
+        });
+
+        // Listen for changes on the site filter
         $('#selectedSite').on('change', function() {
-            //get the selected site
             let siteId = $(this).val();
+            let url = `{{ route('admin.getSiteGuards', ':siteId') }}`.replace(':siteId', siteId);
 
-            //get the url
-            let url = `{{ route('admin.getSiteGuards', ':siteId') }}`;
-
-            //replace the :siteId with the actual siteId
-            url = url.replace(':siteId', siteId);
-
-            // Make axios call
             axios.post(url)
                 .then((response) => {
-
                     let guards = response.data.guards;
-
-                    // Remove existing options
                     $('#selectedGuard').find('option').remove();
-
-                    // Add new options
                     $('#selectedGuard').append('<option value="" selected>Choose Guard</option>');
                     guards.forEach(guard => {
                         $('#selectedGuard').append(
@@ -205,217 +198,177 @@
                     console.log(error);
                 });
         });
-    });
 
-    const filterRecords = () => {
-        //get the selected site
-        let siteId = '';
-        let selectedSite = $('#selectedSite').val();
-        if (selectedSite != 'Choose Site') {
-            siteId = selectedSite;
-        }
+        window.filterRecords = function() {
+            let siteId = $('#selectedSite').val();
+            let guardId = $('#selectedGuard').val();
+            let startDate = $('#start').val();
+            let endDate = $('#end').val();
+            let url =
+                `{{ route('admin.filterRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
+            let spinner = document.getElementById('loading');
+            spinner.style.display = 'block';
 
-        //get the selected guard
-        let selectedGuard = $('#selectedGuard').val();
-        if (selectedGuard != 'Choose Guard') {
-            guardId = selectedGuard;
-        }
-
-        //get the selected date range
-        let startDate = $('#start').val();
-        let endDate = $('#end').val();
-
-
-        let url =
-            `{{ route('admin.filterRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
-
-        let spinner = document.getElementById('loading');
-        spinner.style.display = 'block';
-        // Make axios call
-        axios.post(url)
-            .then((response) => {
-
-                let filteredRecords = response.data.records;
-                console.log(filteredRecords);
-
-                // Remove existing DataTable data
-                let dataTable = $('#patrol-report').DataTable().clear();
-                console.log(dataTable);
-
-                // Add new DataTable rows
-                filteredRecords.forEach(record => {
-                    dataTable.row.add([
-                        `<div class="custom-control custom-control-sm custom-checkbox notext">
-                        <input type="checkbox" class="custom-control-input" id="uid">
-                        <label class="custom-control-label" for="uid"></label>
-                    </div>`,
-                        `<div class="user-card">
-                        <div class="user-avatar bg-dim-primary d-none d-sm-flex">
-                            <span>${record.owner.name[0]}</span>
-                        </div>
-                        <div class="user-info">
-                            <span class="tb-lead">${record.owner.name} <span class="dot dot-success d-md-none ml-1"></span></span>
-                            <span>${record.owner.phone}</span>
-                        </div>
-                    </div>`,
-                        `<span>${record.site.name}</span>`,
-                        `<span>${record.tag.name}</span>`,
-                        `<span>${record.date}</span>`,
-                        `<span>${record.time}</span>`,
-                        `<span>${record.status}</span>`
-                    ]);
+            axios.post(url)
+                .then((response) => {
+                    let filteredRecords = response.data.records;
+                    dataTable.clear().draw();
+                    if (filteredRecords.length === 0) {
+                        displayError('No records found.');
+                    } else {
+                        displaySuccess('Records filtered successfully.');
+                        filteredRecords.forEach(record => {
+                            dataTable.row.add([
+                                `<div class="custom-control custom-control-sm custom-checkbox notext">
+                    <input type="checkbox" class="custom-control-input" id="uid">
+                    <label class="custom-control-label" for="uid"></label>
+                  </div>`,
+                                `<div class="user-card">
+                    <div class="user-avatar bg-dim-primary d-none d-sm-flex">
+                      <span>${record.owner.name[0]}</span>
+                    </div>
+                    <div class="user-info">
+                      <span class="tb-lead">${record.owner.name} <span class="dot dot-success d-md-none ml-1"></span></span>
+                      <span>${record.owner.phone}</span>
+                    </div>
+                  </div>`,
+                                `<span>${record.site.name}</span>`,
+                                `<span>${record.tag.name}</span>`,
+                                `<span>${record.date}</span>`,
+                                `<span>${record.time}</span>`,
+                                `<span>${record.status}</span>`
+                            ]).draw();
+                        });
+                    }
+                    spinner.style.display = 'none';
+                })
+                .catch((error) => {
+                    console.log(error);
+                    displayError(error.response.data.message);
+                    spinner.style.display = 'none';
                 });
-
-                // Draw the DataTable
-                dataTable.draw();
-                // Hide the spinner
-                spinner.style.display = 'none';
-            })
-            .catch((error) => {
-                console.log(error);
-
-                //display an error message
-                displayError(error.response.data.message);
-                // Hide the spinner
-                spinner.style.display = 'none';
-            });
-    }
-
-    const resetFilters = () => {
-        // Reset the site filter
-        $('#selectedSite').val('Choose Site');
-
-        // Reset the guard filter
-        $('#selectedGuard').val('Choose Guard');
-
-        // Reset the date range filter
-        $('#start').val('');
-        $('#end').val('');
-
-        // Reload the page
-        location.reload();
-    }
-
-    function exportExcel(ext) {
-        //get the selected site
-        let siteId = '';
-        let selectedSite = $('#selectedSite').val();
-        if (selectedSite != 'Choose Site') {
-            siteId = selectedSite;
         }
 
-        //get the selected guard
-        let selectedGuard = $('#selectedGuard').val();
-        if (selectedGuard != 'Choose Guard') {
-            guardId = selectedGuard;
+        window.resetFilters = function() {
+            $('#selectedSite').val('Choose Site');
+            $('#selectedGuard').val('Choose Guard');
+            $('#start').val('');
+            $('#end').val('');
+            location.reload();
         }
 
-        //get the selected date range
-        let startDate = $('#start').val();
-        let endDate = $('#end').val();
+        window.exportExcel = function(ext) {
+            let siteId = $('#selectedSite').val();
+            let guardId = $('#selectedGuard').val();
+            let startDate = $('#start').val();
+            let endDate = $('#end').val();
+            let url =
+                `{{ route('admin.exportRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}&ext=${ext}`;
+            let spinner = document.getElementById('loading');
+            spinner.style.display = 'block';
 
+            //if any of the filters is not null, export the filtered records
+            if (siteId !== 'Choose Site' || guardId !== 'Choose Guard' || startDate !== '' || endDate !==
+                '') {
+                axios.get(url)
+                    .then((response) => {
+                        if (response.status === 200) {
+                            displaySuccess('Records exported successfully.');
+                        } else {
+                            displayError(response.data.message);
+                        }
+                        spinner.style.display = 'none';
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        displayError(error.response.data.message);
+                        spinner.style.display = 'none';
+                    });
 
-        let url =
-            `{{ route('admin.exportRecords') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}&ext=${ext}`;
-
-        //show the spinner
-        let spinner = document.getElementById('loading');
-        spinner.style.display = 'block';
-        //make axios call
-        axios.get(url)
-            .then((response) => {
-
-                // Check the response status and display success or error message
-                if (response.status === 200) {
-                    displaySuccess('Records exported successfully.');
-                    // Hide the spinner
-                    spinner.style.display = 'none';
-                } else {
-
-                    displayError(response.data.message);
-                    // Hide the spinner
-                    spinner.style.display = 'none';
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-
-                // Display an error message
-                displayError(error.response.data.message);
-                // Hide the spinner
-                spinner.style.display = 'none';
-            });
-        // Create a hidden iframe to handle the download
-        let iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = url;
-        document.body.appendChild(iframe);
-
-        // Hide the spinner
-        spinner.style.display = 'none';
-    }
-</script>
-<script>
-    function exportPDF() {
-        //get the selected site
-        let siteId = '';
-        let selectedSite = $('#selectedSite').val();
-        if (selectedSite != 'Choose Site') {
-            siteId = selectedSite;
-        }
-
-        //get the selected guard
-        let selectedGuard = $('#selectedGuard').val();
-        if (selectedGuard != 'Choose Guard') {
-            guardId = selectedGuard;
-        }
-
-        //get the selected date range
-        let startDate = $('#start').val();
-        let endDate = $('#end').val();
-
-
-        let url =
-            `{{ route('admin.exportPDF') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
-        let spinner = document.getElementById('loading');
-        spinner.style.display = 'block';
-        // Make axios call
-
-
-        axios.get(url)
-            .then((response) => {
-
-                // Check the response status and display success or error message
-                if (response.status === 200) {
-                    displaySuccess('PDF generated successfully.');
-                    // Hide the spinner
-                    spinner.style.display = 'none';
-                } else {
-
-                    displayError(response.data.message);
-
-                    // Hide the spinner
-                    spinner.style.display = 'none';
-                }
-
-                // Create a hidden iframe to handle the download
                 let iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
                 iframe.src = url;
                 document.body.appendChild(iframe);
-
-                // Hide the spinner
                 spinner.style.display = 'none';
-
-            })
-            .catch((error) => {
-                console.log(error);
-
-                // Display an error message
-                displayError(error.response.data.message);
-
-                // Hide the spinner
+            } else {
+                displayError('Please filter records before exporting.');
                 spinner.style.display = 'none';
-            });
-    }
+            }
+
+
+        }
+
+        window.exportPDF = function() {
+            let siteId = $('#selectedSite').val();
+            let guardId = $('#selectedGuard').val();
+            let startDate = $('#start').val();
+            let endDate = $('#end').val();
+            let url =
+                `{{ route('admin.exportPDF') }}?site_id=${siteId}&guard_id=${guardId}&start_date=${startDate}&end_date=${endDate}`;
+            let spinner = document.getElementById('loading');
+            spinner.style.display = 'block';
+            console.log(startDate, endDate);
+
+            //if any of the filters is not null, export the filtered records
+            if (siteId !== 'Choose Site') {
+                axios.get(url)
+                    .then((response) => {
+                        if (response.status === 200) {
+                            displaySuccess('PDF generated successfully.');
+                        } else {
+                            displayError(response.data.message);
+                        }
+                        spinner.style.display = 'none';
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        displayError(error.response.data.message);
+                        spinner.style.display = 'none';
+                    });
+
+                let iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+                document.body.appendChild(iframe);
+                spinner.style.display = 'none';
+            } else {
+                displayError('Please filter records before exporting.');
+                spinner.style.display = 'none';
+            }
+
+        }
+
+        //initialize select2
+        let sites = @json($sites);
+        let guards = @json($guards);
+
+        sites.forEach(site => {
+            $('#selectedSite').append(
+                `<option value="${site.id}">${site.name}</option>`);
+        });
+
+        $('#selectedSite').select2({
+            placeholder: 'Select Site',
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: true,
+            dropdownParent: $('#selectedSite').parent(),
+            searching: true,
+        });
+
+        guards.forEach(guard => {
+            $('#selectedGuard').append(
+                `<option value="${guard.id}">${guard.name}</option>`);
+        });
+
+        $('#selectedGuard').select2({
+            placeholder: 'Choose Guard',
+            allowClear: true,
+            width: '100%',
+            dropdownAutoWidth: true,
+            dropdownParent: $('#selectedGuard').parent(),
+            searching: true,
+        });
+
+    });
 </script>

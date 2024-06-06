@@ -21,10 +21,27 @@ class AttendanceController extends Controller
     {
         $title = "Attendance Reports";
 
-        $sites = Site::where('company_id', auth()->user()->company_id)->get();
+        $sites = Site::where('company_id', auth()->user()->company_id)
+            ->select('name', 'id')
+            ->get()
+            ->map(function ($site) {
+                return [
+                    'id' => $site->id,
+                    'text' => $site->name,
+                ];
+            })
+            ->toArray();
 
-        $guards = Guard::where('company_id', auth()->user()->company_id)->get();
-
+        $guards = Guard::where('company_id', auth()->user()->company_id)
+        ->select('name', 'id')
+        ->get()
+        ->map(function ($guard) {
+            return [
+                'id' => $guard->id,
+                'text' => $guard->name,
+            ];
+        })
+        ->toArray();
         $records = $this->fetchRecords();
 
         $total = count($records);

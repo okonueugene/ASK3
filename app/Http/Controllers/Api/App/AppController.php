@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Api\App;
 
-use App\Events\SosEvent;
-use App\Http\Controllers\Controller;
-use App\Models\Guard;
-use App\Models\Incident;
-use App\Models\Patrol;
-use App\Models\PatrolHistory;
-use App\Models\Site;
+use Carbon\Carbon;
 use App\Models\Sos;
 use App\Models\Tag;
+use App\Models\Site;
 use App\Models\Task;
-use Carbon\Carbon;
+use App\Models\Guard;
+use App\Models\Patrol;
+use App\Events\SosEvent;
+use App\Models\Incident;
 use Illuminate\Http\Request;
+use App\Models\PatrolHistory;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Models\Activity;
 
 class AppController extends Controller
 {
@@ -322,38 +323,7 @@ class AppController extends Controller
             ]);
         }
     }
-    // Dashboard stats
-    // public function dashboardStats()
-    // {
-    //     $guard = Auth::guard('guard')->user();
-
-    //     $allpatrols = Patrol::where('guard_id', $guard->id)->get();
-
-    //     date_default_timezone_set('Africa/Nairobi');
-
-    //     $time = now()->toTimeString();
-    //     $today = Carbon::now($guard->site->timezone)->format('Y-m-d');
-
-    //     $totalpatrols = count($allpatrols);
-    //     $passed = Patrol::select('*')
-    //         ->where('guard_id', '=', $guard->id)
-    //         ->where('end', '<', $time)
-    //         ->get();
-
-    //     $roundspassed = count($passed);
-    //     $todaytasks = $guard->tasks->where('date', $today)->count();
-
-    //     $time_in = $guard->attendances()->where('day', $today)->first();
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'totalpatrols' => count($allpatrols),
-    //         'rounds_passed' => $roundspassed,
-    //         'today_tasks' => $todaytasks,
-    //         'time_in' => $time_in->time_in,
-    //     ], 200);
-
-    // }
+ 
 
     public function dashboardStats(Request $request)
     {
@@ -806,7 +776,7 @@ class AppController extends Controller
             ->withProperties(['site_id' => $site->id])
             ->event('created')
             ->performedOn($sos)
-            ->useLog('Sos')
+            ->useLog('Sos_Alert')
             ->log($guard->name . ' raised an SOS alert');
 
         //call the sos event
@@ -939,6 +909,41 @@ class AppController extends Controller
             return response()->json(['success' => true, 'message' => 'Clocked out successfully'], 200);
         } else {
             return response()->json(['success' => false, 'message' => 'You have not clocked in today'], 200);
+        }
+    }
+
+    //site activity
+    public function siteActivity(Request $request)
+    {
+        // $site= Site::where('id', $id)->first();
+        // $site->load('guards');
+        // $siteguards = Guard::where('site_id', $id)->pluck('id');
+        
+
+        // $activities = Activity::whereIn('subject_id', $siteguards)
+        // ->orWhereIn('causer_id', $siteguards)
+        // ->with('causer', 'subject')
+        // ->orderBy('id', 'DESC')->get();
+
+        $site = auth()->guard()->user()->site;
+
+        $activities = Activity::where('subject_id', $site->id)
+            ->orWhere('causer_id', $site->id)
+            ->with('causer', 'subject')
+            ->orderBy('id', 'DESC')->get();
+
+        if (count($activities) > 0) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Activities retrieved successfully',
+                'data' => $activities,
+            ]);
+
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No Activities found',
+            ]);
         }
     }
 
