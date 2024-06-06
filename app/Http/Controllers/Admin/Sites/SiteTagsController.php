@@ -105,14 +105,14 @@ class SiteTagsController extends Controller
                 'lat' => 0.0,
                 'long' => 0.0,
             ]);
-        }
 
-        //log the tag creation
-        activity()
-            ->event('create')
-            ->performedOn($tag)
-            ->causedBy(auth()->user())
-            ->log('Tags created');
+            //log the tag creation
+            activity()
+                ->event('create')
+                ->performedOn($tag)
+                ->causedBy(auth()->user())
+                ->log('Tags created');
+        }
 
         //return success message
         return redirect()->back()->with('success', 'Tags added successfully');
